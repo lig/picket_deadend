@@ -1,0 +1,38 @@
+{% extends 'email.eml' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Foobar is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block letter %}
+
+{% blocktrans %}
+Hello {{ newUser }}!
+
+Your or somebody else probably has enter your email address "{{ newUser_email }}"
+ for registering at the {{ site_name }}.
+
+If it was not you just do nothing.
+
+Otherwise here is your validation code: {{ valCode }} (six digits).
+
+Please go to http://{{ site_domain }}/accounts/validation/ and enter this code
+ into the form on this page or just go to the url below:
+http://{{ site_domain }}/accounts/validation/?user={{ newUser }}&code={{ valCode }}
+{% endblocktrans %}
+
+{% endblock letter %}

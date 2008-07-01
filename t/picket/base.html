@@ -1,0 +1,48 @@
+{% extends 'base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Foobar is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block content %}
+
+<div id="picketmenu">
+{% block picketmenu %}
+<strong>{% trans 'Picket menu' %}:</strong><br />
+<a href="{{ picket_url }}bugs/">{% trans 'bugs' %}</a>
+{% endblock picketmenu %}
+</div>
+
+<div id="picketsidebar">
+
+<div id="picketprojects">
+{% block picketprojects %}
+<strong>{% trans 'Projects' %}:</strong><br />
+{% for picket_project in picket_projects %}
+<a href="{{ picket_project.get_absolute_url }}">{{ picket_project.name }}</a><br />
+{% endfor %}
+{% endblock picketprojects %}
+</div>
+
+</div>
+
+<div id="picketcontent">
+{% block picketcontent %}
+{% endblock picketcontent %}
+</div>
+
+{% endblock content %}

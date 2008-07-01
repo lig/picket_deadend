@@ -1,0 +1,91 @@
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Foobar is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="u">
+
+<head>
+
+<title>{% block title %}{% blocktrans %} - {{ site_name }} - {% endblocktrans %}{% endblock %}</title>
+
+{% block css %}
+<link rel="stylesheet" href="/i/picket.css" type="text/css" />
+{% endblock %}
+
+{% comment %}
+<script type="text/javascript" src="/i/picket.js"></script> 
+{% endcomment %}
+
+</head>
+
+<body>
+
+<div id="usermenu">
+{% block usermenu %}
+<strong>{% trans 'user menu' %}:</strong><br />
+{% if user.is_authenticated %}
+<a href="/accounts/logout/">{% trans 'log out' %}</a>
+{% else %}
+<a href="/accounts/login/">{% trans 'log in' %}</a>
+{% endif %}
+{% endblock %}
+</div>
+
+<div id="mainmenu">
+{% block mainmenu %}
+<strong>{% trans 'main menu' %}:</strong><br />
+<a href="https://sourceforge.net/projects/picket">{% trans 'picket project' %}</a><br />
+<a href="/">{% trans 'home page' %}</a> <a href="{{ picket_url }}">{% trans 'picket home page' %}</a> 
+{% endblock %}
+</div>
+
+<div id="messages">
+{% block messages %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
+</div>
+
+<div id="content">
+{% block content %}
+{% endblock %}
+</div>
+
+<div id="debug">
+{% block debug %}
+{% if debug %}
+<br clear="both" />
+<hr/>
+<p>
+{% for sql_query in sql_queries %}
+{{ forloop.counter }}. {{ sql_query.sql }} in {{ sql_query.time }}<br />
+{% endfor %}
+</p>
+{% endif %}
+{% endblock %}
+</div>
+</body>
+
+</html>

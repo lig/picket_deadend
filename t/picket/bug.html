@@ -1,0 +1,28 @@
+{% extends 'picket/base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Foobar is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block picketcontent %}
+
+<strong>{% blocktrans with bug.id as bug_id %}Bug #{{ bug_id }}{% endblocktrans %}</strong> {{ bug.get_status_display }} {% trans 'in' %} {% with bug.category as category %}{% include 'picket/category_link_inc.html' %}{% endwith %} {% trans 'of' %} {% with bug.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %} {% trans 'by' %} {% with bug.reporter as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}<br />
+<strong>{{ bug.summary }}</strong><br />
+{% trans 'priority' %}: {{ bug.get_priority_display }}, {% trans 'severity' %}: {{ bug.get_severity_display }}, {% trans 'reproducibility' %}: {{ bug.get_reproducibility_display }}<br />
+{{ bug.description }}<br />
+
+{% endblock picketcontent %}
