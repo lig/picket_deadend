@@ -8,7 +8,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Foobar is distributed in the hope that it will be useful,
+Picket is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -155,11 +155,11 @@ class Bug(models.Model):
     view_state = models.ForeignKey(ViewState,
         verbose_name=_('bug view state'))
     summary = models.CharField(_('bug summary'), max_length=255)
-    description = models.TextField(_('bug description'), core=True)
+    description = models.TextField(_('bug description'))
     steps_to_reproduce = models.TextField(_('bug steps to reproduce'),
-        blank=True, core=True)
+        blank=True)
     additional_information = models.TextField(
-        _('bug additional information'), blank=True, core=True)
+        _('bug additional information'), blank=True)
     sponsorship_total = models.IntegerField(
         _('bug sponsorship total'), default=0)
     sticky = models.BooleanField(_('bug sticky'), default=False)
@@ -174,12 +174,9 @@ class Bug(models.Model):
         pass
 
 class BugFile(models.Model):
-    bug = models.ForeignKey(Bug, verbose_name=_('bug'),
-        edit_inline=True)
-    title = models.CharField(_('bug file title'),
-        max_length=750, core=True)
-    file = models.FileField(_('bug file'),
-        upload_to='bugs/%Y/%m/%d-%H', core=True)
+    bug = models.ForeignKey(Bug, verbose_name=_('bug'))
+    title = models.CharField(_('bug file title'), max_length=750)
+    file = models.FileField(_('bug file'), upload_to='bugs/%Y/%m/%d-%H')
     date_added = models.DateTimeField(_('bug file date added'),
         auto_now_add=True, editable=False)
     def __unicode__(self):
@@ -189,16 +186,13 @@ class BugFile(models.Model):
         verbose_name_plural = _('bug files')
 
 class ProjectFile(models.Model):
-    project = models.ForeignKey(Project, verbose_name=_('project'),
-        edit_inline=True)
-    title = models.CharField(_('project file title'),
-        max_length=750, core=True)
+    project = models.ForeignKey(Project, verbose_name=_('project'))
+    title = models.CharField(_('project file title'), max_length=750)
     file = models.FileField(_('project file'),
-        upload_to='projects/%Y/%m/%d-%H', core=True)
+        upload_to='projects/%Y/%m/%d-%H')
     date_added = models.DateTimeField(_('project file date added'),
         auto_now_add=True, editable=False)
-    description = models.TextField(_('project file description'),
-        blank=True, core=True)
+    description = models.TextField(_('project file description'), blank=True)
     def __unicode__(self):
         return u'%s' % self.title
     class Meta():
