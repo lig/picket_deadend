@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django import newforms as forms
+from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 

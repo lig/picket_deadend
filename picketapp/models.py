@@ -37,8 +37,6 @@ class ViewState(models.Model):
     class Meta():
         verbose_name = _('view state')
         verbose_name_plural = _('view states')
-    class Admin():
-        pass
 
 class ProjectManager(models.Manager):
     def permited(self, user):
@@ -59,6 +57,9 @@ class Project(models.Model):
         blank=True)
     parent = models.ForeignKey('Project',
         verbose_name=_('project parent'), blank=True, null=True)
+    user_list = models.ManyToManyField(User,
+        verbose_name=_('project user list'), related_name='project_list',
+        through='ProjectUserList')
         
     def __unicode__(self):
         return u'%s' % self.name
@@ -72,7 +73,8 @@ class Project(models.Model):
         """
         @return: integrated project if available
         @raise IntegrationError: if integration is improperly \
-configured  
+configured
+        TODO: make _integration_cache working as cache
         """
         if not hasattr(self, '_integration_cache'):
             if not INTEGRATION_MODEL:
@@ -89,9 +91,6 @@ configured
     class Meta():
         verbose_name = _('project')
         verbose_name_plural = _('projects')
-    
-    class Admin():
-        pass
 
 class Category(models.Model):
     project = models.ForeignKey(Project,
@@ -107,8 +106,6 @@ class Category(models.Model):
         verbose_name = _('category')
         verbose_name_plural = _('categories')
         unique_together = (('project', 'name'),)
-    class Admin():
-        pass
 
 class BugManager(models.Manager):
     def permited(self, user, project):
@@ -122,20 +119,20 @@ class BugManager(models.Manager):
 
 class Bug(models.Model):
     objects = BugManager()
-    project = models.ForeignKey(Project,
-        verbose_name=_('bug project'))
-    reporter = models.ForeignKey(User,
-        verbose_name=_('bug reporter'), related_name='reporter')
-    handler = models.ForeignKey(User,
-        verbose_name=_('bug handler'), related_name='handler')
-    duplicate = models.ForeignKey('Bug',
-        verbose_name=_('bug duplicate'), blank=True, null=True)
+    
+    project = models.ForeignKey(Project, verbose_name=_('bug project'))
+    reporter = models.ForeignKey(User, verbose_name=_('bug reporter'),
+        related_name='reporter')
+    handler = models.ForeignKey(User, verbose_name=_('bug handler'),
+        related_name='handler')
+    duplicate = models.ForeignKey('self', verbose_name=_('bug duplicate'),
+        related_name='duplicateOf', blank=True, null=True,)
     priority = models.PositiveIntegerField(_('bug priority'),
         choices=PRIORITY_CHOICES, default=PRIORITY_CHOICES_DEFAULT)
     severity = models.PositiveIntegerField(_('bug severity'),
         choices=SEVERITY_CHOICES, default=SEVERITY_CHOICES_DEFAULT)
-    reproducibility = models.PositiveIntegerField(
-        _('bug reproducibility'), choices=REPRODUCIBILITY_CHOICES,
+    reproducibility = models.PositiveIntegerField(_('bug reproducibility'),
+        choices=REPRODUCIBILITY_CHOICES,
         default=REPRODUCIBILITY_CHOICES_DEFAULT)
     status = models.PositiveIntegerField(_('bug status'),
         choices=BUG_STATUS_CHOICES,
@@ -146,32 +143,38 @@ class Bug(models.Model):
     projection = models.PositiveIntegerField(_('bug projection'),
         choices=PROJECTION_CHOICES,
         default=PROJECTION_CHOICES_DEFAULT)
-    category = models.ForeignKey(Category,
-        verbose_name=_('bug category'))
+    category = models.ForeignKey(Category, verbose_name=_('bug category'))
     date_submitted = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    eta = models.PositiveIntegerField(_('bug ETA'),
-        choices=ETA_CHOICES, default=ETA_CHOICES_DEFAULT)
-    view_state = models.ForeignKey(ViewState,
-        verbose_name=_('bug view state'))
+    eta = models.PositiveIntegerField(_('bug ETA'), choices=ETA_CHOICES,
+        default=ETA_CHOICES_DEFAULT)
+    view_state = models.ForeignKey(ViewState, verbose_name=_('bug view state'))
     summary = models.CharField(_('bug summary'), max_length=255)
     description = models.TextField(_('bug description'))
     steps_to_reproduce = models.TextField(_('bug steps to reproduce'),
         blank=True)
-    additional_information = models.TextField(
-        _('bug additional information'), blank=True)
-    sponsorship_total = models.IntegerField(
-        _('bug sponsorship total'), default=0)
+    additional_information = models.TextField(_('bug additional information'),
+        blank=True)
+    sponsorship_total = models.IntegerField(_('bug sponsorship total'),
+        default=0)
     sticky = models.BooleanField(_('bug sticky'), default=False)
+    history = models.ManyToManyField(User, verbose_name=_('bug history'),
+        related_name=_('history'), through='BugHistory')
+    monitor = models.ManyToManyField(User, verbose_name=_('bug monitor'),
+        related_name=_('monitor'), through='BugMonitor')
+    relationship = models.ManyToManyField('self',
+        verbose_name=_('bug relationship'), symmetrical=False,
+        through='BugRelationship')
+    
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
+    
     def get_absolute_url(self):
-        return '%sp%s/b%s/' % (BASE_URL, self.project_id, self.id) 
+        return '%sp%s/b%s/' % (BASE_URL, self.project_id, self.id)
+     
     class Meta():
         verbose_name = _('bug')
         verbose_name_plural = _('bugs')
-    class Admin():
-        pass
 
 class BugFile(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
@@ -200,6 +203,10 @@ class ProjectFile(models.Model):
         verbose_name_plural = _('project files')
 
 class BugHistory(models.Model):
+    """
+    TODO: automate me
+    """
+    
     user = models.ForeignKey(User,
         verbose_name=_('bug history entry user'))
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
@@ -272,10 +279,13 @@ class Bugnote(models.Model):
     class Meta():
         verbose_name = _('bugnote')
         verbose_name_plural = _('bugnotes')
-    class Admin():
-        pass
+        ordering = ['date_submitted',]
 
 class ProjectUserList(models.Model):
+    """
+    TODO: automate me from view states
+    """
+    
     project = models.ForeignKey(Project, verbose_name=_('project'))
     user = models.ForeignKey(User, verbose_name=_('user'))
     access_level = models.PositiveIntegerField(
@@ -288,7 +298,6 @@ class ProjectUserList(models.Model):
     class Meta():
         verbose_name = _('project user list entry')
         verbose_name_plural = _('project user list entries')
-    class Admin():
         pass
 
 """

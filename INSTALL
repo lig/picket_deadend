@@ -29,13 +29,15 @@ http://sourceforge.net/svn/?group_id=210642
 
 4. Change working directory to the root directory of your local Picket copy.
 
-5. Run in terminal:
+5. Copy file "settings_sample.py" to "settings.py" and edit it if you need.
+
+6. Run in terminal for making default database file:
 $ ./manage.py syncdb
 
-6. Run in terminal:
+7. Run in terminal for start picket:
 $ ./manage.py runserver
 
-7. Point your browser at:
+8. Point your browser at:
 http://localhost:8000/
 
 You are done!

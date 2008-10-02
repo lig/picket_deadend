@@ -23,8 +23,6 @@ import os
 
 PATH_TO_PICKET = os.path.dirname(__file__)
 
-print PATH_TO_PICKET
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -86,14 +84,27 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    #picket
+    ## picket
     'picketapp',
-    #util
+    ## util
     'accounts',
     'users',
-    #django
+    ## django
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.admin',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    ## picket
+    'picketapp.context_processors.navi',
+    ## django
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n', 
+    'django.core.context_processors.media',
+)
+
+AUTH_PROFILE_MODULE = 'users.profile'

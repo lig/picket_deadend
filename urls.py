@@ -18,23 +18,29 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.conf.urls.defaults  import *
+from django.contrib             import admin
 from django.shortcuts           import render_to_response
 from django.template            import RequestContext
 
 from picketapp.settings import BASE_URL
 
+## django admin
+admin.autodiscover()
+
 urlpatterns = patterns('',
     
-    # main page:
+    ## main page:
     (r'^$', lambda req: render_to_response('index.html', {},
         context_instance=RequestContext(req))),
     
-    # picket itself
-    (r'^accounts/', include('accounts.urls')),
+    ## picket itself
     (r'^picket/', include('picketapp.urls')),
+
+    ## picket util
+    (r'^accounts/', include('accounts.urls')),
     (r'^users/', include('users.urls')),
 
-    # for django admin:
-    (r'^admin/', include('django.contrib.admin.urls')),
+    ## django admin
+    (r'^admin/(.*)', admin.site.root),
 
 )
