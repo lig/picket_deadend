@@ -20,8 +20,12 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls.defaults  import *
 
 urlpatterns = patterns('picketapp.views',
-    (r'^$', 'index'),
-    (r'^bugs/$', 'bugs'),
-    (r'^b(?P<bugId>\d+)/$', 'bug'),
-    (r'^c(?P<categoryId>\d+)/$', 'category'),
+    (r'^$', 'index', {}, 'picket-index',),
+    (r'^filebug/$', 'filebug', {}, 'picket-filebug',),
+    (r'^bugs/$', 'bugs', {}, 'picket-bugs',),
+    (r'^p(?P<projectId>\d+)/$', 'bugs', {}, 'picket-project',),
+    (r'^p(?P<projectId>\d+)/c(?P<categoryId>\d+)/$', 'bugs', {},
+        'picket-category',),
+    (r'^p(?P<projectId>\d+)/c(?P<categoryId>\d+)/b(?P<bugId>\d+)/$',
+        'bug', {}, 'picket-bug',),
 )

@@ -64,8 +64,9 @@ class Project(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
     
+    @models.permalink
     def get_absolute_url(self):
-        return '%sp%s/' % (BASE_URL, self.id) \
+        return ('picket-project', [str(self.id)]) \
             if not INTEGRATION_FOREIGN_ABSOLUTE_URL \
                 else self.get_integrated().get_absolute_url()
     
@@ -100,22 +101,24 @@ class Category(models.Model):
         verbose_name=_('category handler'), blank=True, null=True)
     def __unicode__(self):
         return u'%s: %s' % (self.project, self.name)
+    @models.permalink
     def get_absolute_url(self):
-        return '%sp%s/c%s/' % (BASE_URL, self.project_id, self.id)
+        return ('picket-category', [str(self.project_id), str(self.id)])
     class Meta():
         verbose_name = _('category')
         verbose_name_plural = _('categories')
         unique_together = (('project', 'name'),)
 
 class BugManager(models.Manager):
-    def permited(self, user, project):
+    def permited(self, user, project=None, category=None):
         bugs = self.filter(
             view_state__in=[viewstate.id for viewstates in [
                 group.viewstate_set.all() for group in \
                 user.groups.all()] for viewstate in viewstates],
             project__in=Project.objects.permited(user))
-        return bugs.filter(project=project) \
-            if project is not None else bugs
+        bugs = bugs.filter(project=project) if project is not None else bugs
+        bugs = bugs.filter(category=category) if category is not None else bugs
+        return bugs
 
 class Bug(models.Model):
     objects = BugManager()
@@ -124,9 +127,9 @@ class Bug(models.Model):
     reporter = models.ForeignKey(User, verbose_name=_('bug reporter'),
         related_name='reporter')
     handler = models.ForeignKey(User, verbose_name=_('bug handler'),
-        related_name='handler')
+        related_name='handler', blank=True, null=True)
     duplicate = models.ForeignKey('self', verbose_name=_('bug duplicate'),
-        related_name='duplicateOf', blank=True, null=True,)
+        related_name='duplicateOf', blank=True, null=True)
     priority = models.PositiveIntegerField(_('bug priority'),
         choices=PRIORITY_CHOICES, default=PRIORITY_CHOICES_DEFAULT)
     severity = models.PositiveIntegerField(_('bug severity'),
@@ -169,8 +172,10 @@ class Bug(models.Model):
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
     
+    @models.permalink
     def get_absolute_url(self):
-        return '%sp%s/b%s/' % (BASE_URL, self.project_id, self.id)
+        return ('picket-bug', [str(self.project_id), str(self.category_id),
+            str(self.id)])
      
     class Meta():
         verbose_name = _('bug')

@@ -1,5 +1,4 @@
-{% extends 'picket/base.html' %}{% load i18n %}
-{% comment %}
+"""
 Copyright 2008 Serge Matveenko
 
 This file is part of Picket.
@@ -16,21 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-{% endcomment %}
+"""
 
-{% block picketcontent %}
+from django import forms
 
-<div id="picketfilter">
-{% block picketfilter %}
+from picketapp.models import Bug
 
-{% endblock picketfilter %}
-</div>
-
-<strong>{% trans 'Project' %}:</strong> {% firstof project.name '-' %}<br />
-<strong>{% trans 'Category' %}:</strong> {% firstof category.name '-' %}<br />
-<strong>{% trans 'Bugs' %}:</strong><br />
-{% for bug in bugs %}
-{% include 'picket/bug_inlist_inc.html' %}<br />
-{% endfor %}
-
-{% endblock picketcontent %}
+class BugForm(forms.ModelForm):
+    class Meta():
+        model = Bug
+        fields = ['project', 'category', 'severity', 'reproducibility', 'projection', 'summary', 'description', 'steps_to_reproduce', 'additional_information',]

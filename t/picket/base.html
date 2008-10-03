@@ -23,7 +23,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <div id="picketmenu">
 {% block picketmenu %}
 <strong>{% trans 'Picket menu' %}:</strong><br />
-<a href="{{ picket_url }}bugs/">{% trans 'bugs' %}</a>
+<a href="{{ picket_url }}bugs/">{% trans 'bugs' %}</a> <a href="{{ picket_url }}filebug/">{% trans 'file bug' %}</a>
 {% endblock picketmenu %}
 </div>
 
@@ -36,6 +36,17 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <a href="{{ picket_project.get_absolute_url }}">{{ picket_project.name }}</a><br />
 {% endfor %}
 {% endblock picketprojects %}
+</div>
+
+<div id="picketcategories">
+{% block picketcategories %}
+{% if project %}
+<strong>{% blocktrans %}Categories in {{ project }}{% endblocktrans %}:</strong><br />
+{% for category in project.category_set.all %}
+<a href="{{ category.get_absolute_url }}">{{ category.name }}</a><br />
+{% endfor %}
+{% endif %}
+{% endblock picketcategories %}
 </div>
 
 </div>

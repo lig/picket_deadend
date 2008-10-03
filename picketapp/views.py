@@ -18,51 +18,65 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers       import reverse
+from django.http                    import HttpResponseRedirect
 from django.shortcuts               import get_object_or_404, \
                                            render_to_response
 from django.template                import RequestContext
+from django.utils.translation       import ugettext as _
 
 from picketapp.models import Bug, Project, Category
 
 @login_required
-def index(req, projectId=None):
-    
-    project = get_object_or_404(Project, id=projectId) \
-        if projectId is not None else None
+def index(req):
     
     return render_to_response('picket/index.html', {},
         context_instance=RequestContext(req))
     
 @login_required
-def bugs(req, projectId=None):
+def bugs(req, projectId=None, categoryId=None):
     
     project = get_object_or_404(Project, id=projectId) \
         if projectId is not None else None
 
-    bugs = Bug.objects.permited(req.user, project)
+    category = get_object_or_404(Category, id=categoryId) \
+        if categoryId is not None else None
+
+    bugs = Bug.objects.permited(req.user, project, category)
     
-    return render_to_response('picket/bugs.html', {'bugs': bugs,},
+    return render_to_response('picket/bugs.html',
+        {'bugs': bugs, 'project': project, 'category': category,},
         context_instance=RequestContext(req))
 
 @login_required
-def bug(req, bugId, projectId=None):
-    
-    project = get_object_or_404(Project, id=projectId) \
-        if projectId is not None else None
+def bug(req, projectId, categoryId, bugId):
+    projectId, categoryId = int(projectId), int(categoryId)
     
     bug = get_object_or_404(Bug, id=bugId)
+    
+    if projectId != bug.project_id or categoryId != bug.category_id:
+        return HttpResponseRedirect(reverse('picket-bug',
+            kwargs={'projectId': bug.project_id, 'categoryId': bug.category_id,
+                'bugId': bug.id,}))
     
     return render_to_response('picket/bug.html', {'bug': bug,},
         context_instance=RequestContext(req))
 
 @login_required
-def category(req, categoryId, projectId=None):
+def filebug(req):
+    from picketapp.forms import BugForm
     
-    project = get_object_or_404(Project, id=projectId) \
-        if projectId is not None else None
+    if req.method == 'POST':
+        bugForm = BugForm(req.POST)
+        if bugForm.is_valid():
+            bug = bugForm.save(commit=False)
+            bug.reporter = req.user
+            bug.view_state = bug.project.view_state
+            bug.save()
+            req.user.message_set.create(message=_('bug filed'))
+            return HttpResponseRedirect(bug.get_absolute_url())
+    else:
+        bugForm = BugForm()
     
-    category = get_object_or_404(Category, id=categoryId)
-    
-    return render_to_response('picket/category.html',
-        {'category': category,},
+    return render_to_response('picket/filebug.html', {'bug_form': bugForm,},
         context_instance=RequestContext(req))

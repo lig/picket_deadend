@@ -20,6 +20,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picketcontent %}
 
-<strong>{% trans 'Category' %} {{ category.name }}</strong> {% trans 'of' %} {% with category.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %} {% trans 'is handled by' %} {% if category.handler %}{% with category.handler as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}{% else %}{% trans 'nobody' %}{% endif %}<br />
+<strong>{% trans 'Please file your bug in the form below' %}:</strong><br />
+
+<form action="" method="post">
+    {{ bug_form.as_p }}
+    <input type="submit" name="submit" value="{% trans 'File bug' %}">
+</form>
 
 {% endblock picketcontent %}
