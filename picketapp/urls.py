@@ -28,4 +28,6 @@ urlpatterns = patterns('picketapp.views',
         'picket-category',),
     (r'^p(?P<projectId>\d+)/c(?P<categoryId>\d+)/b(?P<bugId>\d+)/$',
         'bug', {}, 'picket-bug',),
+    (r'^p\d+/c\d+/b(?P<bugId>\d+)/annotate/$',
+        'annotate', {}, 'picket-annotate',),
 )

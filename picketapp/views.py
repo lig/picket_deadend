@@ -25,6 +25,7 @@ from django.shortcuts               import get_object_or_404, \
 from django.template                import RequestContext
 from django.utils.translation       import ugettext as _
 
+from picketapp.forms import BugForm, BugnoteForm
 from picketapp.models import Bug, Project, Category
 
 @login_required
@@ -49,22 +50,7 @@ def bugs(req, projectId=None, categoryId=None):
         context_instance=RequestContext(req))
 
 @login_required
-def bug(req, projectId, categoryId, bugId):
-    projectId, categoryId = int(projectId), int(categoryId)
-    
-    bug = get_object_or_404(Bug, id=bugId)
-    
-    if projectId != bug.project_id or categoryId != bug.category_id:
-        return HttpResponseRedirect(reverse('picket-bug',
-            kwargs={'projectId': bug.project_id, 'categoryId': bug.category_id,
-                'bugId': bug.id,}))
-    
-    return render_to_response('picket/bug.html', {'bug': bug,},
-        context_instance=RequestContext(req))
-
-@login_required
 def filebug(req):
-    from picketapp.forms import BugForm
     
     if req.method == 'POST':
         bugForm = BugForm(req.POST)
@@ -78,5 +64,41 @@ def filebug(req):
     else:
         bugForm = BugForm()
     
-    return render_to_response('picket/filebug.html', {'bug_form': bugForm,},
+    return render_to_response('picket/bug_form.html', {'bug_form': bugForm,},
         context_instance=RequestContext(req))
+
+@login_required
+def bug(req, projectId, categoryId, bugId):
+    
+    bug = get_object_or_404(Bug, id=bugId)
+    
+    try:
+        bug.check_place(projectId, categoryId)
+    except:
+        return HttpResponseRedirect(bug.get_absolute_url())
+    
+    bugnoteForm = BugnoteForm()
+    
+    return render_to_response('picket/bug.html',
+        {'bug': bug, 'bugnote_form': bugnoteForm,},
+        context_instance=RequestContext(req))
+
+@login_required
+def annotate(req, bugId):
+    
+    bug = get_object_or_404(Bug, id=bugId)
+    
+    assert req.method == 'POST'
+    
+    bugnoteForm = BugnoteForm(req.POST)
+    if bugnoteForm.is_valid():
+        bugnote = bugnoteForm.save(commit=False)
+        bugnote.bug, bugnote.reporter, bugnote.view_state \
+            = bug, req.user, bug.view_state
+        bugnote.save()
+        req.user.message_set.create(message=_('bugnote filed'))
+        return HttpResponseRedirect(bugnote.get_absolute_url())
+    else:
+        return render_to_response('picket/bugnote_form.html',
+            {'bugnote_form': bugnoteForm, 'bug': bug,},
+            context_instance=RequestContext(req))

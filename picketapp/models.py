@@ -176,7 +176,16 @@ class Bug(models.Model):
     def get_absolute_url(self):
         return ('picket-bug', [str(self.project_id), str(self.category_id),
             str(self.id)])
-     
+    
+    def check_place(self, project, category):
+        """
+        raises exception if provided project or category are not project and
+        category of the bug
+        """
+        if int(project) != self.project_id \
+        or int(category) != self.category_id:
+            raise Exception('i\'m not here')
+    
     class Meta():
         verbose_name = _('bug')
         verbose_name_plural = _('bugs')
@@ -278,9 +287,14 @@ class Bugnote(models.Model):
         null=True, blank=True)
     note_attr = models.CharField(_('bugnote attr'),
         max_length=750, blank=True)
+    
     def __unicode__(self):
         return u'%s: %s at %s' % (
             self.bug, self.reporter, self.date_submitted)
+    
+    def get_absolute_url(self):
+        return '%s#bugnote%s' % (self.bug.get_absolute_url(), self.id)
+    
     class Meta():
         verbose_name = _('bugnote')
         verbose_name_plural = _('bugnotes')

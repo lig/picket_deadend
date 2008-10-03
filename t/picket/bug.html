@@ -20,9 +20,23 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picketcontent %}
 
-<strong>{% blocktrans with bug.id as bug_id %}Bug #{{ bug_id }}{% endblocktrans %}</strong> {{ bug.get_status_display }} {% trans 'in' %} {% with bug.category as category %}{% include 'picket/category_link_inc.html' %}{% endwith %} {% trans 'of' %} {% with bug.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %} {% trans 'by' %} {% with bug.reporter as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}<br />
+<strong>{% blocktrans with bug.id as bug_id %}Bug #{{ bug_id }}{% endblocktrans %}</strong> {{ bug.get_status_display }} {% trans 'in' %} {% with bug.category as category %}{% include 'picket/category_link_inc.html' %}{% endwith %} {% trans 'of' %} {% with bug.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %} {% trans 'by' %} {% with bug.reporter as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}[<a href="{{ bug.get_absolute_url }}">#</a>]<br />
 <strong>{{ bug.summary }}</strong><br />
 {% trans 'priority' %}: {{ bug.get_priority_display }}, {% trans 'severity' %}: {{ bug.get_severity_display }}, {% trans 'reproducibility' %}: {{ bug.get_reproducibility_display }}<br />
 {{ bug.description }}<br />
+<br />
+
+{% for bugnote in bug.bugnote_set.all %}
+<a name="bugnote{{ bugnote.id }}"></a>{% blocktrans with bugnote.id as id and bugnote.date_submitted as date_submitted and bugnote.reporter as reporter %}Bugnote #{{ id }} at {{ date_submitted }} by {{ reporter }}{% endblocktrans %}[<a href="{{ bugnote.get_absolute_url }}">#</a>]<br />
+{{ bugnote.text }}<br />
+{% blocktrans with bugnote.last_modified as last_modified %}(last modified at {{ last_modified }}){% endblocktrans %}<br />
+<br />
+{% endfor %}
+<br />
+
+<form action="annotate/" method="post">
+    {{ bugnote_form.as_p }}
+    <input type="submit" name="submit" value="{% trans 'File bugnote' %}" />
+</form>
 
 {% endblock picketcontent %}
