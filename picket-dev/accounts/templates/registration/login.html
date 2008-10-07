@@ -1,0 +1,43 @@
+{% extends 'base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block content %}
+
+<p>{% blocktrans %}You must login to use {{ site_name }}.{% endblocktrans %}</p>
+
+{% if form.has_errors %}
+<p>{% trans 'Your username and password didn&#39;t match. Please try again.' %}</p>
+{% endif %}
+
+<p>{% blocktrans %}Not yet registered on {{ site_name }}?{% endblocktrans %}<br/>
+<a href="/accounts/registration/">{% blocktrans %}Do it now!{% endblocktrans %}</a></p>
+
+<form method="post" action=".">
+<table>
+<tr><td><label for="id_username">{% trans 'Username:' %}</label></td><td>{{ form.username }}</td></tr>
+<tr><td><label for="id_password">{% trans 'Password:' %}</label></td><td>{{ form.password }}</td></tr>
+</table>
+
+<input type="submit" value="{% trans 'login' %}" />
+<input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+
+{% endblock content %}

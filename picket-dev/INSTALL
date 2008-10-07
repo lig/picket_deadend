@@ -1,0 +1,46 @@
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+
+----
+
+This is short installation instructions for Picket
+(http://sourceforge.net/projects/picket).
+
+1. Install Python (http://python.org/).
+
+2. Install Django (http://www.djangoproject.com/).
+
+3. Checkout latest revision of Picket from Subversion repository from here:
+http://sourceforge.net/svn/?group_id=210642
+
+4. Change working directory to the root directory of your local Picket copy.
+
+5. Copy file "settings_sample.py" to "settings.py" and edit it if you need.
+
+6. Run in terminal for making default database file:
+$ ./manage.py syncdb
+
+7. Run in terminal for start picket:
+$ ./manage.py runserver
+
+8. Point your browser at:
+http://localhost:8000/
+
+You are done!
+
+Please report any bugs here:
+http://sourceforge.net/tracker/?group_id=210642&atid=1014558
