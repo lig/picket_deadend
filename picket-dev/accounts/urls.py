@@ -21,10 +21,10 @@ from django.conf.urls.defaults  import *
 from django.http                import HttpResponseRedirect
 
 urlpatterns = patterns('',
-    (r'^login/$', 'django.contrib.auth.views.login'),
-    (r'^logout/$', 'django.contrib.auth.views.logout'),
-    (r'^registration/$', 'accounts.views.registration'),
-    (r'^validation/$', 'accounts.views.validation'),
-    (r'^registration/password/$', 'accounts.views.make_password'),
+    (r'^login/$', 'django.contrib.auth.views.login', {}, 'login'),
+    (r'^logout/$', 'django.contrib.auth.views.logout', {}, 'logout'),
+    (r'^registration/$', 'accounts.views.registration', {}, 'signup'),
+    (r'^validation/$', 'accounts.views.validation', {}, 'validate'),
+    (r'^registration/password/$', 'accounts.views.make_password', {}, 'make_password'),
     (r'^profile/$', lambda req: HttpResponseRedirect(req.user.get_absolute_url())),
 )

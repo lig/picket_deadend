@@ -102,3 +102,39 @@ def annotate(req, bugId):
         return render_to_response('picket/bugnote_form.html',
             {'bugnote_form': bugnoteForm, 'bug': bug,},
             context_instance=RequestContext(req))
+
+@login_required
+def set_project(req):
+    """
+    just redirecting to project now
+    TODO: write project to session and force other views to use it from there 
+    """
+    
+    projectId = req.GET['project_id'] if req.GET['project_id'] != '' else None
+    
+    if projectId is not None:
+        project = get_object_or_404(Project, id=projectId)
+        return HttpResponseRedirect(project.get_absolute_url())
+    else:
+        return HttpResponseRedirect(reverse('picket-bugs'))
+
+@login_required
+def jump_to_bug(req):
+    """
+    redirecting to bug
+    """
+    
+    bug = get_object_or_404(Bug, id=req.GET['bug_id'])
+    
+    return HttpResponseRedirect(bug.get_absolute_url())
+
+@login_required
+def dummy(req):
+    """
+    just redirecting to bugs view now
+    TODO: make picket style interface here or simulate mantis functionality
+    """
+    
+    return HttpResponseRedirect(reverse('picket-bugs'))
+
+roadmap = changelog = my = dummy

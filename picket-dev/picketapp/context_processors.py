@@ -17,10 +17,19 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from picketapp.models      import Project
-from picketapp.settings    import BASE_URL, SITE_NAME
+from picketapp.models       import Project
+from picketapp              import settings as config
 
 def navi(req):
+    
     projects = Project.objects.permited(req.user)
-    return {'picket_url': BASE_URL, 'site_name': SITE_NAME,
-        'picket_projects': projects,}
+    
+    if req.method == 'POST':
+        cur_url = req.META['HTTP_REFERER']
+    elif req.META.has_key('QUERY_STRING'):
+        cur_url = '%s?%s' % (req.path, req.META['QUERY_STRING'])
+    else:
+        cur_url = '%s?%s'
+    
+    return {'picket_url': config.BASE_URL, 'site_name': config.SITE_NAME,
+        'picket_projects': projects, 'cur_url': cur_url, 'config': config}

@@ -23,10 +23,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <head>
 
-<title>{% block title %}{% blocktrans %} - {{ site_name }} - {% endblocktrans %}{% endblock %}</title>
+<title>{% block title %} - {% blocktrans %}{{ site_name }}{% endblocktrans %} - {% endblock %}</title>
 
 {% block css %}
-<link rel="stylesheet" href="/i/picket.css" type="text/css" />
+<link rel="stylesheet" href="/i/css/default.css" type="text/css" />
 {% endblock %}
 
 {% comment %}
@@ -36,25 +36,6 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body>
-
-<div id="usermenu">
-{% block usermenu %}
-<strong>{% trans 'user menu' %}:</strong><br />
-{% if user.is_authenticated %}
-<a href="/accounts/logout/">{% trans 'log out' %}</a>
-{% else %}
-<a href="/accounts/login/">{% trans 'log in' %}</a>
-{% endif %}
-{% endblock %}
-</div>
-
-<div id="mainmenu">
-{% block mainmenu %}
-<strong>{% trans 'main menu' %}:</strong><br />
-<a href="https://sourceforge.net/projects/picket">{% trans 'picket project' %}</a><br />
-<a href="/">{% trans 'home page' %}</a> <a href="{{ picket_url }}">{% trans 'picket home page' %}</a> 
-{% endblock %}
-</div>
 
 <div id="messages">
 {% block messages %}

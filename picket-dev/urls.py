@@ -17,9 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import os
+
+from django.conf                import settings
 from django.conf.urls.defaults  import *
 from django.contrib             import admin
-from django.shortcuts           import render_to_response
+from django.core.urlresolvers   import reverse
+from django.http                import HttpResponseRedirect
 from django.template            import RequestContext
 
 from picketapp.settings import BASE_URL
@@ -30,8 +34,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     
     ## main page:
-    (r'^$', lambda req: render_to_response('index.html', {},
-        context_instance=RequestContext(req))),
+    (r'^$', lambda req: HttpResponseRedirect(reverse('picket-index')), {}, 'index'),
     
     ## picket itself
     (r'^picket/', include('picketapp.urls')),
@@ -42,5 +45,8 @@ urlpatterns = patterns('',
 
     ## django admin
     (r'^admin/(.*)', admin.site.root),
-
+    
+    ## testing
+    (r'^i/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PATH_TO_PICKET, 'i'),}),
+    (r'^m/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PATH_TO_PICKET, 'm'),}),
 )
