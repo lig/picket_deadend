@@ -19,13 +19,14 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults  import *
 
+"""
+TODO: project view with project description not bugs
+"""
 urlpatterns = patterns('picketapp.views',
     (r'^$', 'index', {}, 'picket-index',),
     (r'^filebug/$', 'filebug', {}, 'picket-filebug',),
     (r'^bugs/$', 'bugs', {}, 'picket-bugs',),
-    (r'^bugs/p(?P<projectId>\d+)/$', 'bugs', {}, 'picket-project',),
-    (r'^bugs/p(?P<projectId>\d+)/c(?P<categoryId>\d+)/$', 'bugs', {},
-        'picket-category',),
+    (r'^bugs/c(?P<categoryId>\d+)/$', 'bugs', {}, 'picket-category',),
     (r'^p(?P<projectId>\d+)/c(?P<categoryId>\d+)/b(?P<bugId>\d+)/$', 'bug', {},
         'picket-bug',),
     (r'^p\d+/c\d+/b(?P<bugId>\d+)/annotate/$', 'annotate', {},

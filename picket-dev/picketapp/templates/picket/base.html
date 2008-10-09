@@ -63,9 +63,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <table class="width100" cellspacing="0">
 <tr>
 <td class="menu">
-    <a href="{% url picket-bugs %}">{% trans 'All projects' %}</a>
+    <a href="{% url picket-set-project %}">{% trans 'All projects' %}</a>
     {% for picket_project in picket_projects %}
-    <a href="{{ picket_project.get_absolute_url }}">{{ picket_project.name }}</a>
+    <a href="{% url picket-set-project %}?project_id={{ picket_project.id }}">{{ picket_project.name }}</a>
     {% endfor %}
 </td>
 </tr>

@@ -24,6 +24,9 @@ def navi(req):
     
     projects = Project.objects.permited(req.user)
     
+    project_id = req.session.get('project_id', None)
+    project = projects.get(id=project_id) if project_id is not None else None
+    
     if req.method == 'POST':
         cur_url = req.META['HTTP_REFERER']
     elif req.META.has_key('QUERY_STRING'):

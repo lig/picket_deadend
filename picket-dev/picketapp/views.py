@@ -35,8 +35,9 @@ def index(req):
         context_instance=RequestContext(req))
     
 @login_required
-def bugs(req, projectId=None, categoryId=None):
+def bugs(req, categoryId=None):
     
+    projectId = req.session.get('project_id', None)
     project = get_object_or_404(Project, id=projectId) \
         if projectId is not None else None
 
@@ -106,16 +107,18 @@ def annotate(req, bugId):
 @login_required
 def set_project(req):
     """
-    just redirecting to project now
-    TODO: write project to session and force other views to use it from there 
+    writing project to session for other views could use it from there 
     """
     
-    projectId = req.GET['project_id'] if req.GET['project_id'] != '' else None
+    projectId = req.GET.get('project_id', None)
     
     if projectId is not None:
         project = get_object_or_404(Project, id=projectId)
-        return HttpResponseRedirect(project.get_absolute_url())
+        req.session['project_id'] = project.id
+        return HttpResponseRedirect(reverse('picket-bugs'))
     else:
+        if req.session.has_key('project_id'):
+            del req.session['project_id'] 
         return HttpResponseRedirect(reverse('picket-bugs'))
 
 @login_required
