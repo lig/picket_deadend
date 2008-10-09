@@ -132,9 +132,13 @@ def jump_to_bug(req):
 def dummy(req):
     """
     just redirecting to bugs view now
-    TODO: make picket style interface here or simulate mantis functionality
     """
     
     return HttpResponseRedirect(reverse('picket-bugs'))
 
+"""
+TODO: make picket style interface for my view
+TODO: make gnustyle changelog view from bug at some status from config
+TODO: make roadmap view with mantis like functionality
+"""
 roadmap = changelog = my = dummy
