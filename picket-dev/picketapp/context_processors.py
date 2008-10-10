@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from picketapp              import COPYING
 from picketapp.models       import Project
 from picketapp              import settings as config
 
@@ -35,4 +36,5 @@ def navi(req):
         cur_url = '%s?%s'
     
     return {'picket_url': config.BASE_URL, 'site_name': config.SITE_NAME,
-        'picket_projects': projects, 'cur_url': cur_url, 'config': config}
+        'picket_projects': projects, 'cur_url': cur_url, 'config': config,
+        'COPYING': COPYING,}

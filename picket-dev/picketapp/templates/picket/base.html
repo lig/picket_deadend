@@ -72,38 +72,31 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 </table>
 {% endif %}
 
-{% if user.is_authenticated %}
-<table class="width100" cellspacing="0">
-<tr>
-<td class="menu">
-<a href="{% url picket-index %}">{% trans 'Main' %}</a>
-| <a href="{% url picket-my-view %}">{% trans 'My view' %}</a>
-| <a href="{% url picket-bugs %}">{% trans 'View bugs' %}</a>
-| <a href="{% url picket-filebug %}">{% trans 'File bug' %}</a>
-| <a href="{% url picket-changelog %}">{% trans 'Change log' %}</a>
-| <a href="{% url picket-roadmap %}">{% trans 'Road map' %}</a>
-| <a href="{% url profile user.username %}">{% trans 'Profile' %}</a> <small>(<a href="{% url profile-update user.username %}">{% trans 'edit' %}</a>)</small>
-</td>
-<td class="menu right nowrap">
-    <form method="get" action="{% url picket-jump-to-bug %}">
-    {% if config.USE_JAVASCRIPT %}
-        <input type="text" name="bug_id" size="10" class="small" value="{% trans 'Issue id' %}" onfocus="if (this.value == '{% trans 'Issue id' %}') this.value = ''" onblur="if (this.value == '') this.value = '{% trans 'Issue id' %}'" />&nbsp;
-    {% else %}
-        <input type="text" name="bug_id" size="10" class="small" />&nbsp;
-    {% endif %}
-
-        <input type="submit" class="button-small" value="{% trans 'Jump' %}" />&nbsp;
-    </form>
-</td>
-</tr>
-</table>
-{% endif %}
-
-<hr />
+{% include 'picket/menu_inc.html' %}
 
 <div id="picketcontent">
 {% block picketcontent %}
 {% endblock picketcontent %}
 </div>
+
+{% if config.SHOW_FOOTER_MENU %}
+{% include 'picket/menu_inc.html' %}
+{% endif %}
+
+{% include 'picket/bottom_banner_inc.html' %}
+
+<br />
+<hr size="1" />
+
+<table border="0" width="100%" cellspacing="0" cellpadding="0"><tr valign="top"><td>
+{% if config.SHOW_VERSION %}
+<a href="" title=""></a></div>
+<span class="timer"><a href="{{ COPYING.URL }}" title="Picket Bugtracker via Django">Picket {{ COPYING.PICKET_VERSION }}</a></span>
+{% endif %}
+<address>Copyright &copy; {{ COPYING.YEARS|join:", " }} {{ COPYING.AUTHORS|join:", " }}</address>
+
+</td><td><div align="right">
+<a href="{{ COPYING.URL }}" title="Picket Bugtracker via Django"><img src="/i/images/picket_logo_button.png" width="88" height="35" alt="Powered by Picket Bugtracker" border="0" /></a>
+</div></td></tr></table>
 
 {% endblock content %}

@@ -26,11 +26,40 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endblock picketfilter %}
 </div>
 
-<strong>{% trans 'Project' %}:</strong> {% firstof project.name '-' %}<br />
-<strong>{% trans 'Category' %}:</strong> {% firstof category.name '-' %}<br />
-<strong>{% trans 'Bugs' %}:</strong><br />
-{% for bug in bugs %}
-{% include 'picket/bug_inlist_inc.html' %}<br />
+<table id="buglist" class="width100" cellspacing="1">
+
+<tr>
+    <td class="right" colspan="2">
+        <span class="small">Page number links</span>
+    </td>
+</tr>
+
+<tr class="row-category">
+{% for column_name, column_title in config.COLUMNS_BUGS_VIEW %}
+<td>{{ column_title }}</td>
 {% endfor %}
+</tr>
+
+<tr class="spacer">
+    <td colspan="{{ config.COLUMNS_BUGS_VIEW|length }}"></td>
+</tr>
+
+{% for bug in sticky_bugs %}
+<tr bgcolor="{{ bug.get_status_color }}" border="1">
+{% include 'picket/bug_inlist_inc.html' %}
+</tr>
+{% endfor %}
+
+<tr class="spacer">
+    <td colspan="{{ config.COLUMNS_BUGS_VIEW|length }}"></td>
+</tr>
+
+{% for bug in bugs %}
+<tr bgcolor="{{ bug.get_status_color }}" border="1">
+{% include 'picket/bug_inlist_inc.html' %}
+</tr>
+{% endfor %}
+
+</table>
 
 {% endblock picketcontent %}
