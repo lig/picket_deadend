@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts   import render_to_response
 from django.template    import RequestContext
+from picketapp.models import Project
 
 def index(req):
     return render_to_response('picket/admin/index.html', {},
@@ -30,6 +31,13 @@ def users(req):
         context_instance=RequestContext(req))
 
 def projects(req):
-    ## implement projects administration interface
-    return render_to_response('picket/admin/index.html', {},
+    
+    projects = Project.objects.all()
+    
+    return render_to_response('picket/admin/projects.html',
+        {'projects': projects,}, context_instance=RequestContext(req))
+
+def add_project(req):
+    
+    return render_to_response('picket/admin/project-form.html', {},
         context_instance=RequestContext(req))
