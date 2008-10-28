@@ -36,4 +36,7 @@ urlpatterns = patterns('picketapp.views',
     (r'^my/$', 'my', {}, 'picket-my-view',),
     (r'^changelog/$', 'changelog', {}, 'picket-changelog'),
     (r'^roadmap/$', 'roadmap', {}, 'picket-roadmap'),
+    
+    ## picket administration
+    (r'^admin/', include('picketapp.admin.urls')),
 )

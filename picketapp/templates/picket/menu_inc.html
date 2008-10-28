@@ -27,6 +27,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 | <a href="{% url picket-filebug %}">{% trans 'File bug' %}</a>
 | <a href="{% url picket-changelog %}">{% trans 'Change log' %}</a>
 | <a href="{% url picket-roadmap %}">{% trans 'Road map' %}</a>
+{% if user.is_superuser %}
+| <a href="{% url picket-admin %}">{% trans 'Administration' %}</a>
+{% endif %}
 | <a href="{% url profile user.username %}">{% trans 'Profile' %}</a> <small>(<a href="{% url profile-update user.username %}">{% trans 'edit' %}</a>)</small>
 </td>
 <td class="menu right nowrap">
