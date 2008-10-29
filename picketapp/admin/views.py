@@ -19,7 +19,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts   import render_to_response
 from django.template    import RequestContext
-from picketapp.models import Project
+
+from picketapp.forms    import ProjectForm
+from picketapp.models   import Project
 
 def index(req):
     return render_to_response('picket/admin/index.html', {},
@@ -39,5 +41,10 @@ def projects(req):
 
 def add_project(req):
     
-    return render_to_response('picket/admin/project-form.html', {},
-        context_instance=RequestContext(req))
+    if req.method == 'POST':
+        pass
+    else:
+        projectForm = ProjectForm()
+    
+    return render_to_response('picket/admin/project-form.html',
+        {'project_form': projectForm,}, context_instance=RequestContext(req))
