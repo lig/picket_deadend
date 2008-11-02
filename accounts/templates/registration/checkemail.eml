@@ -30,9 +30,9 @@ If it was not you just do nothing.
 
 Otherwise here is your validation code: {{ valCode }} (six digits).
 
-Please go to {{ validation_url }} and enter this code
+Please go to http://{{ site_domain }}/accounts/validation/ and enter this code
  into the form on this page or just go to the url below:
-{{ validation_url }}?user={{ newUser }}&code={{ valCode }}
+http://{{ site_domain }}/accounts/validation/?user={{ newUser }}&code={{ valCode }}
 {% endblocktrans %}
 
 {% endblock letter %}

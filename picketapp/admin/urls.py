@@ -24,5 +24,4 @@ urlpatterns = patterns('picketapp.admin.views',
     (r'^users/$', 'users', {}, 'picket-admin-users',),
     (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
     (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
-    (r'^p(?P<projectId>\d+)/$', 'project', {}, 'picket-admin-project',),
 )

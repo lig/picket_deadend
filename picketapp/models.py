@@ -52,15 +52,15 @@ class Project(models.Model):
     enabled = models.BooleanField(_('project enabled'), default=True)
     view_state = models.ForeignKey(ViewState,
         verbose_name=_('project view state'))
-    url = models.URLField(_('project url'), verify_exists=False, blank=True)
+    url = models.URLField(_('project url'))
     description = models.TextField(_('project description'),
         blank=True)
     parent = models.ForeignKey('Project',
         verbose_name=_('project parent'), blank=True, null=True)
     user_list = models.ManyToManyField(User,
-        verbose_name=_('project user list'), blank=True, null=True,
-        related_name='project_list', through='ProjectUserList')
-    
+        verbose_name=_('project user list'), related_name='project_list',
+        through='ProjectUserList')
+        
     def __unicode__(self):
         return u'%s' % self.name
     
@@ -315,7 +315,7 @@ class Bugnote(models.Model):
 
 class ProjectUserList(models.Model):
     """
-    TODO: automate me for caching view states
+    TODO: automate me from view states
     """
     
     project = models.ForeignKey(Project, verbose_name=_('project'))
