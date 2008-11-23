@@ -1,4 +1,5 @@
-"""
+{% extends 'picket/admin/base.html' %}{% load i18n %}
+{% comment %}
 Copyright 2008 Serge Matveenko
 
 This file is part of Picket.
@@ -15,23 +16,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
+{% endcomment %}
 
-from django import forms
+{% block picketadmincontent %}
 
-from picketapp.models import Bug, Bugnote, Project
+<form action="" method="post">
+    <table>{{ project_form }}</table>
+    <input type="submit" name="submit" value="{% trans 'Submit' %}" />
+</form>
 
-class BugForm(forms.ModelForm):
-    class Meta():
-        model = Bug
-        fields = ['project', 'category', 'severity', 'reproducibility', 'projection', 'summary', 'description', 'steps_to_reproduce', 'additional_information',]
-
-class BugnoteForm(forms.ModelForm):
-    class Meta():
-        model = Bugnote
-        fields = ['text',]
-
-class ProjectForm(forms.ModelForm):
-    class Meta():
-        model = Project
-        
+{% endblock picketadmincontent %}

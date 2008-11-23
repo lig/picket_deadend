@@ -17,21 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django import forms
+from django.conf.urls.defaults  import *
 
-from picketapp.models import Bug, Bugnote, Project
-
-class BugForm(forms.ModelForm):
-    class Meta():
-        model = Bug
-        fields = ['project', 'category', 'severity', 'reproducibility', 'projection', 'summary', 'description', 'steps_to_reproduce', 'additional_information',]
-
-class BugnoteForm(forms.ModelForm):
-    class Meta():
-        model = Bugnote
-        fields = ['text',]
-
-class ProjectForm(forms.ModelForm):
-    class Meta():
-        model = Project
-        
+urlpatterns = patterns('picketapp.admin.views',
+    (r'^$', 'index', {}, 'picket-admin',),
+    (r'^users/$', 'users', {}, 'picket-admin-users',),
+    (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
+    (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
+)
