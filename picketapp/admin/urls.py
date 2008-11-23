@@ -1,4 +1,4 @@
-/*
+"""
 Copyright 2008 Serge Matveenko
 
 This file is part of Picket.
@@ -15,8 +15,13 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#picketsidebar {
-	width: 130px;
-	float: left;
-}
+"""
+
+from django.conf.urls.defaults  import *
+
+urlpatterns = patterns('picketapp.admin.views',
+    (r'^$', 'index', {}, 'picket-admin',),
+    (r'^users/$', 'users', {}, 'picket-admin-users',),
+    (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
+    (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
+)

@@ -23,6 +23,6 @@ from django.contrib.auth.models import User
 from users.forms import ProfileForm
 
 urlpatterns = patterns('users.views',
-    (r'^(?P<username>\w+)/$', 'user'),
-    (r'^(?P<username>\w+)/profile/$', 'profile'),
+    (r'^(?P<username>\w+)/$', 'user', {}, 'profile'),
+    (r'^(?P<username>\w+)/profile/$', 'profile', {}, 'profile-update'),
 )

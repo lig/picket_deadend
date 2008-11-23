@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import User, Group
 from django.db                  import models
-from django.utils.translation   import gettext_lazy as _
+from django.utils.translation   import ugettext_lazy as _
 
 from picketapp.settings import *
 
@@ -168,6 +168,7 @@ class Bug(models.Model):
     relationship = models.ManyToManyField('self',
         verbose_name=_('bug relationship'), symmetrical=False,
         through='BugRelationship')
+    num_bugnotes = models.PositiveIntegerField(_('bug notes count'), default=0)
     
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
@@ -186,9 +187,17 @@ class Bug(models.Model):
         or int(category) != self.category_id:
             raise Exception('i\'m not here')
     
+    def get_status_color(self):
+        return BUG_STATUS_COLORS[self.status]
+    
+    def get_display_columns(self):
+        return [self.__getattribute__(column[0]) \
+            for column in COLUMNS_BUGS_VIEW]
+    
     class Meta():
         verbose_name = _('bug')
         verbose_name_plural = _('bugs')
+        ordering = ['last_updated',]
 
 class BugFile(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
@@ -294,6 +303,10 @@ class Bugnote(models.Model):
     
     def get_absolute_url(self):
         return '%s#bugnote%s' % (self.bug.get_absolute_url(), self.id)
+    
+    def save(self):
+        self.bug.num_bugnotes = self.bug.bugnote_set.all().count()
+        super(Bugnote, self).save()
     
     class Meta():
         verbose_name = _('bugnote')

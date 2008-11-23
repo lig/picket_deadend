@@ -35,18 +35,24 @@ def index(req):
         context_instance=RequestContext(req))
     
 @login_required
-def bugs(req, projectId=None, categoryId=None):
+def bugs(req, categoryId=None, skip=0, limit=20):
     
+    projectId = req.session.get('project_id', None)
     project = get_object_or_404(Project, id=projectId) \
         if projectId is not None else None
 
     category = get_object_or_404(Category, id=categoryId) \
         if categoryId is not None else None
-
+    
     bugs = Bug.objects.permited(req.user, project, category)
+    sticky_bugs = bugs.filter(sticky=True)
+    bugs = bugs.filter(sticky=False)[skip:skip+limit]
+    
+    #bugs = [bug.column for column in Bug.Meta for bug in bugs]
     
     return render_to_response('picket/bugs.html',
-        {'bugs': bugs, 'project': project, 'category': category,},
+        {'bugs': bugs, 'sticky_bugs': sticky_bugs, 'project': project,
+            'category': category,},
         context_instance=RequestContext(req))
 
 @login_required
@@ -102,3 +108,45 @@ def annotate(req, bugId):
         return render_to_response('picket/bugnote_form.html',
             {'bugnote_form': bugnoteForm, 'bug': bug,},
             context_instance=RequestContext(req))
+
+@login_required
+def set_project(req):
+    """
+    writing project to session for other views could use it from there 
+    """
+    
+    projectId = req.GET.get('project_id', None)
+    
+    if projectId is not None:
+        project = get_object_or_404(Project, id=projectId)
+        req.session['project_id'] = project.id
+        return HttpResponseRedirect(reverse('picket-bugs'))
+    else:
+        if req.session.has_key('project_id'):
+            del req.session['project_id'] 
+        return HttpResponseRedirect(reverse('picket-bugs'))
+
+@login_required
+def jump_to_bug(req):
+    """
+    redirecting to bug
+    """
+    
+    bug = get_object_or_404(Bug, id=req.GET['bug_id'])
+    
+    return HttpResponseRedirect(bug.get_absolute_url())
+
+@login_required
+def dummy(req):
+    """
+    just redirecting to bugs view now
+    """
+    
+    return HttpResponseRedirect(reverse('picket-bugs'))
+
+"""
+TODO: make picket style interface for my view
+TODO: make gnustyle changelog view from bug at some status from config
+TODO: make roadmap view with mantis like functionality
+"""
+roadmap = changelog = my = dummy

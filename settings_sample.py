@@ -36,3 +36,10 @@ MANAGERS = ADMINS
 
 # Make this unique, and don't share it with anybody.
 #SECRET_KEY = ''
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
+TIME_ZONE = 'Europe/London'

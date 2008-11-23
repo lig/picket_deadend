@@ -108,3 +108,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTH_PROFILE_MODULE = 'users.profile'
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'

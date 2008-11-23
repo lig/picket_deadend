@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext as _
 
 PROJECT_STATUS_CHOICES = (
     (10,_('development'),),
@@ -75,6 +75,16 @@ BUG_STATUS_CHOICES = (
 
 BUG_STATUS_CHOICES_DEFAULT = 10
 
+BUG_STATUS_COLORS = {
+    10: '#ffa0a0', # red
+    20: '#ff50a8', # purple
+    30: '#ffd850', # orange
+    40: '#ffffb0', # yellow
+    50: '#c8c8ff', # blue
+    80: '#cceedd', # buish-green
+    90: '#e8e8e8', # light gray
+}
+
 RESOLUTION_CHOICES = (
     (10,_('open'),),
     (20,_('fixed'),),
@@ -121,6 +131,18 @@ ACCESS_LEVELS_CHOICES = (
 
 ACCESS_LEVELS_CHOICES_DEFAULT = 10
 
+COLUMNS_BUGS_VIEW = (
+    ('priority', _('Priority'),),
+    ('id', _('ID'),),
+    ('sponsorship_total', _('Sponsorship'),),
+    ('num_bugnotes', _('Number of comments'),),
+    ('category',_('Category'),),
+    ('severity',_('Severity'),),
+    ('status',_('Status'),),
+    ('last_updated',_('Updated'),),
+    ('summary',_('Summary'),),
+)
+
 BASE_URL = '/picket/'
 
 SITE_NAME = _('Picket')
@@ -132,3 +154,9 @@ INTEGRATION_MODEL = ''
 INTEGRATION_ALLOW_INTERNAL_PROJECTS = True
 
 INTEGRATION_FOREIGN_ABSOLUTE_URL = False
+
+USE_JAVASCRIPT = True
+
+SHOW_PROJECT_MENU_BAR = True
+
+SHOW_VERSION = True
