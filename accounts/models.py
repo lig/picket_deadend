@@ -23,8 +23,7 @@ from django.contrib.auth.models import User
 
 class Validator(models.Model):
     user = models.OneToOneField(User, verbose_name=_('user being validating'))
-    hash = models.CharField(_('validation hash'), max_length=128,
-        editable=False)
+    hash = models.CharField(_('validation hash'), max_length=128, editable=False)
     
     @staticmethod
     def get_hash(username, code):

@@ -110,6 +110,11 @@ def annotate(req, bugId):
             context_instance=RequestContext(req))
 
 @login_required
+def project(req, projectId):
+    return HttpResponseRedirect(reverse('picket-admin-project',
+        args=(projectId,))) 
+
+@login_required
 def set_project(req):
     """
     writing project to session for other views could use it from there 
