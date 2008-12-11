@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
 
-from users.models   import Profile
+from util.users.models   import Profile
 
 class ProfileForm(forms.ModelForm):
     

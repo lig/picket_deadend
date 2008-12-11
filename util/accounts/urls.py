@@ -17,4 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-BASE_URL    = '/users/'
+from django.conf.urls.defaults  import *
+from django.http                import HttpResponseRedirect
+
+urlpatterns = patterns('',
+    (r'^login/$', 'django.contrib.auth.views.login', {}, 'login'),
+    (r'^logout/$', 'django.contrib.auth.views.logout', {}, 'logout'),
+    (r'^registration/$', 'util.accounts.views.registration', {}, 'signup'),
+    (r'^validation/$', 'util.accounts.views.validation', {}, 'validate'),
+    (r'^registration/password/$', 'util.accounts.views.make_password', {},
+        'make-password'),
+    (r'^profile/$',
+        lambda req: HttpResponseRedirect(req.user.get_absolute_url())),
+)

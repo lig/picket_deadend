@@ -16,25 +16,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
-
-from picketapp              import COPYING
-from picketapp.models       import Project
-from picketapp              import settings as config
+from apps.picket            import COPYING
+from apps.picket.models     import Project
+from apps.picket            import settings as config
 
 def navi(req):
     
-    projects = Project.objects.permited(req.user)
-    
-    project_id = req.session.get('project_id', None)
-    project = projects.get(id=project_id) if project_id is not None else None
+    projects = list(Project.objects.permited(req.user))
     
     if req.method == 'POST':
         cur_url = req.META['HTTP_REFERER']
-    elif req.META.has_key('QUERY_STRING'):
+    elif 'QUERY_STRING' in req.META:
         cur_url = '%s?%s' % (req.path, req.META['QUERY_STRING'])
     else:
-        cur_url = '%s?%s'
+        cur_url = req.path
     
-    return {'picket_url': config.BASE_URL, 'site_name': config.SITE_NAME,
-        'picket_projects': projects, 'cur_url': cur_url, 'config': config,
+    return {'picket_projects': projects, 'cur_url': cur_url, 'config': config,
         'COPYING': COPYING,}

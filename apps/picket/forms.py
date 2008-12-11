@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
 
-from picketapp.models import Bug, Bugnote, Project
+from apps.picket.models import Bug, Bugnote, Project
 
 class BugForm(forms.ModelForm):
     class Meta():
@@ -34,4 +34,4 @@ class BugnoteForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta():
         model = Project
-        fields = ['name', 'status', 'enabled', 'view_state', 'url', 'description', '', '', '', '', '', '', '', '', ]
+        fields = ['name', 'status', 'enabled', 'scope', 'url', 'description', '', '', '', '', '', '', '', '', ]

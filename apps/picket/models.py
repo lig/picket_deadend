@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright 2008 Serge Matveenko
 
@@ -21,26 +22,53 @@ from django.contrib.auth.models import User, Group
 from django.db                  import models
 from django.utils.translation   import ugettext_lazy as _
 
-from picketapp.settings import *
+from apps.picket.settings import *
 
 class IntegrationError(Exception):
     pass
 
-class ViewState(models.Model):
-    name = models.CharField(_('view state name'),
+RIGHTS = (
+    ('r', 'Read'),
+    ('rw', 'Read/Write')
+)
+
+class ScopeGroup(models.Model):
+    rights = models.CharField(_('rights'), choices=RIGHTS, max_length=2)
+    scope = models.ForeignKey('Scope', verbose_name=_('scope'))
+    group = models.ForeignKey(Group, verbose_name=_('group'))
+
+class ScopeManager(models.Manager):
+    def permited(self, user):
+        scopes = []
+        for group in user.groups.all():
+            scopes.append(group.scope_set.all())
+        scopes += list(Scope.objects.filter(anonymous_access=True))
+        return scopes
+
+
+class Scope(models.Model):
+    objects = ScopeManager()
+    name = models.CharField(_('scope name'),
         unique=True, max_length=255)
     groups = models.ManyToManyField(Group,
-        verbose_name=_('view state groups'),
-        help_text=_('groups allowed to view this view state'))
+        verbose_name=_('scope groups'),
+        help_text=_('groups allowed to view items in this scope'),
+        through=ScopeGroup)
+    
+    anonymous_access = models.BooleanField(_('anonymous users allowed to view \
+        items in this scope'))
+
     def __unicode__(self):
         return u'%s' % self.name
+    
     class Meta():
-        verbose_name = _('view state')
-        verbose_name_plural = _('view states')
+        verbose_name = _('scope')
+        verbose_name_plural = _('scopes')
 
 class ProjectManager(models.Manager):
     def permited(self, user):
-        return self.filter(view_state__groups__user = user.id)
+        #return self.filter(scope__groups__user=user.id)
+        return self.filter(scope__in=Scope.objects.permited(user))
         
 class Project(models.Model):
     objects = ProjectManager()
@@ -50,8 +78,8 @@ class Project(models.Model):
         choices=PROJECT_STATUS_CHOICES,
         default=PROJECT_STATUS_CHOICES_DEFAULT)
     enabled = models.BooleanField(_('project enabled'), default=True)
-    view_state = models.ForeignKey(ViewState,
-        verbose_name=_('project view state'))
+    scope = models.ForeignKey(Scope,
+        verbose_name=_('project scope'))
     url = models.URLField(_('project url'), verify_exists=False, blank=True)
     description = models.TextField(_('project description'),
         blank=True)
@@ -74,7 +102,7 @@ class Project(models.Model):
         """
         @return: integrated project if available
         @raise IntegrationError: if integration is improperly \
-configured
+        configured
         TODO: make _integration_cache working as cache
         """
         if not hasattr(self, '_integration_cache'):
@@ -99,11 +127,14 @@ class Category(models.Model):
     name = models.CharField(_('category name'), max_length=192)
     handler = models.ForeignKey(User,
         verbose_name=_('category handler'), blank=True, null=True)
+
     def __unicode__(self):
         return u'%s: %s' % (self.project, self.name)
+
     @models.permalink
     def get_absolute_url(self):
         return ('picket-category', [str(self.project_id), str(self.id)])
+
     class Meta():
         verbose_name = _('category')
         verbose_name_plural = _('categories')
@@ -111,13 +142,29 @@ class Category(models.Model):
 
 class BugManager(models.Manager):
     def permited(self, user, project=None, category=None):
+
+        """
         bugs = self.filter(
-            view_state__in=[viewstate.id for viewstates in [
-                group.viewstate_set.all() for group in \
-                user.groups.all()] for viewstate in viewstates],
+                scope__in=[scope.id for scopes in [
+                    group.scope_set.all() for group in \
+                    user.groups.all()] for scope in scopes] ,
             project__in=Project.objects.permited(user))
+
         bugs = bugs.filter(project=project) if project is not None else bugs
         bugs = bugs.filter(category=category) if category is not None else bugs
+        """
+
+        if project is not None:
+            #concrete project
+            bugs = self.filter(project=project)
+        else:
+            # permited projects bugs
+            bugs = self.filter(project__in=Project.objects.permited(user))
+            # and personally permited bugs (by scope)
+            bugs = self.filter(scope__in=Scope.objects.permited(user))
+            
+        if category is not None: bugs = bugs.filter(category=category)
+
         return bugs
 
 class Bug(models.Model):
@@ -151,7 +198,7 @@ class Bug(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     eta = models.PositiveIntegerField(_('bug ETA'), choices=ETA_CHOICES,
         default=ETA_CHOICES_DEFAULT)
-    view_state = models.ForeignKey(ViewState, verbose_name=_('bug view state'))
+    scope = models.ForeignKey(Scope, verbose_name=_('bug scope'))
     summary = models.CharField(_('bug summary'), max_length=255)
     description = models.TextField(_('bug description'))
     steps_to_reproduce = models.TextField(_('bug steps to reproduce'),
@@ -205,8 +252,10 @@ class BugFile(models.Model):
     file = models.FileField(_('bug file'), upload_to='bugs/%Y/%m/%d-%H')
     date_added = models.DateTimeField(_('bug file date added'),
         auto_now_add=True, editable=False)
+
     def __unicode__(self):
         return u'%s' % self.title
+
     class Meta():
         verbose_name = _('bug file')
         verbose_name_plural = _('bug files')
@@ -219,8 +268,10 @@ class ProjectFile(models.Model):
     date_added = models.DateTimeField(_('project file date added'),
         auto_now_add=True, editable=False)
     description = models.TextField(_('project file description'), blank=True)
+
     def __unicode__(self):
         return u'%s' % self.title
+
     class Meta():
         verbose_name = _('project file')
         verbose_name_plural = _('project files')
@@ -259,6 +310,7 @@ class BugMonitor(models.Model):
     user = models.ForeignKey(User, verbose_name=_('bug monitor user'))
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
     mute = models.BooleanField(_('bug monitor mute'), default=False)
+
     class Meta():
         verbose_name = _('bug monitor entry')
         verbose_name_plural = _('bug monitor entries')
@@ -278,6 +330,7 @@ class BugRelationship(models.Model):
             (0,_('duplicate of'),),
             (4,_('has duplicate'),),
         ))
+        
     class Meta():
         verbose_name = _('bug relationship entry')
         verbose_name_plural = _('bug relationship entries')
@@ -286,8 +339,8 @@ class Bugnote(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bugnote bug'))
     reporter = models.ForeignKey(User, verbose_name=_('bugnote user'))
     text = models.TextField(_('bugnote text'))
-    view_state = models.ForeignKey(ViewState,
-        verbose_name=_('bugnote view state'))
+    scope = models.ForeignKey(Scope,
+        verbose_name=_('bugnote scope'))
     date_submitted = models.DateTimeField(_('bugnote date submitted'),
         auto_now_add=True, editable=False)
     last_modified = models.DateTimeField(_('bugnote last modified'),
@@ -315,7 +368,7 @@ class Bugnote(models.Model):
 
 class ProjectUserList(models.Model):
     """
-    TODO: automate me for caching view states
+    TODO: automate me for caching scopes
     """
     
     project = models.ForeignKey(Project, verbose_name=_('project'))

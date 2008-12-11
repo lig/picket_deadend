@@ -25,8 +25,8 @@ from django.shortcuts               import get_object_or_404, \
 from django.template                import RequestContext
 from django.utils.translation       import ugettext as _
 
-from picketapp.forms import BugForm, BugnoteForm
-from picketapp.models import Bug, Project, Category
+from apps.picket.forms import BugForm, BugnoteForm
+from apps.picket.models import Bug, Project, Category
 
 @login_required
 def index(req):
@@ -35,14 +35,14 @@ def index(req):
         context_instance=RequestContext(req))
     
 @login_required
-def bugs(req, categoryId=None, skip=0, limit=20):
+def bugs(req, category_id=None, skip=0, limit=20):
     
-    projectId = req.session.get('project_id', None)
-    project = get_object_or_404(Project, id=projectId) \
-        if projectId is not None else None
+    project_id = req.session.get('project_id', None)
+    project = get_object_or_404(Project, id=project_id) \
+        if project_id is not None else None
 
-    category = get_object_or_404(Category, id=categoryId) \
-        if categoryId is not None else None
+    category = get_object_or_404(Category, id=category_id) \
+        if category_id is not None else None
     
     bugs = Bug.objects.permited(req.user, project, category)
     sticky_bugs = bugs.filter(sticky=True)
@@ -63,7 +63,7 @@ def filebug(req):
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
             bug.reporter = req.user
-            bug.view_state = bug.project.view_state
+            bug.scope = bug.project.scope
             bug.save()
             req.user.message_set.create(message=_('bug filed'))
             return HttpResponseRedirect(bug.get_absolute_url())
@@ -74,12 +74,12 @@ def filebug(req):
         context_instance=RequestContext(req))
 
 @login_required
-def bug(req, projectId, categoryId, bugId):
+def bug(req, project_id, category_id, bug_id):
     
-    bug = get_object_or_404(Bug, id=bugId)
+    bug = get_object_or_404(Bug, id=bug_id)
     
     try:
-        bug.check_place(projectId, categoryId)
+        bug.check_place(project_id, category_id)
     except:
         return HttpResponseRedirect(bug.get_absolute_url())
     
@@ -90,17 +90,17 @@ def bug(req, projectId, categoryId, bugId):
         context_instance=RequestContext(req))
 
 @login_required
-def annotate(req, bugId):
+def annotate(req, bug_id):
     
-    bug = get_object_or_404(Bug, id=bugId)
+    bug = get_object_or_404(Bug, id=bug_id)
     
     assert req.method == 'POST'
     
     bugnoteForm = BugnoteForm(req.POST)
     if bugnoteForm.is_valid():
         bugnote = bugnoteForm.save(commit=False)
-        bugnote.bug, bugnote.reporter, bugnote.view_state \
-            = bug, req.user, bug.view_state
+        bugnote.bug, bugnote.reporter, bugnote.scope \
+            = bug, req.user, bug.scope
         bugnote.save()
         req.user.message_set.create(message=_('bugnote filed'))
         return HttpResponseRedirect(bugnote.get_absolute_url())
@@ -110,9 +110,9 @@ def annotate(req, bugId):
             context_instance=RequestContext(req))
 
 @login_required
-def project(req, projectId):
+def project(req, project_id):
     return HttpResponseRedirect(reverse('picket-admin-project',
-        args=(projectId,))) 
+        args=(project_id,)))
 
 @login_required
 def set_project(req):

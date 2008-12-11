@@ -17,20 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib             import admin
-from django.contrib.auth.admin  import UserAdmin
-from django.contrib.auth.models import User
+from django.conf.urls.defaults  import *
 
-from users.models   import Profile
-
-admin.site.unregister(User)
-
-class ProfileInline(admin.StackedInline):
-    model = Profile
-
-class ProfileUserAdmin(UserAdmin):
-    inlines = [
-        ProfileInline,
-    ]
-
-admin.site.register(User, ProfileUserAdmin)
+urlpatterns = patterns('util.users.views',
+    (r'^(?P<username>\w+)/$', 'user', {}, 'profile'),
+    (r'^(?P<username>\w+)/profile/$', 'profile', {}, 'profile-update'),
+)

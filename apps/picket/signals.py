@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.db.models.signals   import pre_save, post_save
+from django.db.models.signals import post_init, post_save
 
-from picketapp.models import Bug, BugHistory
+from apps.picket.models import Bug, BugHistory
 
 """
 type = models.PositiveIntegerField(_('bug history entry type'),
@@ -34,9 +34,14 @@ type = models.PositiveIntegerField(_('bug history entry type'),
 
 class PicketSignalsMiddleware(object):
     
-    def bug_pre_save_handler(self, sender, instance, **kwargs):
-        old_instance = Bug.objects.get(pk=instance.pk)
-        self._bug_cache[old_instance.pk] = old_instance 
+    def bug_post_init_handler(self, sender, instance, **kwargs):
+        try:
+            old_instance = lambda: Bug.objects.get(pk=instance.pk)
+        except Bug.DoesNotExist:
+            old_instance = None
+
+        if old_instance is not None:
+            self._bug_cache[instance.pk] = old_instance
     
     def bug_post_save_handler(self, sender, instance, created, **kwargs):
         if created:
@@ -47,8 +52,8 @@ class PicketSignalsMiddleware(object):
             for log_field in ['project_id', 'reporter_id', 'handler_id',
                 'duplicate_id', 'priority', 'severity', 'reproducibility',
                 'status', 'resolution', 'projection', 'category_id',
-                'view_state_id', 'summary', 'sponsorship_total', 'sticky',]:
-                old_value = self._bug_cache[instance.pk].__getattribute__(
+                'scope_id', 'summary', 'sponsorship_total', 'sticky',]:
+                old_value = self._bug_cache[instance.pk]().__getattribute__(
                     log_field)
                 new_value = instance.__getattribute__(log_field)
                 if new_value != old_value:
@@ -63,6 +68,7 @@ class PicketSignalsMiddleware(object):
     def process_request(self, request):
         self._bug_cache={}
         self._req = request
-        pre_save.connect(self.bug_pre_save_handler, Bug)
+        post_init.connect(self.bug_post_init_handler, Bug)
         post_save.connect(self.bug_post_save_handler, Bug)
         return None
+

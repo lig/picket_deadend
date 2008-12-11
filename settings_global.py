@@ -21,13 +21,13 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 
-PATH_TO_PICKET = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.dirname(__file__)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = os.path.join(PATH_TO_PICKET, 'db')             # Or path to database file if using sqlite3.
+DATABASE_NAME = os.path.join(PROJECT_ROOT, 'local.db')             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -52,17 +52,17 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(PATH_TO_PICKET, 'm/')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/m/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -76,37 +76,38 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'picketapp.signals.PicketSignalsMiddleware',
+    'apps.picket.signals.PicketSignalsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
-    os.path.join(PATH_TO_PICKET, 't'),
+    os.path.join(PROJECT_ROOT, 'templates'),
+    os.path.join(PROJECT_ROOT, 'apps/picket/templates'),
 )
 
 INSTALLED_APPS = (
-    ## picket
-    'picketapp',
-    ## util
-    'accounts',
-    'users',
     ## django
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    ## util
+    'util.accounts',
+    'util.users',
+    ## picket
+    'apps.picket',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    ## picket
-    'picketapp.context_processors.navi',
     ## django
     'django.core.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n', 
     'django.core.context_processors.media',
+    ## picket
+    'apps.picket.context_processors.navi',
 )
 
 AUTH_PROFILE_MODULE = 'users.profile'

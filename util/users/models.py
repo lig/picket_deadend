@@ -19,11 +19,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import User
 from django.db                  import models
-from django.forms               import ValidationError
+from django.db.models           import permalink
 from django.utils.translation   import ugettext_lazy as _
 
-from users.settings     import BASE_URL
-from picketapp.settings import ACCESS_LEVELS_CHOICES, \
+from apps.picket.settings import ACCESS_LEVELS_CHOICES, \
                                ACCESS_LEVELS_CHOICES_DEFAULT
 
 class Profile(models.Model):    
@@ -39,6 +38,8 @@ class Profile(models.Model):
     
     def __unicode__(self):
         return u'%s: %s, %s' % (self.user, self.phone, self.comment)
-    
+
+    @permalink
     def get_absolute_url(self):
-        return '%s%s' % (BASE_URL, self.user.username)
+        return ('util.users.views.profile', (self.user.username,),)
+

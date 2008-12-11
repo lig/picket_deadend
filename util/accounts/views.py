@@ -27,8 +27,8 @@ from django.template                import RequestContext
 from django.template.loader         import render_to_string
 from django.utils.translation       import ugettext as _
 
-from accounts.forms import RegForm, ValForm, PassForm
-from accounts.models import Validator
+from util.accounts.forms import RegForm, ValForm, PassForm
+from util.accounts.models import Validator
 
 def registration(req):
     if req.user.is_authenticated():

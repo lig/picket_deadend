@@ -19,7 +19,12 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 # Local Django settings for picket project.
 
-from settings_global import *
+try:
+    from settings_global import *
+except ImportError:
+    import sys
+    sys.stderr.write('Unable to import settings_global.py\n')
+    sys.exit(1)
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),

@@ -21,7 +21,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from accounts.models import Validator
+from util.accounts.models import Validator
 
 class RegForm(forms.ModelForm):
     

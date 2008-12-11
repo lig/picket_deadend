@@ -17,12 +17,20 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.conf.urls.defaults  import *
+from django.contrib             import admin
+from django.contrib.auth.admin  import UserAdmin
+from django.contrib.auth.models import User
 
-urlpatterns = patterns('picketapp.admin.views',
-    (r'^$', 'index', {}, 'picket-admin',),
-    (r'^users/$', 'users', {}, 'picket-admin-users',),
-    (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
-    (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
-    (r'^p(?P<projectId>\d+)/$', 'project', {}, 'picket-admin-project',),
-)
+from util.users.models   import Profile
+
+admin.site.unregister(User)
+
+class ProfileInline(admin.StackedInline):
+    model = Profile
+
+class ProfileUserAdmin(UserAdmin):
+    inlines = [
+        ProfileInline,
+    ]
+
+admin.site.register(User, ProfileUserAdmin)

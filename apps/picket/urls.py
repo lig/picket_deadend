@@ -18,28 +18,26 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.conf.urls.defaults  import *
-from django.core.urlresolvers   import reverse
-from django.http                import HttpResponseRedirect
 
 """
 TODO: project view with project summary not administration
 """
-urlpatterns = patterns('picketapp.views',
+urlpatterns = patterns('apps.picket.views',
     (r'^$', 'index', {},
         'picket-index',),
     (r'^filebug/$', 'filebug', {},
         'picket-filebug',),
     (r'^bugs/$', 'bugs', {},
         'picket-bugs',),
-    (r'^p(?P<projectId>\d+)/$', 'project', {},
+    (r'^p(?P<project_id>\d+)/$', 'project', {},
         'picket-project',),
-    (r'^bugs/c(?P<categoryId>\d+)/$', 'bugs', {},
+    (r'^bugs/c(?P<category_id>\d+)/$', 'bugs', {},
         'picket-category',),
-    (r'^p(?P<projectId>\d+)/c(?P<categoryId>\d+)/b(?P<bugId>\d+)/$', 'bug', {},
+    (r'^p(?P<project_id>\d+)/c(?P<category_id>\d+)/b(?P<bug_id>\d+)/$', 'bug', {},
         'picket-bug',),
-    (r'^b(?P<bugId>\d+)/$', 'bug', {'categoryId': 0, 'projectId': 0,},
+    (r'^b(?P<bug_id>\d+)/$', 'bug', {'category_id': 0, 'project_id': 0,},
         'picket-b',),
-    (r'^p\d+/c\d+/b(?P<bugId>\d+)/annotate/$', 'annotate', {},
+    (r'^p\d+/c\d+/b(?P<bug_id>\d+)/annotate/$', 'annotate', {},
         'picket-annotate',),
     (r'^set_p/$', 'set_project', {},
         'picket-set-project'),
@@ -53,5 +51,5 @@ urlpatterns = patterns('picketapp.views',
         'picket-roadmap'),
     
     ## picket administration
-    (r'^admin/', include('picketapp.admin.urls')),
+    (r'^admin/', include('apps.picket.admin.urls')),
 )

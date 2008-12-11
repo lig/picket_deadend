@@ -19,26 +19,31 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
 
-from picketapp.models   import Bug, BugFile, BugHistory, BugMonitor, Bugnote, \
+from apps.picket.models   import Bug, BugFile, BugHistory, BugMonitor, Bugnote, \
                                BugRelationship, Category, Project, \
-                               ProjectFile, ProjectUserList, ViewState
+                               ProjectFile, ProjectUserList, Scope, ScopeGroup
 
 class BugFileInline(admin.StackedInline):
     model = BugFile
     extra = 1
+
 class BugHistoryInline(admin.TabularInline):
     model = BugHistory
     extra = 0
+
 class BugMonitorInline(admin.TabularInline):
     model = BugMonitor
     extra = 1
+
 class BugnoteInline(admin.StackedInline):
     model = Bugnote
     extra = 1
+
 class BugRelationshipInline(admin.TabularInline):
     model = BugRelationship
     fk_name = 'source_bug'
     extra = 1
+
 class BugAdmin(admin.ModelAdmin):
     inlines = [
         BugFileInline,
@@ -54,9 +59,11 @@ admin.site.register(Category)
 class ProjectFileInline(admin.StackedInline):
     model = ProjectFile
     extra = 1
+
 class ProjectUserListInline(admin.TabularInline):
     model = ProjectUserList
     extra = 1
+
 class ProjectAdmin(admin.ModelAdmin):
     inlines = [
         ProjectFileInline,
@@ -64,4 +71,13 @@ class ProjectAdmin(admin.ModelAdmin):
     ]
 admin.site.register(Project, ProjectAdmin)
 
-admin.site.register(ViewState)
+class ScopeGroupInline(admin.TabularInline):
+    model = ScopeGroup
+    extra = 1
+
+class ScopeAdmin(admin.ModelAdmin):
+    inlines = [
+        ScopeGroupInline,
+    ]
+admin.site.register(Scope, ScopeAdmin)
+

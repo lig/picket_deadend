@@ -18,15 +18,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.conf.urls.defaults  import *
-from django.http                import HttpResponseRedirect
 
-urlpatterns = patterns('',
-    (r'^login/$', 'django.contrib.auth.views.login', {}, 'login'),
-    (r'^logout/$', 'django.contrib.auth.views.logout', {}, 'logout'),
-    (r'^registration/$', 'accounts.views.registration', {}, 'signup'),
-    (r'^validation/$', 'accounts.views.validation', {}, 'validate'),
-    (r'^registration/password/$', 'accounts.views.make_password', {},
-        'make-password'),
-    (r'^profile/$',
-        lambda req: HttpResponseRedirect(req.user.get_absolute_url())),
+urlpatterns = patterns('apps.picket.admin.views',
+    (r'^$', 'index', {}, 'picket-admin',),
+    (r'^users/$', 'users', {}, 'picket-admin-users',),
+    (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
+    (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
+    (r'^p(?P<projectId>\d+)/$', 'project', {}, 'picket-admin-project',),
 )

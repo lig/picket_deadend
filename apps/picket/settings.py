@@ -143,10 +143,7 @@ COLUMNS_BUGS_VIEW = (
     ('summary',_('Summary'),),
 )
 
-BASE_URL = '/picket/'
-
-SITE_NAME = _('Picket')
-
+# settings for integration in some other django project as app
 INTEGRATION = True
 
 INTEGRATION_MODEL = ''
@@ -155,6 +152,7 @@ INTEGRATION_ALLOW_INTERNAL_PROJECTS = True
 
 INTEGRATION_FOREIGN_ABSOLUTE_URL = False
 
+# settings inherited from Mantis
 USE_JAVASCRIPT = True
 
 SHOW_PROJECT_MENU_BAR = True
