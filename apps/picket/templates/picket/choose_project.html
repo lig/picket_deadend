@@ -1,0 +1,37 @@
+{% extends 'picket/base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block picketcontent %}
+
+<br />
+<div align="center">
+    <form method="get" name="form_set_project" action="{% url picket-set-project-gonext view_name=view_name %}">
+        {% trans 'Choose project' %}:
+        <select name="project_id" class="small">
+            <option value=""{% if not project %} selected="selected"{% endif %}>{% trans 'All projects' %}</option>
+            {% for picket_project in picket_projects %}
+            <option value="{{ picket_project.id }}"{% ifequal picket_project.id project.id  %} selected="selected"{% endifequal %}>{{ picket_project.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="button-small" value="{% trans 'Choose' %}" />
+    </form>
+</div>
+
+{% endblock picketcontent %}

@@ -44,7 +44,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% else %}
         <select name="project_id" class="small">
         {% endif %}
-            <option value=""{% if not project %} checked="checked"{% endif %}>{% trans 'All projects' %}</option>
+            <option value=""{% if not project %} selected="selected"{% endif %}>{% trans 'All projects' %}</option>
             {% for picket_project in picket_projects %}
             <option value="{{ picket_project.id }}"{% ifequal picket_project.id project.id  %} selected="selected"{% endifequal %}>{{ picket_project.name }}</option>
             {% endfor %}

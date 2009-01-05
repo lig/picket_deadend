@@ -25,8 +25,8 @@ from django.shortcuts               import get_object_or_404, \
 from django.template                import RequestContext
 from django.utils.translation       import ugettext as _
 
-from apps.picket.forms import BugForm, BugnoteForm
-from apps.picket.models import Bug, Project, Category
+from apps.picket.forms  import BugForm, BugnoteForm
+from apps.picket.models import Bug, Project, Category, Scope
 
 @login_required
 def index(req):
@@ -58,19 +58,26 @@ def bugs(req, category_id=None, skip=0, limit=20):
 @login_required
 def filebug(req):
     
+    if not 'project_id' in req.session:
+        return HttpResponseRedirect(reverse('picket-choose-project-gonext',
+            kwargs={'view_name': 'picket-filebug',}))
+    
+    scopes = Scope.objects.permited(req.user)
+    
     if req.method == 'POST':
         bugForm = BugForm(req.POST)
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
             bug.reporter = req.user
-            bug.scope = bug.project.scope
+            bug.project_id = bug.category.project_id
             bug.save()
             req.user.message_set.create(message=_('bug filed'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
         bugForm = BugForm()
     
-    return render_to_response('picket/bug_form.html', {'bug_form': bugForm,},
+    return render_to_response('picket/bug_form.html',
+        {'bug_form': bugForm, 'scopes': scopes,},
         context_instance=RequestContext(req))
 
 @login_required
@@ -115,7 +122,15 @@ def project(req, project_id):
         args=(project_id,)))
 
 @login_required
-def set_project(req):
+def choose_project(req, view_name='picket-bugs'):
+    """
+    form for choosing project 
+    """
+    return render_to_response('picket/choose_project.html',
+        {'view_name': view_name,}, context_instance=RequestContext(req))
+
+@login_required
+def set_project(req, view_name='picket-bugs'):
     """
     writing project to session for other views could use it from there 
     """
@@ -125,11 +140,11 @@ def set_project(req):
     if projectId is not None:
         project = get_object_or_404(Project, id=projectId)
         req.session['project_id'] = project.id
-        return HttpResponseRedirect(reverse('picket-bugs'))
+        return HttpResponseRedirect(reverse(view_name))
     else:
         if req.session.has_key('project_id'):
             del req.session['project_id'] 
-        return HttpResponseRedirect(reverse('picket-bugs'))
+        return HttpResponseRedirect(reverse(view_name))
 
 @login_required
 def jump_to_bug(req):

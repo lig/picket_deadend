@@ -24,12 +24,18 @@ def navi(req):
     
     projects = list(Project.objects.permited(req.user))
     
+    try:
+        cur_project = Project.objects.permited(req.user).get(
+            pk=req.session.get('project_id', 0))
+    except Project.DoesNotExist:
+        cur_project = None
+
     if req.method == 'POST':
         cur_url = req.META['HTTP_REFERER']
     elif 'QUERY_STRING' in req.META:
         cur_url = '%s?%s' % (req.path, req.META['QUERY_STRING'])
     else:
         cur_url = req.path
-    
-    return {'picket_projects': projects, 'cur_url': cur_url, 'config': config,
-        'COPYING': COPYING,}
+        
+    return {'picket_projects': projects, 'cur_project': cur_project,
+        'cur_url': cur_url, 'config': config, 'COPYING': COPYING,}

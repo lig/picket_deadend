@@ -24,7 +24,10 @@ from apps.picket.models import Bug, Bugnote, Project
 class BugForm(forms.ModelForm):
     class Meta():
         model = Bug
-        fields = ['project', 'category', 'severity', 'reproducibility', 'projection', 'summary', 'description', 'steps_to_reproduce', 'additional_information',]
+        fields = ['category', 'reproducibility', 'severity', 'priority',
+            'summary', 'description', 'steps_to_reproduce',
+            'additional_information', 'scope',]
+""" @todo: inline form for bugfile """
 
 class BugnoteForm(forms.ModelForm):
     class Meta():

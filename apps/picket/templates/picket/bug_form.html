@@ -20,11 +20,150 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picketcontent %}
 
-<strong>{% trans 'Please file your bug in the form below' %}:</strong><br />
+<br />
+<div align="center">
+<form name="report_bug_form" method="post" enctype="multipart/form-data" action="">
+<table class="width75" cellspacing="1">
 
-<form action="" method="post">
-    {{ bug_form.as_p }}
-    <input type="submit" name="submit" value="{% trans 'File bug' %}">
+<!-- Title -->
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Please file your bug in the form below' %}
+    </td>
+</tr>
+
+<!-- Category -->
+<tr class="{% cycle 'row-1' 'row-2' as row-class %}">
+    <td class="category" width="30%">
+        <span class="required">*</span>{% trans 'Category' %}
+    </td>
+    <td width="70%">
+        [{{ cur_project.name }}]
+        <select name="category">
+        {% for category in cur_project.category_set.all %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+        </select>
+    </td>
+</tr>
+
+<!-- Reproducibility -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Reproducibility' %}
+    </td>
+    <td>
+        {{ bug_form.reproducibility }}
+    </td>
+</tr>
+
+<!-- Severity -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Severity' %}
+    </td>
+    <td>
+        {{ bug_form.severity }}
+    </td>
+</tr>
+
+<!-- Priority @note: permissions droped -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Priority' %}
+    </td>
+    <td>
+        {{ bug_form.priority }}
+    </td>
+</tr>
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="2"></td>
+</tr>
+
+<!-- Summary -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        <span class="required">*</span>{% trans 'Summary' %}
+    </td>
+    <td>
+        <input type="text" name="summary" size="105" maxlength="128" value="" />
+    </td>
+</tr>
+
+<!-- Description -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        <span class="required">*</span>{% trans 'Description' %}
+    </td>
+    <td>
+        <textarea name="description" cols="80" rows="10"></textarea>
+    </td>
+</tr>
+
+<!-- Steps to reproduce -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Steps to reproduce' %}
+    </td>
+    <td>
+        <textarea name="steps_to_reproduce" cols="80" rows="10"</textarea>
+    </td>
+</tr>
+
+<!-- Additional information -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Additional information' %}
+    </td>
+    <td>
+        <textarea name="additional_info" cols="80" rows="10"</textarea>
+    </td>
+</tr>
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="2"></td>
+</tr>
+
+<!-- File Upload -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Upload file' %}
+    </td>
+    <td>
+        <input name="file" type="file" size="60" />
+    </td>
+</tr>
+
+<!-- View Status -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Scope' %}
+    </td>
+    <td>
+        <select name="scope">
+        {% for scope in scopes %}
+            <option value="{{ scope.id }}">{{ scope.name }}</option>
+        {% endfor %}
+        </select>
+    </td>
+</tr>
+
+<!-- Submit Button -->
+<tr>
+    <td class="left">
+        <span class="required"> * {% trans 'Required' %}</span>
+    </td>
+    <td class="center">
+        <input type="submit" class="button" value="{% trans 'File bug' %}" />
+    </td>
+</tr>
+
+
+</table>
 </form>
+</div>
 
 {% endblock picketcontent %}
