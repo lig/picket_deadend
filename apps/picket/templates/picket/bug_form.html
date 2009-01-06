@@ -88,7 +88,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <span class="required">*</span>{% trans 'Summary' %}
     </td>
     <td>
-        <input type="text" name="summary" size="105" maxlength="128" value="" />
+        <input type="text" name="summary" size="105" maxlength="255" />
     </td>
 </tr>
 
@@ -133,8 +133,22 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Upload file' %}
     </td>
     <td>
-        <input name="file" type="file" size="60" />
+        <input name="bugfile-file" type="file" size="60" />
     </td>
+</tr>
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        <span class="required">*</span>{% trans 'File title' %}<br />
+        <span class="required">({% trans 'if file present' %})</span>
+    </td>
+    <td>
+        <input name="bugfile-title" type="text" size="105" maxlength="255" />
+    </td>
+</tr>
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="2"></td>
 </tr>
 
 <!-- View Status -->

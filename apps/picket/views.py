@@ -25,7 +25,7 @@ from django.shortcuts               import get_object_or_404, \
 from django.template                import RequestContext
 from django.utils.translation       import ugettext as _
 
-from apps.picket.forms  import BugForm, BugnoteForm
+from apps.picket.forms  import BugForm, BugnoteForm, BugFileForm
 from apps.picket.models import Bug, Project, Category, Scope
 
 @login_required
@@ -66,18 +66,25 @@ def filebug(req):
     
     if req.method == 'POST':
         bugForm = BugForm(req.POST)
+        bugFileForm = BugFileForm(req.POST, req.FILES, prefix='bugfile')
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
             bug.reporter = req.user
             bug.project_id = bug.category.project_id
             bug.save()
             req.user.message_set.create(message=_('bug filed'))
+            if bugFileForm.is_valid():
+                bugFile = bugFileForm.save(commit=False)
+                bugFile.bug = bug
+                bugFile.save()
+                req.user.message_set.create(message=_('file for bug uploaded'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
         bugForm = BugForm()
+        bugFileForm = BugFileForm(prefix='bugfile')
     
     return render_to_response('picket/bug_form.html',
-        {'bug_form': bugForm, 'scopes': scopes,},
+        {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,},
         context_instance=RequestContext(req))
 
 @login_required
