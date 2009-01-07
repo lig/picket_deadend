@@ -142,29 +142,14 @@ class Category(models.Model):
 
 class BugManager(models.Manager):
     def permited(self, user, project=None, category=None):
-
-        """
-        bugs = self.filter(
-                scope__in=[scope.id for scopes in [
-                    group.scope_set.all() for group in \
-                    user.groups.all()] for scope in scopes] ,
+        
+        bugs = self.filter(scope__in=Scope.objects.permited(user),
             project__in=Project.objects.permited(user))
 
         bugs = bugs.filter(project=project) if project is not None else bugs
+        
         bugs = bugs.filter(category=category) if category is not None else bugs
-        """
-
-        if project is not None:
-            #concrete project
-            bugs = self.filter(project=project)
-        else:
-            # permited projects bugs
-            bugs = self.filter(project__in=Project.objects.permited(user))
-            # and personally permited bugs (by scope)
-            bugs = self.filter(scope__in=Scope.objects.permited(user))
-            
-        if category is not None: bugs = bugs.filter(category=category)
-
+        
         return bugs
 
 class Bug(models.Model):
