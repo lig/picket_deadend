@@ -270,10 +270,10 @@ class BugHistory(models.Model):
         max_length=96, blank=True)
     old_value = models.CharField(
         _('bug history entry old field value'),
-        max_length=255, blank=True)
+        max_length=255, blank=True, null=True)
     new_value = models.CharField(
         _('bug history entry new field value'),
-        max_length=255, blank=True)
+        max_length=255, blank=True, null=True)
     type = models.PositiveIntegerField(_('bug history entry type'),
         choices=(
             (0,_('bug created'),),
