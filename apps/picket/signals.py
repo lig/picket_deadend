@@ -35,13 +35,16 @@ type = models.PositiveIntegerField(_('bug history entry type'),
 class PicketSignalsMiddleware(object):
     
     def bug_post_init_handler(self, sender, instance, **kwargs):
-        try:
-            old_instance = lambda: Bug.objects.get(pk=instance.pk)
-        except Bug.DoesNotExist:
-            old_instance = None
-
-        if old_instance is not None:
-            self._bug_cache[instance.pk] = old_instance
+        if not instance.pk in self._bug_cache:
+            """
+            key for instance must be created to not trigger this mechanism on
+            another object initialization follows
+            """
+            self._bug_cache[instance.pk] = None
+            try:
+                self._bug_cache[instance.pk] = Bug.objects.get(pk=instance.pk)
+            except Bug.DoesNotExist:
+                del self._bug_cache[instance.pk]
     
     def bug_post_save_handler(self, sender, instance, created, **kwargs):
         if created:
@@ -49,11 +52,17 @@ class PicketSignalsMiddleware(object):
             bugHistory.save()
             del bugHistory
         else:
+            """
+            @todo: handle TextFieldS changes
+            @todo: handle relationship changes
+            """
+            print self._bug_cache[instance.pk].priority
+            print instance.priority
             for log_field in ['project_id', 'reporter_id', 'handler_id',
                 'duplicate_id', 'priority', 'severity', 'reproducibility',
                 'status', 'resolution', 'projection', 'category_id',
                 'scope_id', 'summary', 'sponsorship_total', 'sticky',]:
-                old_value = self._bug_cache[instance.pk]().__getattribute__(
+                old_value = self._bug_cache[instance.pk].__getattribute__(
                     log_field)
                 new_value = instance.__getattribute__(log_field)
                 if new_value != old_value:
@@ -62,8 +71,7 @@ class PicketSignalsMiddleware(object):
                         new_value=new_value, user=self._req.user)
                     bugHistory.save()
                     del bugHistory
-            #TODO: handle TextFieldS changes
-            #TODO: handle relationship changes
+        self._bug_cache[instance.pk] = instance
     
     def process_request(self, request):
         self._bug_cache={}

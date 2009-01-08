@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 Copyright 2008 Serge Matveenko
 
@@ -194,9 +193,9 @@ class Bug(models.Model):
         default=0)
     sticky = models.BooleanField(_('bug sticky'), default=False)
     history = models.ManyToManyField(User, verbose_name=_('bug history'),
-        related_name=_('history'), through='BugHistory')
+        related_name='history', through='BugHistory')
     monitor = models.ManyToManyField(User, verbose_name=_('bug monitor'),
-        related_name=_('monitor'), through='BugMonitor')
+        related_name='monitor', through='BugMonitor')
     relationship = models.ManyToManyField('self',
         verbose_name=_('bug relationship'), symmetrical=False,
         through='BugRelationship')
@@ -262,10 +261,6 @@ class ProjectFile(models.Model):
         verbose_name_plural = _('project files')
 
 class BugHistory(models.Model):
-    """
-    TODO: automate me
-    """
-    
     user = models.ForeignKey(User,
         verbose_name=_('bug history entry user'))
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
