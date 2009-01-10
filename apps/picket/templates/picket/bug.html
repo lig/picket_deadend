@@ -19,24 +19,558 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 {% block picketcontent %}
-
-<strong>{% blocktrans with bug.id as bug_id %}Bug #{{ bug_id }}{% endblocktrans %}</strong> {{ bug.get_status_display }} {% trans 'in' %} {% with bug.category as category %}{% include 'picket/category_link_inc.html' %}{% endwith %} {% trans 'of' %} {% with bug.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %} {% trans 'by' %} {% with bug.reporter as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}[<a href="{{ bug.get_absolute_url }}">#</a>]<br />
-<strong>{{ bug.summary }}</strong><br />
-{% trans 'priority' %}: {{ bug.get_priority_display }}, {% trans 'severity' %}: {{ bug.get_severity_display }}, {% trans 'reproducibility' %}: {{ bug.get_reproducibility_display }}<br />
-{{ bug.description }}<br />
 <br />
+<table class="width100" cellspacing="1">
 
-{% for bugnote in bug.bugnote_set.all %}
-<a name="bugnote{{ bugnote.id }}"></a>{% blocktrans with bugnote.id as id and bugnote.date_submitted as date_submitted and bugnote.reporter as reporter %}Bugnote #{{ id }} at {{ date_submitted }} by {{ reporter }}{% endblocktrans %}[<a href="{{ bugnote.get_absolute_url }}">#</a>]<br />
-{{ bugnote.text }}<br />
-{% blocktrans with bugnote.last_modified as last_modified %}(last modified at {{ last_modified }}){% endblocktrans %}<br />
-<br />
-{% endfor %}
-<br />
+<tr>
 
-<form action="annotate/" method="post">
-    {{ bugnote_form.as_p }}
-    <input type="submit" name="submit" value="{% trans 'File bugnote' %}" />
+    <!-- Title -->
+    <td class="form-title" colspan="4">
+
+        <!-- Jump to Bugnotes -->
+        <span class="small"><a href="#bugnotes">{% trans 'Jump to bugnotes' %}</a></span>
+
+        <!-- Send Bug Reminder -->
+        <span class="small">
+            <a href="% url picket-bug-reminder bug_id=bug.id %">{% trans 'Bug reminder' %}</a>
+        </span>
+    </td>
+
+    <!-- Links -->
+    <td class="right" colspan="2">
+
+        <!-- History -->
+        <span class="small"><a href="#history">{% trans 'bug_history' %}</a></span>
+
+        <!-- Print Bug -->
+        <span class="small"><a href="% url picket-bug-print bug_id=bug.id %" {% trans 'Print' %}</a></span>
+
+    </td>
+
+</tr>
+
+
+<!-- Labels -->
+<tr class="row-category">
+    <td width="15%">
+        {% trans 'ID' %}
+    </td>
+    <td width="20%">
+        {% trans 'Category' %}
+    </td>
+    <td width="15%">
+        {% trans 'Severity' %}
+    </td>
+    <td width="20%">
+        {% trans 'Reproducibility' %}
+    </td>
+    <td width="15%">
+        {% trans 'Date submitted' %}
+    </td>
+    <td width="15%">
+        {% trans 'Last update' %}
+    </td>
+</tr>
+
+
+<tr class="{% cycle 'row-1' 'row-2' as row-class %}">
+
+    <!-- Bug ID -->
+    <td>
+        <a href="{{ bug.get_absolute_url }}">#</a>{{ bug.id }}
+    </td>
+
+    <!-- Category -->
+    <td>
+        [{% with bug.project as project %}{% include 'picket/project_link_inc.html' %}{% endwith %}] {% with bug.category as category %}{% include 'picket/category_link_inc.html' %}{% endwith %}
+    </td>
+
+    <!-- Severity -->
+    <td>
+        {{ bug.get_severity_display }}
+    </td>
+
+    <!-- Reproducibility -->
+    <td>
+        {{ bug.get_reproducibility_display }}
+    </td>
+
+    <!-- Date Submitted -->
+    <td>
+        {{ bug.date_submitted|date }}
+    </td>
+
+    <!-- Date Updated -->
+    <td>
+        {{ bug.last_updated|date }}
+    </td>
+
+</tr>
+
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="6"></td>
+</tr>
+
+
+<tr class="{% cycle row-class %}">
+
+    <!-- Reporter -->
+    <td class="category">
+        {% trans 'Reporter' %}
+    </td>
+    <td>
+        {% with bug.reporter as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}
+    </td>
+
+    <!-- View Status -->
+    <td class="category">
+        {% trans 'Scope' %}
+    </td>
+    <td>
+        {{ bug.scope.name }}
+    </td>
+
+    <!-- spacer -->
+    <td colspan="2">&nbsp;</td>
+
+</tr>
+
+
+<!-- Handler -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Assigned to' %}
+    </td>
+    <td colspan="5">
+    {% if bug.handler %}
+        {% with bug.handler as user %}{% include 'picket/user_link_inc.html' %}{% endwith %}
+    {% else %}
+        {% trans 'Nobody' %}
+    {% endif %}
+    </td>
+</tr>
+
+<tr class="{% cycle row-class %}">
+
+    <!-- Priority -->
+    <td class="category">
+        {% trans 'Priority' %}
+    </td>
+    <td>
+        {{ bug.get_priority_display }}
+    </td>
+
+    <!-- Resolution -->
+    <td class="category">
+        {% trans 'Resolution' %}
+    </td>
+    <td colspan="3">
+        {{ bug.get_resolution_display }}
+    </td>
+
+</tr>
+
+<tr class="{% cycle row-class %}">
+
+    <!-- Status -->
+    <td class="category">
+        {% trans 'Status' %}
+    </td>
+    <td bgcolor="{{ bug.get_status_color }}">
+        {{ bug.get_status_display }}
+    </td>
+    
+    <!-- Duplicate -->
+    {% if bug.duplicate %}
+    <td class="category">
+        {% trans 'duplicate_id' %}
+    <td colspan="3">
+        {{ bug.duplicate }}
+    </td>
+    {% else %}
+    <td colspan="4">&nbsp;</td>
+    {% endif %}
+
+</tr>
+
+<tr class="{% cycle row-class %}">
+
+    <!-- Projection -->
+    <td class="category">
+        {% trans 'Projection' %}
+    </td>
+    <td>
+        {{ bug.get_projection_display }}
+    </td>
+
+    <!-- spacer -->
+    <td colspan="4">&nbsp;</td>
+
+</tr>
+
+
+<tr class="{% cycle row-class %}">
+
+    <!-- ETA -->
+    <td class="category">
+        {% trans 'ETA' %}
+    </td>
+    <td>
+        {{ bug.get_eta_display }}
+    </td>
+    
+    <!-- spacer -->
+    <td colspan="4">&nbsp;</td>
+
+</tr>
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="6"></td>
+</tr>
+
+<!-- Summary -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Summary' %}
+    </td>
+    <td colspan="5">
+        {{ bug.summary }}
+    </td>
+</tr>
+
+<!-- @todo: markdown rendering in Description, "Steps" and Additional info -->
+
+<!-- Description -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Description' %}
+    </td>
+    <td colspan="5">
+        {{ bug.description }}
+    </td>
+</tr>
+
+<!-- Steps to Reproduce -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Steps to reproduce' %}
+    </td>
+    <td colspan="5">
+        {{ bug.steps_to_reproduce }}
+    </td>
+</tr>
+
+<!-- Additional Information -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Additional information' %}
+    </td>
+    <td colspan="5">
+        {{ bug.additional_information }}
+    </td>
+</tr>
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="6"></td>
+</tr>
+
+<!-- Attachments -->
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        <a name="attachments"></a>
+        {% trans 'Attached files' %}
+    </td>
+    <td colspan="5">
+    {% ifnotequal bug.bugfile_set.count 0 %}
+        {% for bugfile in bug.bugfile_set.all %}
+            <a href="{{ bugfile.file.url }}"><img src="{{ bugfile.get_file_icon }}" width="16" height="16" alt="" border="0" /></a> <a href="{{ bugfile.file.url }}">{{ bugfile.title }}</a> [<a href="{{ bugfile.file.url }}" target="_blank">^</a>] ({{ bugfile.file.size|filesizeformat }}) <span class="italic">{{ bugfile.date_added|date }} {{ bugfile.date_added|time }}</span>{% if not forloop.last %}<br />{% endif %}
+        {% endfor %}
+    {% endifnotequal %}
+    </td>
+</tr>
+
+<!-- Buttons -->
+<tr align="center">
+    <td align="center" colspan="6"><table><tr class="vcenter">
+        
+        <!-- UPDATE button -->
+        <td class="center">
+            <form method="get" action="% url picket-bug-update bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Update' %}" />
+            </form>
+        </td>
+
+        <!-- ASSIGN button -->
+        <td class="center">
+            <form method="post" action="% url picket-bug-update-handler bug_id=bug.id %">
+                {{ assign_form.handler }}
+                <input type="submit" class="button" value="{% trans 'Assign' %}" />
+            </form>
+        </td>
+        
+	    <!-- Change Status button -->
+        <td class="center">
+            <form method="post" action="% url picket-bug-update-status bug_id=bug.id %">
+                {{ status_form.status }}
+                <input type="submit" class="button" value="{% trans 'Change status' %}" />
+            </form>
+        </td>
+
+	    <!-- MONITOR/UNMONITOR button -->
+	    <td class="center">
+            {% if is_bugmonitor_user %}
+            <form method="post" action="% url picket-bug-mute bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Mute' %}" />
+            </form>
+	        {% else %}
+            <form method="post" action="% url picket-bug-monitor bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Monitor' %}" />
+            </form>
+	        {% endif %}
+	    </td>
+	
+        <!-- CREATE CHILD button -->
+        <td class="center">
+            <form method="post" action="% url picket-bug-gemma bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Clone' %}" />
+            </form>
+        </td>
+	
+	    {% if bug.is_resolved %}
+	    <!-- REOPEN button -->
+	    <td class="center">
+            <form method="post" action="% url picket-bug-reopen bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Reopen' %}" />
+            </form>
+	    </td>
+	    {% endif %}
+	    
+	    <!-- MOVE button -->
+        <td class="center">
+            <form method="post" action="% url picket-bug-move bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Move' %}" />
+            </form>
+        </td>
+	
+	    <!-- DELETE button -->
+	    <td class="center">
+            <form method="post" action="% url picket-bug-delete bug_id=bug.id %">
+                <input type="submit" class="button" value="{% trans 'Delete' %}" />
+            </form>
+	    </td>
+	    
+    </tr></table></td>
+</tr>
+</table>
+
+<!-- Bug Relationships -->
+<br/>
+<table class="width100" cellspacing="1">
+<tr class="row-2" valign="top">
+    <td width="15%" class="form-title" colspan="2">
+        {% trans 'Bug relationships' %}
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category">{% trans 'Add new relationship' %}</td>
+    <td>{% trans 'This bug' %}
+        <form method="post" action="% url picket-bug-relationship-add bug_id=bug.id %">
+        {{ bug_relationship_form.relationship_type }}
+        {{ bug_relationship_form.destination_bug }}
+        <input type="submit" name="add_relationship" class="button" value="{% trans 'Add new relationship' %}" />
+        </form>
+    </td></tr>
+<tr>
+    <td colspan="2">
+        <table border="0" width="100%" cellpadding="0" cellspacing="1">
+	    {% for bug_relationship in bug_relationships %}
+	    <tr bgcolor="{{ bug_relationship.destination_bug.get_status_color }}">
+           <td>{{ bug_relationship.get_relationship_type_display }}</td>
+           <td><a href="{{ bug_relationship.destination_bug.get_absolute_url }}">{{ bug_relationship.destination_bug.id }}</a></td>
+           <td>{{ bug_relationship.destination_bug.get_status_display }}</td>
+           <td>{% firstof bug_relationship.destination_bug.handler '' %}</td>
+           <td>{{ bug_relationship.destination_bug.summary }} (<a class="small" href="% url picket-bug-relationship-delete bug_relationship_id=bug_relationship.id %">{% trans 'Delete' %}</a>)</td>
+	    </tr>
+	    {% endfor %}
+        </table>
+    </td>
+</tr>
+</table>
+
+<!-- File upload box -->
+<br />
+<form method="post" enctype="multipart/form-data" action="% url picket-bugfile-upload bug_id=bug.id %">
+<table class="width100" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Upload file' %}
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category" width="15%">
+        {% trans 'Select file' %}
+    </td>
+    <td width="85%">
+        <input name="file" type="file" size="40" />
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category">
+        {% trans 'File title' %}
+    </td>
+    <td>
+        <input name="title" type="text" size="40" />
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category">&nbsp;</td>
+    <td>
+        <input type="submit" class="button" value="{% trans 'Upload file' %}" />
+    </td>
+</tr>
+</table>
 </form>
+
+<!-- User list monitoring the bug -->
+<br />
+<table class="width100" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Users monitoring this issue' %}
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category" width="15%">
+        {% trans 'User list' %}
+    </td>
+    <td width="85%">
+    {% spaceless %}
+        {% for bugmonitor_user in bugmonitor_users %}
+            {% with bugmonitor_user as user %}
+                {% include 'picket/user_link_inc.html' %}
+                {% if not forloop.last %}, {% endif %}
+            {% endwith %}
+        {% endfor %}
+    {% endspaceless %}
+    </td>
+</tr>
+</table>
+
+<!-- Bugnotes and "Add Note" box -->
+<a name="bugnotes" id="bugnotes"></a>
+<br />
+<table class="width100" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Bug notes' %}
+    </td>
+</tr>
+{% for bugnote in bug.bugnote_set.select_related.all %}
+<tr class="bugnote" id="bugnote{{ bugnote.id }}">
+        <td class="bugnote-public">
+        <span class="small">({{ bugnote.id }}) {{ bugnote.scope }}</span><br />
+        {% with bugnote.reporter as user %}
+        {% include 'picket/user_link_inc.html' %}
+        <span class="small">{{ user.groups.all }}</span>
+        {% endwith %}
+        <br />
+        <span class="small">{{ bugnote.date_submitted|date }} {{ bugnote.date_submitted|time }}</span><br />
+        {% ifnotequal bugnote.date_submitted bugnote.last_modified %}
+        <span class="small">{% trans 'Edited on' %} {{ bugnote.last_modified|date }} {{ bugnote.last_modified|time }}</span><br />
+        {% endifnotequal %}
+        <br /><div class="small">
+        <!-- @todo: update, delete links, scope change possibility -->
+        </div>
+    </td>
+    <!-- @todo: markdown rendering in note text -->
+    <td class="bugnote-note-public">{{ bugnote.text }}</td>
+</tr>
+<tr class="spacer">
+    <td colspan="2"></td>
+</tr>
+{% endfor %}
+</table>
+<a name="addbugnote"></a> <br />
+<form name="bugnoteadd" method="post" action="{% url picket-annotate bug_id=bug.id %}">
+<table class="width100" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+    {% trans 'Add bugnote' %}
+    </td>
+</tr>
+<tr class="row-2">
+    <td class="category" width="25%">
+        {% trans 'Bugnote' %}
+    </td>
+    <td width="75%">
+        <textarea name="text" cols="80" rows="10"></textarea>
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category">
+        {% trans 'Scope' %}
+    </td>
+    <td>
+        {{ bugnote_form.scope }}
+    </td>
+</tr>
+<tr>
+    <td class="center" colspan="2">
+        <input type="submit" class="button" value="{% trans 'Add bugnote' %}" />
+    </td>
+</tr>
+</table>
+</form>
+</div>
+
+<!-- History -->
+<a name="history" id="history" />
+<br />
+<table class="width100" cellspacing="0">
+<tr>
+    <td class="form-title" colspan="4">
+    {% trans 'Bug history' %}
+    </td>
+</tr>
+<tr class="row-category-history">
+    <td class="small-caption">
+        {% trans 'Date modified' %}
+    </td>
+    <td class="small-caption">
+        {% trans 'User' %}
+    </td>
+    <td class="small-caption">
+        {% trans 'Field' %}
+    </td>
+    <td class="small-caption">
+        {% trans 'Change' %}
+    </td>
+</tr>
+{% for bug_history_item in bug_history_items %}
+<tr class="{% cycle row-class %}">
+    <td class="small-caption">
+        {{ bug_history_item.date_modified|date }} {{ bug_history_item.date_modified|time }}
+    </td>
+    <td class="small-caption">
+        {% spaceless %}
+	        {% with bug_history_item.user as user %}
+	           {% include 'picket/user_link_inc.html' %}
+	        {% endwith %}
+        {% endspaceless %}
+    </td>
+    <td class="small-caption">
+        {{ bug_history_item.field_name }} {{ bug_history_item.get_type_display }}
+    </td>
+    <td class="small-caption">
+        {{ bug_history_item.old_value }} => {{ bug_history_item.new_value }}
+    </td>
+</tr>
+{% endfor %}
+</table>
+</div>
 
 {% endblock picketcontent %}

@@ -20,13 +20,15 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers       import reverse
 from django.http                    import HttpResponseRedirect
-from django.shortcuts               import get_object_or_404, \
-                                           render_to_response
+from django.shortcuts               import (get_object_or_404,
+                                            render_to_response)
 from django.template                import RequestContext
 from django.utils.translation       import ugettext as _
 
-from apps.picket.forms  import BugForm, BugnoteForm, BugFileForm
-from apps.picket.models import Bug, Project, Category, Scope
+from apps.picket.forms  import (BugForm, BugnoteForm, BugFileForm, AssignForm,
+                                StatusForm, BugRelationshipForm)
+from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
+                                BugHistory)
 
 @login_required
 def index(req):
@@ -98,9 +100,28 @@ def bug(req, project_id, category_id, bug_id):
         return HttpResponseRedirect(bug.get_absolute_url())
     
     bugnoteForm = BugnoteForm()
+    assignForm = AssignForm(instance=bug)
+    statusForm = StatusForm(instance=bug)
+    
+    bugFileForm = BugFileForm()
+    
+    bugmonitor_users = bug.monitor.filter(bugmonitor__mute=False)
+    is_bugmonitor_user = req.user in bugmonitor_users
+    
+    bugRelationshipForm = BugRelationshipForm()
+    bugRelationships = BugRelationship.objects.select_related().filter(
+        source_bug=bug)
+    
+    bugHistoryItems = BugHistory.objects.filter(bug=bug)
     
     return render_to_response('picket/bug.html',
-        {'bug': bug, 'bugnote_form': bugnoteForm,},
+        {'bug': bug, 'bugnote_form': bugnoteForm, 'assign_form': assignForm,
+            'status_form': statusForm, 'bugmonitor_users': bugmonitor_users,
+            'is_bugmonitor_user': is_bugmonitor_user,
+            'bug_relationship_form': bugRelationshipForm,
+            'bug_relationships': bugRelationships,
+            'bug_file_form': bugFileForm,
+            'bug_history_items': bugHistoryItems,},
         context_instance=RequestContext(req))
 
 @login_required
@@ -108,20 +129,24 @@ def annotate(req, bug_id):
     
     bug = get_object_or_404(Bug, id=bug_id)
     
-    assert req.method == 'POST'
-    
-    bugnoteForm = BugnoteForm(req.POST)
-    if bugnoteForm.is_valid():
-        bugnote = bugnoteForm.save(commit=False)
-        bugnote.bug, bugnote.reporter, bugnote.scope \
-            = bug, req.user, bug.scope
-        bugnote.save()
-        req.user.message_set.create(message=_('bugnote filed'))
-        return HttpResponseRedirect(bugnote.get_absolute_url())
+    if req.method == 'POST':
+        bugnoteForm = BugnoteForm(req.POST)
+        if bugnoteForm.is_valid():
+            bugnote = bugnoteForm.save(commit=False)
+            bugnote.bug, bugnote.reporter = bug, req.user
+            """ @todo: automate default bugnote.scope from bug.scope via
+            signals """ 
+            if bugnote.scope is None:
+                bugnote.scope = bug.scope
+            bugnote.save()
+            req.user.message_set.create(message=_('bugnote filed'))
+            return HttpResponseRedirect(bugnote.get_absolute_url())
+        else:
+            return render_to_response('picket/bugnote_form.html',
+                {'bugnote_form': bugnoteForm, 'bug': bug,},
+                context_instance=RequestContext(req))
     else:
-        return render_to_response('picket/bugnote_form.html',
-            {'bugnote_form': bugnoteForm, 'bug': bug,},
-            context_instance=RequestContext(req))
+        return HttpResponseRedirect(bug.get_absolute_url())
 
 @login_required
 def project(req, project_id):

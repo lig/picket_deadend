@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
 
-from apps.picket.models import Bug, Bugnote, Project, BugFile
+from apps.picket.models import Bug, Bugnote, Project, BugFile, BugRelationship
 
 class BugForm(forms.ModelForm):
     class Meta():
@@ -27,6 +27,21 @@ class BugForm(forms.ModelForm):
         fields = ['category', 'reproducibility', 'severity', 'priority',
             'summary', 'description', 'steps_to_reproduce',
             'additional_information', 'scope',]
+class AssignForm(forms.ModelForm):
+    class Meta():
+        model = Bug
+        fields = ['handler',]
+class StatusForm(forms.ModelForm):
+    class Meta():
+        model = Bug
+        fields = ['status',]
+
+class BugRelationshipForm(forms.ModelForm):
+    destination_bug = forms.ModelChoiceField(queryset=Bug.objects.all(),
+        widget=forms.TextInput)
+    class Meta():
+        model = BugRelationship
+        fields = ['relationship_type', 'destination_bug',]
 
 class BugFileForm(forms.ModelForm):
     class Meta():
@@ -36,7 +51,7 @@ class BugFileForm(forms.ModelForm):
 class BugnoteForm(forms.ModelForm):
     class Meta():
         model = Bugnote
-        fields = ['text',]
+        fields = ['text', 'scope',]
 
 class ProjectForm(forms.ModelForm):
     class Meta():

@@ -25,7 +25,6 @@ PROJECT_STATUS_CHOICES = (
     (50,_('stable'),),
     (70,_('obsolete'),),
 )
-
 PROJECT_STATUS_CHOICES_DEFAULT = 10
 
 PRIORITY_CHOICES = (
@@ -36,7 +35,6 @@ PRIORITY_CHOICES = (
     (50,_('urgent'),),
     (60,_('immediate'),),
 )
-
 PRIORITY_CHOICES_DEFAULT = 30
 
 SEVERITY_CHOICES = (
@@ -49,7 +47,6 @@ SEVERITY_CHOICES = (
     (70,_('crash'),),
     (80,_('block'),),
 )
-
 SEVERITY_CHOICES_DEFAULT = 50
 
 REPRODUCIBILITY_CHOICES = (
@@ -60,7 +57,6 @@ REPRODUCIBILITY_CHOICES = (
     (90,_('unable to duplicate'),),
     (100,_('N/A'),),
 )
-
 REPRODUCIBILITY_CHOICES_DEFAULT = 70
 
 BUG_STATUS_CHOICES = (
@@ -72,9 +68,7 @@ BUG_STATUS_CHOICES = (
     (80,_('resolved'),),
     (90,_('closed'),),
 )
-
 BUG_STATUS_CHOICES_DEFAULT = 10
-
 BUG_STATUS_COLORS = {
     10: '#ffa0a0', # red
     20: '#ff50a8', # purple
@@ -84,6 +78,7 @@ BUG_STATUS_COLORS = {
     80: '#cceedd', # buish-green
     90: '#e8e8e8', # light gray
 }
+BUG_RESOLVED_STATUS_THRESHOLD = 80
 
 RESOLUTION_CHOICES = (
     (10,_('open'),),
@@ -96,7 +91,6 @@ RESOLUTION_CHOICES = (
     (80,_('suspended'),),
     (90,_('wont fix'),),
 )
-
 RESOLUTION_CHOICES_DEFAULT = 10
 
 PROJECTION_CHOICES = (
@@ -106,7 +100,6 @@ PROJECTION_CHOICES = (
     (70,_('major rework'),),
     (90,_('redesign'),),
 )
-
 PROJECTION_CHOICES_DEFAULT = 10
 
 ETA_CHOICES = (
@@ -117,9 +110,9 @@ ETA_CHOICES = (
     (50,_('< 1 month'),),
     (60,_('> 1 month'),),
 )
-
 ETA_CHOICES_DEFAULT = 10
 
+# @note: not used. scopes used instead yet.
 ACCESS_LEVELS_CHOICES = (
     (10,_('viewer'),),
     (25,_('reporter'),),
@@ -128,7 +121,6 @@ ACCESS_LEVELS_CHOICES = (
     (70,_('manager'),),
     (90,_('administrator'),),
 )
-
 ACCESS_LEVELS_CHOICES_DEFAULT = 10
 
 COLUMNS_BUGS_VIEW = (

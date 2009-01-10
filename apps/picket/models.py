@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import os
+
+from django.conf                import settings
 from django.contrib.auth.models import User, Group
 from django.db                  import models
 from django.utils.translation   import ugettext_lazy as _
@@ -220,15 +223,18 @@ class Bug(models.Model):
     
     def get_status_color(self):
         return BUG_STATUS_COLORS[self.status]
-    
+        
     def get_display_columns(self):
         return [self.__getattribute__(column[0]) \
             for column in COLUMNS_BUGS_VIEW]
     
+    def is_resolved(self):
+        return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
+    
     class Meta():
         verbose_name = _('bug')
         verbose_name_plural = _('bugs')
-        ordering = ['last_updated',]
+        ordering = ['-last_updated',]
 
 class BugFile(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
@@ -239,10 +245,26 @@ class BugFile(models.Model):
 
     def __unicode__(self):
         return u'%s' % self.title
-
+    
+    def get_file_icon(self):
+        """ returns path of the file icon by file extension """
+        
+        fileicons_path = os.path.join(settings.MEDIA_ROOT, 'images',
+            'fileicons')
+        fileicons_url = os.path.join(settings.MEDIA_URL, 'images', 'fileicons')
+        
+        ext = os.path.splitext(self.file.path)[1][1:]
+        icon_name = '%s.gif' % ext
+        if len(ext) == 0:
+            icon_name = 'generic.gif'
+        elif not os.path.exists(os.path.join(fileicons_path, icon_name)):
+            icon_name = 'unknown.gif'
+        return os.path.join(fileicons_url, icon_name)
+    
     class Meta():
         verbose_name = _('bug file')
         verbose_name_plural = _('bug files')
+        ordering = ['date_added',]
 
 class ProjectFile(models.Model):
     project = models.ForeignKey(Project, verbose_name=_('project'))
@@ -259,8 +281,11 @@ class ProjectFile(models.Model):
     class Meta():
         verbose_name = _('project file')
         verbose_name_plural = _('project files')
+        ordering = ['date_added',]
 
 class BugHistory(models.Model):
+    objects = models.Manager()
+    
     user = models.ForeignKey(User,
         verbose_name=_('bug history entry user'))
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
@@ -285,8 +310,19 @@ class BugHistory(models.Model):
     class Meta():
         verbose_name = _('bug history entry')
         verbose_name_plural = _('bug history entries')
+        ordering = ['date_modified',]
+
+class BugMonitorManager(models.Manager):
+    def active(self):
+        return self.get_query_set().filter(mute=False)
 
 class BugMonitor(models.Model):
+    """
+    @todo: automate BugMonitor from bug.reporter, bug.handler, bugnote.author
+    to make sense of mute feature
+    """
+    objects = BugMonitorManager()
+    
     user = models.ForeignKey(User, verbose_name=_('bug monitor user'))
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
     mute = models.BooleanField(_('bug monitor mute'), default=False)
@@ -296,6 +332,12 @@ class BugMonitor(models.Model):
         verbose_name_plural = _('bug monitor entries')
 
 class BugRelationship(models.Model):
+    """
+    @todo: automate bug relationship reverse connection creation and its
+    synchronized deletion to allow one direction queries  
+    """
+    objects = models.Manager()
+    
     source_bug = models.ForeignKey(Bug,
         verbose_name=_('bug relationship source'),
         related_name='source')
@@ -320,7 +362,7 @@ class Bugnote(models.Model):
     reporter = models.ForeignKey(User, verbose_name=_('bugnote user'))
     text = models.TextField(_('bugnote text'))
     scope = models.ForeignKey(Scope,
-        verbose_name=_('bugnote scope'))
+        verbose_name=_('bugnote scope'), null=True, blank=True)
     date_submitted = models.DateTimeField(_('bugnote date submitted'),
         auto_now_add=True, editable=False)
     last_modified = models.DateTimeField(_('bugnote last modified'),
