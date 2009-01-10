@@ -1,4 +1,4 @@
-{% extends 'picket/base.html' %}{% load i18n %}
+{% extends 'picket/base.html' %}{% load i18n %}{% load markup %}
 {% comment %}
 Copyright 2008 Serge Matveenko
 
@@ -241,15 +241,13 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     </td>
 </tr>
 
-<!-- @todo: markdown rendering in Description, "Steps" and Additional info -->
-
 <!-- Description -->
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Description' %}
     </td>
     <td colspan="5">
-        {{ bug.description }}
+        {{ bug.description|markdown }}
     </td>
 </tr>
 
@@ -259,7 +257,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Steps to reproduce' %}
     </td>
     <td colspan="5">
-        {{ bug.steps_to_reproduce }}
+        {{ bug.steps_to_reproduce|markdown }}
     </td>
 </tr>
 
@@ -269,7 +267,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Additional information' %}
     </td>
     <td colspan="5">
-        {{ bug.additional_information }}
+        {{ bug.additional_information|markdown }}
     </td>
 </tr>
 
@@ -486,8 +484,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <!-- @todo: update, delete links, scope change possibility -->
         </div>
     </td>
-    <!-- @todo: markdown rendering in note text -->
-    <td class="bugnote-note-public">{{ bugnote.text }}</td>
+    <td class="bugnote-note-public">{{ bugnote.text|markdown }}</td>
 </tr>
 <tr class="spacer">
     <td colspan="2"></td>
