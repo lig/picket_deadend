@@ -25,7 +25,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     <form method="get" name="form_set_project" action="{% url picket-set-project-gonext view_name=view_name %}">
         {% trans 'Choose project' %}:
         <select name="project_id" class="small">
+            {% ifnotequal view_name 'picket-filebug' %}
             <option value=""{% if not project %} selected="selected"{% endif %}>{% trans 'All projects' %}</option>
+            {% endifnotequal %}
             {% for picket_project in picket_projects %}
             <option value="{{ picket_project.id }}"{% ifequal picket_project.id project.id  %} selected="selected"{% endifequal %}>{{ picket_project.name }}</option>
             {% endfor %}

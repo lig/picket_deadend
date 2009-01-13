@@ -27,10 +27,12 @@ class BugForm(forms.ModelForm):
         fields = ['category', 'reproducibility', 'severity', 'priority',
             'summary', 'description', 'steps_to_reproduce',
             'additional_information', 'scope',]
+
 class AssignForm(forms.ModelForm):
     class Meta():
         model = Bug
         fields = ['handler',]
+
 class StatusForm(forms.ModelForm):
     class Meta():
         model = Bug

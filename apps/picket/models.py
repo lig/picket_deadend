@@ -74,19 +74,27 @@ class ProjectManager(models.Manager):
         
 class Project(models.Model):
     objects = ProjectManager()
+
     name = models.CharField(_('project name'),
         unique=True, max_length=255)
+
     status = models.PositiveIntegerField(_('project status'),
         choices=PROJECT_STATUS_CHOICES,
         default=PROJECT_STATUS_CHOICES_DEFAULT)
+
     enabled = models.BooleanField(_('project enabled'), default=True)
+
     scope = models.ForeignKey(Scope,
         verbose_name=_('project scope'))
+
     url = models.URLField(_('project url'), verify_exists=False, blank=True)
+
     description = models.TextField(_('project description'),
         blank=True)
+
     parent = models.ForeignKey('Project',
         verbose_name=_('project parent'), blank=True, null=True)
+        
     user_list = models.ManyToManyField(User,
         verbose_name=_('project user list'), blank=True, null=True,
         related_name='project_list', through='ProjectUserList')
@@ -209,24 +217,14 @@ class Bug(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('picket-bug', [str(self.project_id), str(self.category_id),
-            str(self.id)])
-    
-    def check_place(self, project, category):
-        """
-        raises exception if provided project or category are not project and
-        category of the bug
-        """
-        if int(project) != self.project_id \
-        or int(category) != self.category_id:
-            raise Exception('i\'m not here')
+        return ('picket-bug', [str(self.id)])
     
     def get_status_color(self):
         return BUG_STATUS_COLORS[self.status]
         
     def get_display_columns(self):
-        return [self.__getattribute__(column[0]) \
-            for column in COLUMNS_BUGS_VIEW]
+        return [ self.__getattribute__(column[0]) \
+            for column in COLUMNS_BUGS_VIEW ]
     
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status

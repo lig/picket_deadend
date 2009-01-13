@@ -19,7 +19,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers       import reverse
-from django.http                    import HttpResponseRedirect
+from django.http                    import (HttpResponseRedirect,
+                                            HttpResponseNotFound)
 from django.shortcuts               import (get_object_or_404,
                                             render_to_response)
 from django.template                import RequestContext
@@ -31,55 +32,55 @@ from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
                                 BugHistory)
 
 @login_required
-def index(req):
+def index(request):
     
     return render_to_response('picket/index.html', {},
-        context_instance=RequestContext(req))
+        context_instance=RequestContext(request))
     
 @login_required
-def bugs(req, category_id=None, skip=0, limit=20):
-    
-    project_id = req.session.get('project_id', None)
+def bugs(request, category_id=None, skip=0, limit=20):
+
+    project_id = request.session.get('project_id', None)
     project = get_object_or_404(Project, id=project_id) \
         if project_id is not None else None
 
     category = get_object_or_404(Category, id=category_id) \
         if category_id is not None else None
     
-    bugs = Bug.objects.permited(req.user, project, category)
+    bugs = Bug.objects.permited(request.user, project, category)
     sticky_bugs = bugs.filter(sticky=True)
     bugs = bugs.filter(sticky=False)[skip:skip+limit]
     
     #bugs = [bug.column for column in Bug.Meta for bug in bugs]
     
     return render_to_response('picket/bugs.html',
-        {'bugs': bugs, 'sticky_bugs': sticky_bugs, 'project': project,
-            'category': category,},
-        context_instance=RequestContext(req))
+        {'bugs': bugs, 'sticky_bugs': sticky_bugs,
+            'project': project, 'category': category,},
+        context_instance=RequestContext(request))
 
 @login_required
-def filebug(req):
+def filebug(request):
     
-    if not 'project_id' in req.session:
+    if not 'project_id' in request.session:
         return HttpResponseRedirect(reverse('picket-choose-project-gonext',
             kwargs={'view_name': 'picket-filebug',}))
     
-    scopes = Scope.objects.permited(req.user)
+    scopes = Scope.objects.permited(request.user)
     
-    if req.method == 'POST':
-        bugForm = BugForm(req.POST)
-        bugFileForm = BugFileForm(req.POST, req.FILES, prefix='bugfile')
+    if request.method == 'POST':
+        bugForm = BugForm(request.POST)
+        bugFileForm = BugFileForm(request.POST, request.FILES, prefix='bugfile')
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
-            bug.reporter = req.user
+            bug.reporter = request.user
             bug.project_id = bug.category.project_id
             bug.save()
-            req.user.message_set.create(message=_('bug filed'))
+            request.user.message_set.create(message=_('bug filed'))
             if bugFileForm.is_valid():
                 bugFile = bugFileForm.save(commit=False)
                 bugFile.bug = bug
                 bugFile.save()
-                req.user.message_set.create(message=_('file for bug uploaded'))
+                request.user.message_set.create(message=_('file for bug uploaded'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
         bugForm = BugForm()
@@ -87,17 +88,15 @@ def filebug(req):
     
     return render_to_response('picket/bug_form.html',
         {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,},
-        context_instance=RequestContext(req))
+        context_instance=RequestContext(request))
 
 @login_required
-def bug(req, project_id, category_id, bug_id):
+def bug(request, bug_id):
+    """
+    View bug by its id
+    """
     
     bug = get_object_or_404(Bug, id=bug_id)
-    
-    try:
-        bug.check_place(project_id, category_id)
-    except:
-        return HttpResponseRedirect(bug.get_absolute_url())
     
     bugnoteForm = BugnoteForm()
     assignForm = AssignForm(instance=bug)
@@ -106,7 +105,7 @@ def bug(req, project_id, category_id, bug_id):
     bugFileForm = BugFileForm()
     
     bugmonitor_users = bug.monitor.filter(bugmonitor__mute=False)
-    is_bugmonitor_user = req.user in bugmonitor_users
+    is_bugmonitor_user = request.user in bugmonitor_users
     
     bugRelationshipForm = BugRelationshipForm()
     bugRelationships = BugRelationship.objects.select_related().filter(
@@ -122,74 +121,78 @@ def bug(req, project_id, category_id, bug_id):
             'bug_relationships': bugRelationships,
             'bug_file_form': bugFileForm,
             'bug_history_items': bugHistoryItems,},
-        context_instance=RequestContext(req))
+        context_instance=RequestContext(request))
 
 @login_required
-def annotate(req, bug_id):
+def annotate(request, bug_id):
     
     bug = get_object_or_404(Bug, id=bug_id)
     
-    if req.method == 'POST':
-        bugnoteForm = BugnoteForm(req.POST)
+    if request.method == 'POST':
+        bugnoteForm = BugnoteForm(request.POST)
         if bugnoteForm.is_valid():
             bugnote = bugnoteForm.save(commit=False)
-            bugnote.bug, bugnote.reporter = bug, req.user
+            bugnote.bug, bugnote.reporter = bug, request.user
             """ @todo: automate default bugnote.scope from bug.scope via
             signals """ 
             if bugnote.scope is None:
                 bugnote.scope = bug.scope
             bugnote.save()
-            req.user.message_set.create(message=_('bugnote filed'))
+            request.user.message_set.create(message=_('bugnote filed'))
             return HttpResponseRedirect(bugnote.get_absolute_url())
         else:
             return render_to_response('picket/bugnote_form.html',
                 {'bugnote_form': bugnoteForm, 'bug': bug,},
-                context_instance=RequestContext(req))
+                context_instance=RequestContext(request))
     else:
         return HttpResponseRedirect(bug.get_absolute_url())
 
 @login_required
-def project(req, project_id):
+def project(request, project_id):
     return HttpResponseRedirect(reverse('picket-admin-project',
         args=(project_id,)))
 
 @login_required
-def choose_project(req, view_name='picket-bugs'):
+def choose_project(request, view_name='picket-bugs'):
     """
     form for choosing project 
     """
     return render_to_response('picket/choose_project.html',
-        {'view_name': view_name,}, context_instance=RequestContext(req))
+        {'view_name': view_name,}, context_instance=RequestContext(request))
 
 @login_required
-def set_project(req, view_name='picket-bugs'):
+def set_project(request, view_name='picket-bugs'):
     """
     writing project to session for other views could use it from there 
     """
     
-    projectId = req.GET.get('project_id', None)
+    projectId = request.GET.get('project_id', None) or None
     
     if projectId is not None:
         project = get_object_or_404(Project, id=projectId)
-        req.session['project_id'] = project.id
+        request.session['project_id'] = project.id
         return HttpResponseRedirect(reverse(view_name))
     else:
-        if req.session.has_key('project_id'):
-            del req.session['project_id'] 
+        if request.session.has_key('project_id'):
+            del request.session['project_id']
         return HttpResponseRedirect(reverse(view_name))
 
 @login_required
-def jump_to_bug(req):
+def jump_to_bug(request):
     """
     redirecting to bug
     """
+
+    bug_id = request.GET['bug_id']
     
-    bug = get_object_or_404(Bug, id=req.GET['bug_id'])
+    if not bug_id.isdigit(): return HttpResponseNotFound()
+    
+    bug = get_object_or_404(Bug, id=bug_id)
     
     return HttpResponseRedirect(bug.get_absolute_url())
 
 @login_required
-def dummy(req):
+def dummy(request):
     """
     just redirecting to bugs view now
     """
