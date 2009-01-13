@@ -108,7 +108,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n', 
     'django.core.context_processors.media',
     ## picket
-    'apps.picket.context_processors.navi',
+    'apps.picket.context_processors.picket',
 )
 
 AUTH_PROFILE_MODULE = 'users.profile'

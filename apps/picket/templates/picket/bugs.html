@@ -62,4 +62,20 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 </table>
 
+{% if config.SHOW_LEGEND %}
+<br/>
+
+<table class="width100" cellspacing="1">
+    <tbody>
+      <tr>
+        {% for key, value in legend %}
+        <td class="small-caption" bgcolor="{{ value }}" width="14%">
+            {{ key }}
+        </td>
+        {% endfor %}
+      </tr>
+    </tbody>
+</table>
+{% endif %}
+
 {% endblock picketcontent %}

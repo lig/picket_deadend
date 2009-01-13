@@ -16,26 +16,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
+
 from apps.picket            import COPYING
 from apps.picket.models     import Project
 from apps.picket            import settings as config
 
-def navi(req):
+def picket(request):
     
-    projects = list(Project.objects.permited(req.user))
+    projects = list(Project.objects.permited(request.user))
     
     try:
-        cur_project = Project.objects.permited(req.user).get(
-            pk=req.session.get('project_id', 0))
+        cur_project = Project.objects.permited(request.user).get(
+            pk=request.session.get('project_id', 0))
     except Project.DoesNotExist:
         cur_project = None
 
-    if req.method == 'POST':
-        cur_url = req.META['HTTP_REFERER']
-    elif 'QUERY_STRING' in req.META:
-        cur_url = '%s?%s' % (req.path, req.META['QUERY_STRING'])
+    if request.method == 'POST':
+        cur_url = request.META['HTTP_REFERER']
+    elif 'QUERY_STRING' in request.META:
+        cur_url = '%s?%s' % (request.path, request.META['QUERY_STRING'])
     else:
-        cur_url = req.path
+        cur_url = request.path
+
+    legend = []
+    for (k, v) in config.BUG_STATUS_CHOICES:
+        legend.append((v, config.BUG_STATUS_COLORS[k]))
         
-    return {'picket_projects': projects, 'cur_project': cur_project,
-        'cur_url': cur_url, 'config': config, 'COPYING': COPYING,}
+    return { 'picket_projects': projects, 'cur_project': cur_project,
+        'cur_url': cur_url, 'config': config, 'COPYING': COPYING,
+        'legend': legend }
+
