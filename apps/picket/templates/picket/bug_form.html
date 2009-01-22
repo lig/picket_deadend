@@ -43,11 +43,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     </td>
     <td width="70%">
         [{{ cur_project.name }}]
-        <select name="category">
-        {% for category in cur_project.category_set.all %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
-        {% endfor %}
-        </select>
+        {{ bug_form.category }}
     </td>
 </tr>
 
@@ -96,7 +92,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.summary.errors.as_text }}</span>
     </td>
     <td>
-        <input type="text" name="summary" size="105" maxlength="255" />
+        <input type="text" name="summary" size="105" maxlength="255" value="{{ bug_form.summary.data }}" />
     </td>
 </tr>
 
@@ -107,7 +103,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.description.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="description" cols="80" rows="10"></textarea>
+        <textarea name="description" cols="80" rows="10">{{ bug_form.description.data }}</textarea>
     </td>
 </tr>
 
@@ -118,7 +114,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.steps_to_reproduce.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="steps_to_reproduce" cols="80" rows="10"</textarea>
+        <textarea name="steps_to_reproduce" cols="80" rows="10">{{ bug_form.steps_to_reproduce.data }}</textarea>
     </td>
 </tr>
 
@@ -129,7 +125,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.additional_info.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="additional_info" cols="80" rows="10"</textarea>
+        <textarea name="additional_info" cols="80" rows="10">{{ bug_form.additional_info.data }}</textarea>
     </td>
 </tr>
 
@@ -165,15 +161,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Scope -->
 <tr class="{% cycle row-class %}">
     <td class="category">
-        {% trans 'Scope' %}
+        <span class="required">*</span>{% trans 'Scope' %}
         <br /><span class="required">{{ bug_form.scope.errors.as_text }}</span>
     </td>
     <td>
-        <select name="scope">
-        {% for scope in scopes %}
-            <option value="{{ scope.id }}">{{ scope.name }}</option>
-        {% endfor %}
-        </select>
+        {{ bug_form.scope }}
     </td>
 </tr>
 
