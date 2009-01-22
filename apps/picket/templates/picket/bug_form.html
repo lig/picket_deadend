@@ -161,8 +161,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Scope -->
 <tr class="{% cycle row-class %}">
     <td class="category">
-        <span class="required">*</span>{% trans 'Scope' %}
-        <br /><span class="required">{{ bug_form.scope.errors.as_text }}</span>
+        {% trans 'Scope' %}
     </td>
     <td>
         {{ bug_form.scope }}

@@ -139,7 +139,7 @@ class Category(models.Model):
         verbose_name=_('category handler'), blank=True, null=True)
 
     def __unicode__(self):
-        return u'%s: %s' % (self.project, self.name)
+        return u'%s' % self.name
 
     @models.permalink
     def get_absolute_url(self):
@@ -193,7 +193,8 @@ class Bug(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     eta = models.PositiveIntegerField(_('bug ETA'), choices=ETA_CHOICES,
         default=ETA_CHOICES_DEFAULT)
-    scope = models.ForeignKey(Scope, verbose_name=_('bug scope'))
+    scope = models.ForeignKey(Scope, verbose_name=_('bug scope'), null=True,
+        blank=True)
     summary = models.CharField(_('bug summary'), max_length=255)
     description = models.TextField(_('bug description'))
     steps_to_reproduce = models.TextField(_('bug steps to reproduce'),
