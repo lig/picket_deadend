@@ -1,4 +1,5 @@
-"""
+{% extends 'picket/base.html' %}{% load i18n %}
+{% comment %}
 Copyright 2008 Serge Matveenko
 
 This file is part of Picket.
@@ -15,14 +16,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
+{% endcomment %}
 
-from django.conf.urls.defaults  import *
-
-urlpatterns = patterns('apps.picket.admin.views',
-    (r'^$', 'index', {}, 'picket-admin',),
-    (r'^users/$', 'users', {}, 'picket-admin-users',),
-    (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
-    (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
-    (r'^project/(?P<projectId>\d+)/$', 'project', {}, 'picket-admin-project',),
-)
+{% block picketcontent %}
+{% include 'picket/admin/menu_inc.html' %}
+<div id="picketadmincontent">
+{% block picketadmincontent %}
+{% endblock picketadmincontent %}
+</div>
+{% endblock picketcontent %}

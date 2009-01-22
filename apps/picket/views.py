@@ -74,6 +74,10 @@ def filebug(request):
             bug = bugForm.save(commit=False)
             bug.reporter = request.user
             bug.project_id = bug.category.project_id
+            """ @todo: automate default bug.scope from project.scope via
+            signals """ 
+            if bug.scope is None:
+                bug.scope = bug.project.scope
             bug.save()
             request.user.message_set.create(message=_('bug filed'))
             if bugFileForm.is_valid():

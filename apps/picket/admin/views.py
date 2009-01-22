@@ -35,7 +35,7 @@ def index(request):
 
 @user_passes_test(is_su)
 def users(request):
-    ## implement users administration interface
+    """ @todo: implement users administration interface """
     return render_to_response('picket/admin/index.html', {},
         context_instance=RequestContext(request))
 
@@ -59,7 +59,7 @@ def add_project(request):
     else:
         projectForm = ProjectForm()
     
-    return render_to_response('picket/admin/project-form.html',
+    return render_to_response('picket/admin/project_add.html',
         {'project_form': projectForm,}, context_instance=RequestContext(request))
 
 @user_passes_test(is_su)
@@ -77,5 +77,5 @@ def project(request, projectId):
     else:
         projectForm = ProjectForm(instance=project)
     
-    return render_to_response('picket/admin/project-form.html',
+    return render_to_response('picket/admin/project_manage.html',
         {'project_form': projectForm,}, context_instance=RequestContext(request))

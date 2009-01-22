@@ -20,9 +20,18 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picketadmincontent %}
 
-<form action="" method="post">
-    <table>{{ project_form }}</table>
-    <input type="submit" name="submit" value="{% trans 'Submit' %}" />
+<br />
+<div align="center">
+<form method="post" action="">
+<table class="width75" cellspacing="1">
+{% include 'picket/admin/project_form_inc.html' %}
+<tr>
+    <td class="center" colspan="2">
+        <input type="submit" class="button" value="{% trans 'Add project' %}" />
+    </td>
+</tr>
+</table>
 </form>
+</div>
 
 {% endblock picketadmincontent %}
