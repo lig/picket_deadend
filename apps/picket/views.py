@@ -51,8 +51,6 @@ def bugs(request, category_id=None, skip=0, limit=20):
     sticky_bugs = bugs.filter(sticky=True)
     bugs = bugs.filter(sticky=False)[skip:skip+limit]
     
-    #bugs = [bug.column for column in Bug.Meta for bug in bugs]
-    
     return render_to_response('picket/bugs.html',
         {'bugs': bugs, 'sticky_bugs': sticky_bugs,
             'project': project, 'category': category,},
