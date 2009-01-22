@@ -29,6 +29,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr>
     <td class="form-title" colspan="2">
         {% trans 'Please file your bug in the form below' %}
+        {% if bug_form.errors %}
+        <br /><span class="required">{% trans 'Please fix errors in the form' %}</span>
+        {% endif %}
     </td>
 </tr>
 
@@ -36,6 +39,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle 'row-1' 'row-2' as row-class %}">
     <td class="category" width="30%">
         <span class="required">*</span>{% trans 'Category' %}
+        <br /><span class="required">{{ bug_form.category.errors.as_text }}</span>
     </td>
     <td width="70%">
         [{{ cur_project.name }}]
@@ -51,6 +55,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Reproducibility' %}
+        <br /><span class="required">{{ bug_form.reproducibility.errors.as_text }}</span>
     </td>
     <td>
         {{ bug_form.reproducibility }}
@@ -61,6 +66,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Severity' %}
+        <br /><span class="required">{{ bug_form.severity.errors.as_text }}</span>
     </td>
     <td>
         {{ bug_form.severity }}
@@ -71,6 +77,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Priority' %}
+        <br /><span class="required">{{ bug_form.priority.errors.as_text }}</span>
     </td>
     <td>
         {{ bug_form.priority }}
@@ -86,6 +93,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         <span class="required">*</span>{% trans 'Summary' %}
+        <br /><span class="required">{{ bug_form.summary.errors.as_text }}</span>
     </td>
     <td>
         <input type="text" name="summary" size="105" maxlength="255" />
@@ -96,6 +104,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         <span class="required">*</span>{% trans 'Description' %}
+        <br /><span class="required">{{ bug_form.description.errors.as_text }}</span>
     </td>
     <td>
         <textarea name="description" cols="80" rows="10"></textarea>
@@ -106,6 +115,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Steps to reproduce' %}
+        <br /><span class="required">{{ bug_form.steps_to_reproduce.errors.as_text }}</span>
     </td>
     <td>
         <textarea name="steps_to_reproduce" cols="80" rows="10"</textarea>
@@ -116,6 +126,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Additional information' %}
+        <br /><span class="required">{{ bug_form.additional_info.errors.as_text }}</span>
     </td>
     <td>
         <textarea name="additional_info" cols="80" rows="10"</textarea>
@@ -151,10 +162,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     <td colspan="2"></td>
 </tr>
 
-<!-- View Status -->
+<!-- Scope -->
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Scope' %}
+        <br /><span class="required">{{ bug_form.scope.errors.as_text }}</span>
     </td>
     <td>
         <select name="scope">
@@ -167,10 +179,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- Submit Button -->
 <tr>
-    <td class="left">
-        <span class="required"> * {% trans 'Required' %}</span>
-    </td>
-    <td class="center">
+    <td colspan="2" class="center">
         <input type="submit" class="button" value="{% trans 'File bug' %}" />
     </td>
 </tr>
