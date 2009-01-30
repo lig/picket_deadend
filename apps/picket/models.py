@@ -151,11 +151,13 @@ class Category(models.Model):
         unique_together = (('project', 'name'),)
 
 class BugManager(models.Manager):
+    
     def permited(self, user, project=None, category=None):
         
-        bugs = self.filter(scope__in=Scope.objects.permited(user),
+        bugs = self.select_related().filter(
+            scope__in=Scope.objects.permited(user),
             project__in=Project.objects.permited(user))
-
+        
         bugs = bugs.filter(project=project) if project is not None else bugs
         
         bugs = bugs.filter(category=category) if category is not None else bugs
@@ -223,10 +225,9 @@ class Bug(models.Model):
     def get_status_color(self):
         return BUG_STATUS_COLORS[self.status]
         
-    def get_display_columns(self):
-        return [ self.__getattribute__(column[0]) \
-            for column in COLUMNS_BUGS_VIEW ]
-    
+    def get_priority_icon(self):
+            return PRIORITY_ICONS[self.priority]
+        
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
     

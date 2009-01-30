@@ -26,6 +26,9 @@ except ImportError:
     sys.stderr.write('Unable to import settings_global.py\n')
     sys.exit(1)
 
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )

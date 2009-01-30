@@ -1,3 +1,4 @@
+{% load picket_tags %}
 {% comment %}
 Copyright 2008 Serge Matveenko
 
@@ -17,9 +18,6 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-
-{% with bug.get_display_columns as columns %}
-{% for column in columns %}
-<td>{{ column }}</td>
+{% for column_name, column_title in config.COLUMNS_BUGS_VIEW %}
+<td>{% includejoin 'picket/bug_fields/' column_name '_inc.html'  %}</td>
 {% endfor %}
-{% endwith %}

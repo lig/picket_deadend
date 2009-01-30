@@ -40,6 +40,15 @@ PRIORITY_CHOICES = (
 
 PRIORITY_CHOICES_DEFAULT = 30
 
+PRIORITY_ICONS = {
+                10: '/media/images/priority_low_3.gif',
+                20: '/media/images/priority_low_2.gif',
+                30: '/media/images/priority_low_1.gif',
+                40: '/media/images/priority_1.gif',
+                50: '/media/images/priority_2.gif',
+                60: '/media/images/priority_3.gif',
+}
+
 
 SEVERITY_CHOICES = (
     (10, _('feature'),),
@@ -144,16 +153,17 @@ ACCESS_LEVELS_CHOICES_DEFAULT = 10
 
 
 COLUMNS_BUGS_VIEW = (
-    ('priority', _('Priority'),),
+    ('priority', _('P'),),
     ('id', _('ID'),),
-    ('sponsorship_total', _('Sponsorship'),),
-    ('num_bugnotes', _('Number of comments'),),
+    ('sponsorship_total', _('$'),),
+    ('num_bugnotes', _('#'),),
     ('category', _('Category'),),
     ('severity', _('Severity'),),
     ('status', _('Status'),),
     ('last_updated', _('Updated'),),
     ('summary', _('Summary'),),
 )
+
 
 """ settings for integration in some other django project as app """
 INTEGRATION = True

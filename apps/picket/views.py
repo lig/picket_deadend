@@ -38,7 +38,7 @@ def index(request):
         context_instance=RequestContext(request))
     
 @login_required
-def bugs(request, category_id=None, skip=0, limit=20):
+def bugs(request, category_id=None):
 
     project_id = request.session.get('project_id', None)
     project = get_object_or_404(Project, id=project_id) \
@@ -49,7 +49,7 @@ def bugs(request, category_id=None, skip=0, limit=20):
     
     bugs = Bug.objects.permited(request.user, project, category)
     sticky_bugs = bugs.filter(sticky=True)
-    bugs = bugs.filter(sticky=False)[skip:skip+limit]
+    bugs = bugs.filter(sticky=False)
     
     return render_to_response('picket/bugs.html',
         {'bugs': bugs, 'sticky_bugs': sticky_bugs,
