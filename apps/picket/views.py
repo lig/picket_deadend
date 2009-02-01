@@ -40,8 +40,8 @@ def index(request):
 @login_required
 def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     """
-    @note: Add order_by_field_name method to BugManager to order by custom
-        column name
+    @note: Add order_by_field_name method to custom.py module to order by
+        custom column name
     """
         
     project_id = request.session.get('project_id', None)
