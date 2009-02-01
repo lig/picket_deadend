@@ -30,7 +30,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <tr class="row-category">
 {% for column_name, column_title in config.COLUMNS_BUGS_VIEW %}
-<td>{{ column_title }}</td>
+<td><a href="{% url picket-bugs-ordered sort_field=column_name sort_dir="ASC" %}">{{ column_title }}</a></td>
 {% endfor %}
 </tr>
 

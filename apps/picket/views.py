@@ -18,18 +18,18 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers       import reverse
-from django.http                    import (HttpResponseRedirect,
-                                            HttpResponseNotFound)
-from django.shortcuts               import (get_object_or_404,
-                                            render_to_response)
-from django.template                import RequestContext
-from django.utils.translation       import ugettext as _
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
-from apps.picket.forms  import (BugForm, BugnoteForm, BugFileForm, AssignForm,
-                                StatusForm, BugRelationshipForm)
+from apps.picket import custom
+from apps.picket.forms import (BugForm, BugnoteForm, BugFileForm, AssignForm,
+                               StatusForm, BugRelationshipForm)
 from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
                                 BugHistory)
+from apps.picket.settings import *
 
 @login_required
 def index(request):
@@ -38,16 +38,32 @@ def index(request):
         context_instance=RequestContext(request))
     
 @login_required
-def bugs(request, category_id=None):
-
+def bugs(request, category_id=None, sort_field=None, sort_dir=None):
+    """
+    @note: Add order_by_field_name method to BugManager to order by custom
+        column name
+    """
+        
     project_id = request.session.get('project_id', None)
     project = get_object_or_404(Project, id=project_id) \
         if project_id is not None else None
-
+    
     category = get_object_or_404(Category, id=category_id) \
         if category_id is not None else None
     
     bugs = Bug.objects.permited(request.user, project, category)
+    
+    if sort_field is not None:
+        if sort_field in Bug._meta.get_all_field_names():
+            bugs = bugs.order_by('%s%s' % ('-' if sort_dir=='DESC' else '',
+                sort_field))
+        elif custom.__dict__.has_key('order_by_%s' % sort_field):
+            bugs = custom.__getattribute__('order_by_%s' % sort_field)(bugs,
+                sort_dir)
+        else:
+            raise Http404
+    
+    
     sticky_bugs = bugs.filter(sticky=True)
     bugs = bugs.filter(sticky=False)
     
