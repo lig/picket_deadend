@@ -24,7 +24,9 @@ from django.contrib.auth.models import User, Group
 from django.db                  import models
 from django.utils.translation   import ugettext_lazy as _
 
+from apps.picket import custom
 from apps.picket.settings import *
+
 
 class IntegrationError(Exception):
     pass
@@ -230,6 +232,18 @@ class Bug(models.Model):
         
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
+    
+    @staticmethod
+    def has_field(field):
+        return field in Bug._meta.get_all_field_names()
+    
+    @staticmethod
+    def has_custom_sorter(field):
+        return custom.__dict__.has_key('order_by_%s' % field)
+    
+    @staticmethod
+    def field_is_sortable(field):
+        return Bug.has_field(field) or Bug.has_custom_sorter(field)
     
     class Meta():
         verbose_name = _('bug')

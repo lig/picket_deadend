@@ -54,10 +54,10 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     bugs = Bug.objects.permited(request.user, project, category)
     
     if sort_field is not None:
-        if sort_field in Bug._meta.get_all_field_names():
+        if Bug.has_field(sort_field):
             bugs = bugs.order_by('%s%s' % ('-' if sort_dir=='DESC' else '',
                 sort_field))
-        elif custom.__dict__.has_key('order_by_%s' % sort_field):
+        elif Bug.has_custom_sorter(sort_field):
             bugs = custom.__getattribute__('order_by_%s' % sort_field)(bugs,
                 sort_dir)
         else:
