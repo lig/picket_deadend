@@ -35,6 +35,19 @@ class ColumnHeaderNode(Node):
             """ @todo: refactor template names """
             if Bug.field_is_sortable(column_name):
                 t = get_template('picket/bugs_list_header_sortable_inc.html')
+                bugs = Variable('bugs').resolve(context)
+                if len(bugs.query.order_by) > 0:
+                    context['column_sort'] = {
+                        column_name: 'ASC',
+                        '-%s' % column_name: 'DESC',
+                    }.get(bugs.query.order_by[0], None)
+                else:
+                    context['column_sort'] = None
+                context['column_link_sort'] = {
+                    'ASC': 'DESC',
+                    'DESC': 'ASC',
+                    None: 'ASC',
+                }[context['column_sort']]
             else:
                 t = get_template('picket/bugs_list_header_unsortable_inc.html')
             return t.render(context)
