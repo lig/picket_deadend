@@ -228,7 +228,10 @@ class Bug(models.Model):
         return BUG_STATUS_COLORS[self.status]
         
     def get_priority_icon(self):
-            return PRIORITY_ICONS[self.priority]
+        return PRIORITY_ICONS[self.priority]
+    
+    def get_id_display(self):
+        return '%07d' % self.id
         
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
