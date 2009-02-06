@@ -115,7 +115,7 @@ class Project(models.Model):
         @return: integrated project if available
         @raise IntegrationError: if integration is improperly \
         configured
-        TODO: make _integration_cache working as cache
+        @todo: make _integration_cache working as cache
         """
         if not hasattr(self, '_integration_cache'):
             if not INTEGRATION_MODEL:
@@ -404,7 +404,7 @@ class Bugnote(models.Model):
 
 class ProjectUserList(models.Model):
     """
-    TODO: automate me for caching scopes
+    @todo: automate me for caching scopes
     """
     
     project = models.ForeignKey(Project, verbose_name=_('project'))
