@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.conf.urls.defaults  import *
 
 """
-TODO: project view with project summary not administration
+@todo: project view with project summary not administration
 """
 urlpatterns = patterns('apps.picket.views',
     (r'^$', 'index', {},
