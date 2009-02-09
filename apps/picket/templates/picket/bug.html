@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 {% block picketcontent %}
+
 <br />
 <table class="width100" cellspacing="1">
 
@@ -48,7 +49,6 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     </td>
 
 </tr>
-
 
 <!-- Labels -->
 <tr class="row-category">
@@ -461,36 +461,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Bugnotes and "Add Note" box -->
 <a name="bugnotes" id="bugnotes"></a>
 <br />
-<table class="width100" cellspacing="1">
-<tr>
-    <td class="form-title" colspan="2">
-        {% trans 'Bug notes' %}
-    </td>
-</tr>
-{% for bugnote in bug.bugnote_set.select_related.all %}
-<tr class="bugnote" id="bugnote{{ bugnote.id }}">
-        <td class="bugnote-public">
-        <span class="small">({{ bugnote.id }}) {{ bugnote.scope }}</span><br />
-        {% with bugnote.reporter as user %}
-        {% include 'picket/user_link_inc.html' %}
-        <span class="small">{{ user.groups.all }}</span>
-        {% endwith %}
-        <br />
-        <span class="small">{{ bugnote.date_submitted|date }} {{ bugnote.date_submitted|time }}</span><br />
-        {% ifnotequal bugnote.date_submitted bugnote.last_modified %}
-        <span class="small">{% trans 'Edited on' %} {{ bugnote.last_modified|date }} {{ bugnote.last_modified|time }}</span><br />
-        {% endifnotequal %}
-        <br /><div class="small">
-        <!-- @todo: update, delete links, scope change possibility -->
-        </div>
-    </td>
-    <td class="bugnote-note-public">{{ bugnote.text|markdown }}</td>
-</tr>
-<tr class="spacer">
-    <td colspan="2"></td>
-</tr>
-{% endfor %}
-</table>
+{% include 'picket/bugnotes_inc.html' %}
 <a name="addbugnote"></a> <br />
 <form name="bugnoteadd" method="post" action="{% url picket-annotate bug_id=bug.id %}">
 <table class="width100" cellspacing="1">

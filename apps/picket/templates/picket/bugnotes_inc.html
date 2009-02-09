@@ -1,0 +1,50 @@
+{% load i18n %}{% load markup %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+<table class="width100" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Bug notes' %}
+    </td>
+</tr>
+{% for bugnote in bug.bugnote_set.select_related.all %}
+<tr class="bugnote" id="bugnote{{ bugnote.id }}">
+        <td class="bugnote-public">
+        <span class="small">({{ bugnote.id }}) {{ bugnote.scope }}</span><br />
+        {% with bugnote.reporter as user %}
+        {% include 'picket/user_link_inc.html' %}
+        <span class="small">{{ user.groups.all }}</span>
+        {% endwith %}
+        <br />
+        <span class="small">{{ bugnote.date_submitted|date }} {{ bugnote.date_submitted|time }}</span><br />
+        {% ifnotequal bugnote.date_submitted bugnote.last_modified %}
+        <span class="small">{% trans 'Edited on' %} {{ bugnote.last_modified|date }} {{ bugnote.last_modified|time }}</span><br />
+        {% endifnotequal %}
+        <br /><div class="small">
+        <!-- @todo: update, delete links, scope change possibility -->
+        </div>
+    </td>
+    <td class="bugnote-note-public">{{ bugnote.text|markdown }}</td>
+</tr>
+<tr class="spacer">
+    <td colspan="2"></td>
+</tr>
+{% endfor %}
+</table>

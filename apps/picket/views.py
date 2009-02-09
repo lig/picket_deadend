@@ -25,11 +25,16 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from apps.picket import custom
-from apps.picket.forms import (BugForm, BugnoteForm, BugFileForm, AssignForm,
-                               StatusForm, BugRelationshipForm)
+from apps.picket.forms import (BugForm, BugUpdateForm, BugnoteForm,
+                               BugFileForm, AssignForm, StatusForm,
+                               BugRelationshipForm)
 from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
                                 BugHistory)
 from apps.picket.settings import *
+
+"""
+@todo: refactor render_to_response via direct_to_template generic view
+"""
 
 @login_required
 def index(request):
@@ -139,6 +144,40 @@ def bug(request, bug_id):
             'bug_relationships': bugRelationships,
             'bug_file_form': bugFileForm,
             'bug_history_items': bugHistoryItems,},
+        context_instance=RequestContext(request))
+
+@login_required
+def update(request, bug_id):
+    
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        bugUpdateForm = BugUpdateForm(instance=bug, data=request.POST)
+        bugnoteForm = BugnoteForm(prefix='note', data=request.POST)
+        if bugUpdateForm.is_valid():
+            bug = bugUpdateForm.save(commit=True)
+            request.user.message_set.create(
+                message=_('bug #%(bug_id)s updated' % {'bug_id': bug.id,}))
+            if bugnoteForm.is_valid():
+                bugnote = bugnoteForm.save(commit=False)
+                bugnote.bug, bugnote.reporter = bug, request.user
+                """ @todo: automate default bugnote.scope from bug.scope via
+                signals """ 
+                if bugnote.scope is None:
+                    bugnote.scope = bug.scope
+                bugnote.save()
+                request.user.message_set.create(
+                    message=_('bugnote #%(bugnote_id)s added' %
+                        {'bugnote_id': bugnote.id,}))
+            return HttpResponseRedirect(bug.get_absolute_url())
+
+    else:
+        bugUpdateForm = BugUpdateForm(instance=bug)
+        bugnoteForm = BugnoteForm(prefix='note')
+    
+    return render_to_response('picket/bug_update.html',
+        {'bug': bug, 'bug_update_form': bugUpdateForm,
+            'bugnote_form': bugnoteForm,},
         context_instance=RequestContext(request))
 
 @login_required
