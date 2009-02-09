@@ -321,11 +321,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	    <!-- MONITOR/UNMONITOR button -->
 	    <td class="center">
             {% if is_bugmonitor_user %}
-            <form method="post" action="% url picket-bug-mute bug_id=bug.id %">
+            <form method="post" action="{% url picket-bug-mute bug_id=bug.id %}">
                 <input type="submit" class="button" value="{% trans 'Mute' %}" />
             </form>
 	        {% else %}
-            <form method="post" action="% url picket-bug-monitor bug_id=bug.id %">
+            <form method="post" action="{% url picket-bug-monitor bug_id=bug.id %}">
                 <input type="submit" class="button" value="{% trans 'Monitor' %}" />
             </form>
 	        {% endif %}

@@ -18,6 +18,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.shortcuts import get_object_or_404, render_to_response
@@ -29,7 +30,7 @@ from apps.picket.forms import (BugForm, BugUpdateForm, BugnoteForm,
                                BugFileForm, AssignForm, StatusForm,
                                BugRelationshipForm)
 from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
-                                BugHistory)
+                                BugHistory, BugMonitor)
 from apps.picket.settings import *
 
 """
@@ -127,7 +128,8 @@ def bug(request, bug_id):
     
     bugFileForm = BugFileForm()
     
-    bugmonitor_users = bug.monitor.filter(bugmonitor__mute=False)
+    bugmonitor_users = User.objects.filter(bugmonitor__bug=bug,
+        bugmonitor__mute=False)
     is_bugmonitor_user = request.user in bugmonitor_users
     
     bugRelationshipForm = BugRelationshipForm()
@@ -195,6 +197,23 @@ def update_field(request, bug_id, form_class):
         else:
             request.user.message_set.create(
                 message=_('Error! No action performed.'))
+        return HttpResponseRedirect(bug.get_absolute_url())
+    else:
+        raise Http404
+
+@login_required
+def update_monitor(request, bug_id, mute):
+    """
+    @todo: bug monitoring handling
+    """
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        bugMonitor, created = BugMonitor.objects.get_or_create(
+            user=request.user, bug=bug)
+        bugMonitor.mute = mute
+        bugMonitor.save()
+        request.user.message_set.create(message=_('Bug monitoring updated'))
         return HttpResponseRedirect(bug.get_absolute_url())
     else:
         raise Http404
