@@ -18,6 +18,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django import forms
+from django.utils.translation import ugettext as _
 
 from apps.picket.models import Bug, Bugnote, Project, BugFile, BugRelationship
 
@@ -36,11 +37,13 @@ class BugUpdateForm(forms.ModelForm):
             'description', 'steps_to_reproduce', 'additional_information',]
 
 class AssignForm(forms.ModelForm):
+    _message = _('Bug handler updated')
     class Meta():
         model = Bug
         fields = ['handler',]
 
 class StatusForm(forms.ModelForm):
+    _message = _('Bug status updated')
     class Meta():
         model = Bug
         fields = ['status',]

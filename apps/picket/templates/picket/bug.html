@@ -304,7 +304,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
         <!-- ASSIGN button -->
         <td class="center">
-            <form method="post" action="% url picket-bug-update-handler bug_id=bug.id %">
+            <form method="post" action="{% url picket-bug-update-handler bug_id=bug.id %}">
                 {{ assign_form.handler }}
                 <input type="submit" class="button" value="{% trans 'Assign' %}" />
             </form>

@@ -181,6 +181,25 @@ def update(request, bug_id):
         context_instance=RequestContext(request))
 
 @login_required
+def update_field(request, bug_id, form_class):
+    Form = __import__('apps.picket.forms', globals(), locals(),
+        fromlist=[form_class,]).__getattribute__(form_class)
+    
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        form = Form(instance=bug, data=request.POST)
+        if form.is_valid():
+            bug = form.save(commit=True)
+            request.user.message_set.create(message=form._message)
+        else:
+            request.user.message_set.create(
+                message=_('Error! No action performed.'))
+        return HttpResponseRedirect(bug.get_absolute_url())
+    else:
+        raise Http404
+
+@login_required
 def annotate(request, bug_id):
     
     bug = get_object_or_404(Bug, id=bug_id)
