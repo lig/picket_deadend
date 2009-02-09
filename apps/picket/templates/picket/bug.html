@@ -312,7 +312,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         
 	    <!-- Change Status button -->
         <td class="center">
-            <form method="post" action="% url picket-bug-update-status bug_id=bug.id %">
+            <form method="post" action="{% url picket-bug-update-status bug_id=bug.id %}">
                 {{ status_form.status }}
                 <input type="submit" class="button" value="{% trans 'Change status' %}" />
             </form>
