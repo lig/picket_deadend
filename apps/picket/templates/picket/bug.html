@@ -333,7 +333,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	
         <!-- CREATE CHILD button -->
         <td class="center">
-            <form method="post" action="% url picket-bug-gemma bug_id=bug.id %">
+            <form method="get" action="{% url picket-filebug-clone clone_id=bug.id %}">
                 <input type="submit" class="button" value="{% trans 'Clone' %}" />
             </form>
         </td>

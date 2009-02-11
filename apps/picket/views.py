@@ -79,11 +79,22 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
         context_instance=RequestContext(request))
 
 @login_required
-def filebug(request):
+def filebug(request, clone=False, clone_id=None):
+    """
+    @todo: handle relationship with parent in case of cloning
+    """
+    view_name = not clone and 'picket-filebug' or 'picket-filebug-clone'
+    
+    if clone:
+        cloningBug = get_object_or_404(Bug, id=clone_id)
     
     if not 'project_id' in request.session:
-        return HttpResponseRedirect(reverse('picket-choose-project-gonext',
-            kwargs={'view_name': 'picket-filebug',}))
+        if clone:
+            request.session['project_id'] = cloningBug.project_id
+        else:
+            return HttpResponseRedirect(
+                reverse('picket-choose-project-gonext',
+                    kwargs={'view_name': view_name,}))
     
     scopes = Scope.objects.permited(request.user)
     
@@ -107,11 +118,15 @@ def filebug(request):
                 request.user.message_set.create(message=_('file for bug uploaded'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
-        bugForm = BugForm()
+        if clone:
+            bugForm = BugForm(instance=cloningBug)
+        else:
+            bugForm = BugForm()
         bugFileForm = BugFileForm(prefix='bugfile')
     
     return render_to_response('picket/bug_form.html',
-        {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,},
+        {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
+            'is_clone': clone,},
         context_instance=RequestContext(request))
 
 @login_required

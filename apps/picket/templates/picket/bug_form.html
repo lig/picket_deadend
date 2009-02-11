@@ -92,7 +92,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.summary.errors.as_text }}</span>
     </td>
     <td>
-        <input type="text" name="summary" size="105" maxlength="255" value="{% firstof bug_form.summary.data '' %}" />
+        <input type="text" name="summary" size="105" maxlength="255" value="{% firstof bug_form.initial.summary bug_form.summary.data '' %}" />
     </td>
 </tr>
 
@@ -103,7 +103,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.description.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="description" cols="80" rows="10">{% firstof bug_form.description.data %}</textarea>
+        <textarea name="description" cols="80" rows="10">{% firstof bug_form.initial.description bug_form.description.data %}</textarea>
     </td>
 </tr>
 
@@ -114,7 +114,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <br /><span class="required">{{ bug_form.steps_to_reproduce.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="steps_to_reproduce" cols="80" rows="10">{% firstof bug_form.steps_to_reproduce.data '' %}</textarea>
+        <textarea name="steps_to_reproduce" cols="80" rows="10">{% firstof bug_form.initial.steps_to_reproduce bug_form.steps_to_reproduce.data '' %}</textarea>
     </td>
 </tr>
 
@@ -122,10 +122,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="{% cycle row-class %}">
     <td class="category">
         {% trans 'Additional information' %}
-        <br /><span class="required">{{ bug_form.additional_info.errors.as_text }}</span>
+        <br /><span class="required">{{ bug_form.additional_information.errors.as_text }}</span>
     </td>
     <td>
-        <textarea name="additional_info" cols="80" rows="10">{% firstof bug_form.additional_info.data '' %}</textarea>
+        <textarea name="additional_information" cols="80" rows="10">{% firstof bug_form.initial.additional_information bug_form.additional_information.data '' %}</textarea>
     </td>
 </tr>
 
