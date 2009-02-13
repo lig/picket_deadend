@@ -1,4 +1,4 @@
-{% load i18n %}{% load markup %}
+{% load i18n %}
 {% comment %}
 Copyright 2008 Serge Matveenko
 
@@ -41,7 +41,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <!-- @todo: update, delete links, scope change possibility -->
         </div>
     </td>
-    <td class="bugnote-note-public">{{ bugnote.text|markdown }}</td>
+    <td class="bugnote-note-public">{{ bugnote.text }}</td>
 </tr>
 <tr class="spacer">
     <td colspan="2"></td>

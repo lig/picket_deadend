@@ -1,4 +1,4 @@
-{% extends 'picket/base.html' %}{% load i18n %}{% load markup %}
+{% extends 'picket/base.html' %}{% load i18n %}
 {% comment %}
 Copyright 2008 Serge Matveenko
 
@@ -247,7 +247,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Description' %}
     </td>
     <td colspan="5">
-        {{ bug.description|markdown }}
+        {{ bug.description }}
     </td>
 </tr>
 
@@ -257,7 +257,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Steps to reproduce' %}
     </td>
     <td colspan="5">
-        {{ bug.steps_to_reproduce|markdown }}
+        {{ bug.steps_to_reproduce }}
     </td>
 </tr>
 
@@ -267,7 +267,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Additional information' %}
     </td>
     <td colspan="5">
-        {{ bug.additional_information|markdown }}
+        {{ bug.additional_information }}
     </td>
 </tr>
 
