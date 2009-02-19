@@ -209,14 +209,12 @@ def update_field(request, bug_id, form_class):
         if form.is_valid():
             bug = form.save(commit=True)
             request.user.message_set.create(message=form._message)
-        else:
-            request.user.message_set.create(
-                message=_('Error! No action performed.'))
         return HttpResponseRedirect(bug.get_absolute_url())
     else:
         form = Form(instance=bug)
-        return render_to_response('picket/bug_update_field.html',
-            {'field_form': form,}, context_instance=RequestContext(request))
+    
+    return render_to_response('picket/bug_update_field.html',
+        {'field_form': form,}, context_instance=RequestContext(request))
 
 @login_required
 def update_monitor(request, bug_id, mute):
