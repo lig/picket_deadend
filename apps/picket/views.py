@@ -214,7 +214,9 @@ def update_field(request, bug_id, form_class):
                 message=_('Error! No action performed.'))
         return HttpResponseRedirect(bug.get_absolute_url())
     else:
-        raise Http404
+        form = Form(instance=bug)
+        return render_to_response('picket/bug_update_field.html',
+            {'field_form': form,}, context_instance=RequestContext(request))
 
 @login_required
 def update_monitor(request, bug_id, mute):

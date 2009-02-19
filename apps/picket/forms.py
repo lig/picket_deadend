@@ -48,6 +48,12 @@ class StatusForm(forms.ModelForm):
         model = Bug
         fields = ['status',]
 
+class BugMoveForm(forms.ModelForm):
+    _message = _('Bug moved')
+    class Meta():
+        model = Bug
+        fields = ['project',]
+
 class BugRelationshipForm(forms.ModelForm):
     destination_bug = forms.ModelChoiceField(queryset=Bug.objects.all(),
         widget=forms.TextInput)
