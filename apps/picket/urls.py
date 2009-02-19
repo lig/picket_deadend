@@ -23,20 +23,30 @@ from django.conf.urls.defaults  import *
 @todo: project view with project summary not administration
 """
 urlpatterns = patterns('apps.picket.views',
+    
+    ## index
     (r'^$', 'index', {},
         'picket-index',),
+    
+    ## reports
     (r'^filebug/$', 'filebug', {},
         'picket-filebug',),
     (r'^clonebug/(?P<clone_id>\d+)/$', 'filebug', {'clone': True,},
         'picket-filebug-clone',),
+    
+    ## project
     (r'^project(?P<project_id>\d+)/$', 'project', {},
         'picket-project',),
+    
+    ## bugs lists
     (r'^bugs/$', 'bugs', {},
         'picket-bugs',),
     (r'^bugs/sort/(?P<sort_field>\w+)/(?P<sort_dir>(ASC|DESC))/$', 'bugs', {},
         'picket-bugs-ordered',),
     (r'^bugs/c(?P<category_id>\d+)/$', 'bugs', {},
         'picket-category',),
+    
+    ## bug view and operations
     (r'^bug/(?P<bug_id>\d+)/$', 'bug', {},
         'picket-bug',),
     (r'^bug/(?P<bug_id>\d+)/update/$', 'update', {},
@@ -53,6 +63,8 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bug-mute',),
     (r'^p\d+/c\d+/b(?P<bug_id>\d+)/annotate/$', 'annotate', {},
         'picket-annotate',),
+    
+    ## active project selections
     (r'^choose_project/next/(?P<view_name>[\w-]+)/$', 'choose_project', {},
         'picket-choose-project-gonext'),
     (r'^choose_project/$', 'choose_project', {},
@@ -61,8 +73,12 @@ urlpatterns = patterns('apps.picket.views',
         'picket-set-project-gonext'),
     (r'^set_project/$', 'set_project', {},
         'picket-set-project'),
+    
+    ## jump to bug by id
     (r'^jump/$', 'jump_to_bug', {},
         'picket-jump-to-bug'),
+    
+    ## special views
     (r'^my/$', 'my', {},
         'picket-my-view',),
     (r'^changelog/$', 'changelog', {},
