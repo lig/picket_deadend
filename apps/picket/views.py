@@ -260,6 +260,20 @@ def annotate(request, bug_id):
         return HttpResponseRedirect(bug.get_absolute_url())
 
 @login_required
+def delete(request, bug_id):
+    """
+    Delete bug by its id
+    """
+    
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    bug.delete()
+    
+    request.user.message_set.create(message=_('bug deleted'))
+    
+    return HttpResponseRedirect(reverse('picket-bugs'))
+
+@login_required
 def project(request, project_id):
     return HttpResponseRedirect(reverse('picket-admin-project',
         args=(project_id,)))

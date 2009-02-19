@@ -137,8 +137,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	
 	    <!-- DELETE button -->
 	    <td class="center">
-            <form method="post" action="% url picket-bug-delete bug_id=bug.id %">
-                <input type="submit" class="button" value="{% trans 'Delete' %}" />
+            <form method="post" action="{% url picket-bug-delete bug_id=bug.id %}">
+                <input type="submit" class="button" value="{% trans 'Delete' %}" onclick="return confirm('{% trans 'Are you you want to delete this bug?' %}');" />
             </form>
 	    </td>
 	    

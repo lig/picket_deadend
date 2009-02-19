@@ -64,6 +64,8 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bug-monitor',),
     (r'^bug/(?P<bug_id>\d+)/mute/$', 'update_monitor', {'mute': True,},
         'picket-bug-mute',),
+    (r'^bug/(?P<bug_id>\d+)/delete/$', 'delete', {},
+        'picket-bug-delete',),
     (r'^bug/(?P<bug_id>\d+)/annotate/$', 'annotate', {},
         'picket-annotate',),
     
