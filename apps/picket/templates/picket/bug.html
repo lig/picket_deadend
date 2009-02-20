@@ -158,7 +158,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr class="row-1">
     <td class="category">{% trans 'Add new relationship' %}</td>
     <td>{% trans 'This bug' %}
-        <form method="post" action="% url picket-bug-relationship-add bug_id=bug.id %">
+        <form method="post" action="{% url picket-bug-relationship-add bug_id=bug.id %}">
         {{ bug_relationship_form.relationship_type }}
         {{ bug_relationship_form.destination_bug }}
         <input type="submit" name="add_relationship" class="button" value="{% trans 'Add new relationship' %}" />

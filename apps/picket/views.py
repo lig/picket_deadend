@@ -234,6 +234,37 @@ def update_monitor(request, bug_id, mute):
         raise Http404
 
 @login_required
+def add_relationship(request, bug_id):
+    
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        bugRelationshipForm = BugRelationshipForm(request.POST)
+        if bugRelationshipForm.is_valid():
+            bugRelationships = BugRelationship.objects.filter(
+                source_bug=bug,
+                destination_bug=bugRelationshipForm.cleaned_data[
+                    'destination_bug'])
+            if bugRelationships.count() > 0:
+                bugRelationship = bugRelationships[0]
+                bugRelationship.relationship_type = \
+                    bugRelationshipForm.cleaned_data['relationship_type']
+                bugRelationship.save()
+                request.user.message_set.create(
+                    message=_('Bug relationship updated'))
+            else:
+                bugRelationship = bugRelationshipForm.save(commit=False)
+                bugRelationship.source_bug = bug
+                bugRelationship.save()
+                request.user.message_set.create(
+                    message=_('Bug relationship added'))            
+        else:
+            request.user.message_set.create(
+                message=_('Error: bug relationship not changed!'))
+    
+    return HttpResponseRedirect(bug.get_absolute_url())
+    
+@login_required
 def annotate(request, bug_id):
     
     bug = get_object_or_404(Bug, id=bug_id)

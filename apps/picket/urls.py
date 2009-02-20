@@ -64,6 +64,12 @@ urlpatterns = patterns('apps.picket.views',
     (r'^bug/(?P<bug_id>\d+)/move/$', 'update_field',
         {'form_class': 'BugMoveForm',},
         'picket-bug-move',),
+    
+    ## add/modify relationship
+    (r'^bug/(?P<bug_id>\d+)/add_rel/$', 'add_relationship', {},
+        'picket-bug-relationship-add'),
+    
+    ## various bug operations
     (r'^bug/(?P<bug_id>\d+)/monitor/$', 'update_monitor', {'mute': False,},
         'picket-bug-monitor',),
     (r'^bug/(?P<bug_id>\d+)/mute/$', 'update_monitor', {'mute': True,},
