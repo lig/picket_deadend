@@ -65,10 +65,6 @@ urlpatterns = patterns('apps.picket.views',
         {'form_class': 'BugMoveForm',},
         'picket-bug-move',),
     
-    ## add/modify relationship
-    (r'^bug/(?P<bug_id>\d+)/add_rel/$', 'add_relationship', {},
-        'picket-bug-relationship-add'),
-    
     ## various bug operations
     (r'^bug/(?P<bug_id>\d+)/monitor/$', 'update_monitor', {'mute': False,},
         'picket-bug-monitor',),
@@ -78,6 +74,13 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bug-delete',),
     (r'^bug/(?P<bug_id>\d+)/annotate/$', 'annotate', {},
         'picket-annotate',),
+    
+    ## relationships operations
+    (r'^bug/(?P<bug_id>\d+)/add_rel/$', 'add_relationship', {},
+        'picket-bug-relationship-add'),
+    (r'^relationship/(?P<bug_relationship_id>\d+)/delete/$',
+        'delete_relationship', {},
+        'picket-bug-relationship-delete'),
     
     ## active project selections
     (r'^choose_project/next/(?P<view_name>[\w-]+)/$', 'choose_project', {},

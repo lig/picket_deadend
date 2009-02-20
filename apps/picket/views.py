@@ -279,7 +279,7 @@ def annotate(request, bug_id):
             if bugnote.scope is None:
                 bugnote.scope = bug.scope
             bugnote.save()
-            request.user.message_set.create(message=_('bugnote filed'))
+            request.user.message_set.create(message=_('Bugnote filed'))
             return HttpResponseRedirect(bugnote.get_absolute_url())
         else:
             return render_to_response('picket/bugnote_form.html',
@@ -298,9 +298,23 @@ def delete(request, bug_id):
     
     bug.delete()
     
-    request.user.message_set.create(message=_('bug deleted'))
+    request.user.message_set.create(message=_('Bug deleted'))
     
     return HttpResponseRedirect(reverse('picket-bugs'))
+
+@login_required
+def delete_relationship(request, bug_relationship_id):
+    
+    bugRelationship = get_object_or_404(BugRelationship,
+        id=bug_relationship_id)
+    
+    bug = bugRelationship.source_bug
+    
+    bugRelationship.delete()
+    
+    request.user.message_set.create(message=_('Relationship deleted'))
+    
+    return HttpResponseRedirect(bug.get_absolute_url())
 
 @login_required
 def project(request, project_id):

@@ -138,7 +138,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	
 	    <!-- DELETE button -->
             <form method="post" action="{% url picket-bug-delete bug_id=bug.id %}">
-                <input type="submit" class="button" value="{% trans 'Delete' %}" onclick="return confirm('{% trans 'Are you you want to delete this bug?' %}');" />
+                <input type="submit" class="button" value="{% trans 'Delete' %}" onclick="return confirm('{% trans 'Are you sure you want delete this bug?' %}');" />
             </form>
 	    <td class="center">
 	    </td>
@@ -173,7 +173,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
            <td><a href="{{ bug_relationship.destination_bug.get_absolute_url }}">{{ bug_relationship.destination_bug.id }}</a></td>
            <td>{{ bug_relationship.destination_bug.get_status_display }}</td>
            <td>{% firstof bug_relationship.destination_bug.handler '' %}</td>
-           <td>{{ bug_relationship.destination_bug.summary }} (<a class="small" href="% url picket-bug-relationship-delete bug_relationship_id=bug_relationship.id %">{% trans 'Delete' %}</a>)</td>
+           <td>{{ bug_relationship.destination_bug.summary }} (<a class="small" href="{% url picket-bug-relationship-delete bug_relationship_id=bug_relationship.id %}" onclick="return confirm('{% trans 'Are you sure you want delete this relationship?' %}');" >{% trans 'Delete' %}</a>)</td>
 	    </tr>
 	    {% endfor %}
         </table>
