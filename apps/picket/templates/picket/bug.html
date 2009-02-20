@@ -122,7 +122,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	    {% if bug.is_resolved %}
 	    <!-- REOPEN button -->
 	    <td class="center">
-            <form method="post" action="% url picket-bug-reopen bug_id=bug.id %">
+            <form method="post" action="{% url picket-bug-update-status bug_id=bug.id %}">
+                <input type="hidden" name="status" value="{{ config.BUG_REOPEN_STATUS }}" />
                 <input type="submit" class="button" value="{% trans 'Reopen' %}" />
             </form>
 	    </td>
@@ -136,10 +137,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         </td>
 	
 	    <!-- DELETE button -->
-	    <td class="center">
             <form method="post" action="{% url picket-bug-delete bug_id=bug.id %}">
                 <input type="submit" class="button" value="{% trans 'Delete' %}" onclick="return confirm('{% trans 'Are you you want to delete this bug?' %}');" />
             </form>
+	    <td class="center">
 	    </td>
 	    
     </tr></table></td>

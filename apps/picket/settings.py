@@ -116,6 +116,10 @@ RESOLUTION_CHOICES = (
 RESOLUTION_CHOICES_DEFAULT = 10
 
 
+# Status to assign to the bug when reopened.
+BUG_REOPEN_STATUS = 20; # 20: feedback
+
+
 PROJECTION_CHOICES = (
     (10, _('none'),),
     (30, _('tweak'),),

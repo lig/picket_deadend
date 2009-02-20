@@ -46,11 +46,15 @@ urlpatterns = patterns('apps.picket.views',
     (r'^bugs/c(?P<category_id>\d+)/$', 'bugs', {},
         'picket-category',),
     
-    ## bug view and operations
+    ## bug view
     (r'^bug/(?P<bug_id>\d+)/$', 'bug', {},
         'picket-bug',),
+    
+    ## bug update
     (r'^bug/(?P<bug_id>\d+)/update/$', 'update', {},
         'picket-bug-update',),
+    
+    ## bug fields updates
     (r'^bug/(?P<bug_id>\d+)/update_handler/$', 'update_field',
         {'form_class': 'AssignForm',},
         'picket-bug-update-handler',),
