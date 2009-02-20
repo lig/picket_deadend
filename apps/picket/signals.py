@@ -56,15 +56,18 @@ class PicketSignalsMiddleware(object):
             @todo: handle TextFieldS changes
             @todo: handle relationship changes
             """
-            print self._bug_cache[instance.pk].priority
-            print instance.priority
             for log_field in ['project_id', 'reporter_id', 'handler_id',
                 'duplicate_id', 'priority', 'severity', 'reproducibility',
                 'status', 'resolution', 'projection', 'category_id',
                 'scope_id', 'summary', 'sponsorship_total', 'sticky',]:
+                get_log_field_display = 'get_%s_display' % log_field
+                attribute_name = get_log_field_display if \
+                    get_log_field_display in dir(instance) else log_field
                 old_value = self._bug_cache[instance.pk].__getattribute__(
-                    log_field)
-                new_value = instance.__getattribute__(log_field)
+                    attribute_name)
+                new_value = instance.__getattribute__(attribute_name)
+                if '__call__' in dir(new_value):
+                    old_value, new_value = old_value(), new_value()
                 if new_value != old_value:
                     bugHistory = BugHistory(bug=instance, type=1,
                         field_name=log_field, old_value=old_value,
