@@ -33,7 +33,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
         <!-- Send Bug Reminder -->
         <span class="small">
-            <a href="% url picket-bug-reminder bug_id=bug.id %">{% trans 'Bug reminder' %}</a>
+            {% comment %}
+            <a href="{% url picket-bug-reminder bug_id=bug.id %}">{% trans 'Bug reminder' %}</a>
+            {% endcomment %}
         </span>
     </td>
 
@@ -184,7 +186,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- File upload box -->
 <br />
-<form method="post" enctype="multipart/form-data" action="% url picket-bugfile-upload bug_id=bug.id %">
+<form method="post" enctype="multipart/form-data" action="{% url picket-bugfile-upload bug_id=bug.id %}">
 <table class="width100" cellspacing="1">
 <tr>
     <td class="form-title" colspan="2">

@@ -82,6 +82,10 @@ urlpatterns = patterns('apps.picket.views',
         'delete_relationship', {},
         'picket-bug-relationship-delete'),
     
+    ## file upload
+    (r'^bug/(?P<bug_id>\d+)/upload/$', 'bug_file_upload', {},
+        'picket-bugfile-upload'),
+    
     ## active project selections
     (r'^choose_project/next/(?P<view_name>[\w-]+)/$', 'choose_project', {},
         'picket-choose-project-gonext'),

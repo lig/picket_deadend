@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+"""
+@todo: bug reminders and notifications mechanism
+"""
+
 from django.db.models.signals import post_init, post_save
 
 from apps.picket.models import Bug, BugHistory

@@ -263,7 +263,27 @@ def add_relationship(request, bug_id):
                 message=_('Error: bug relationship not changed!'))
     
     return HttpResponseRedirect(bug.get_absolute_url())
+
+@login_required
+def bug_file_upload(request, bug_id):
     
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        bugFileForm = BugFileForm(request.POST, request.FILES)
+        if bugFileForm.is_valid():
+            bugFile = bugFileForm.save(commit=False)
+            bugFile.bug = bug
+            bugFile.save()
+            request.user.message_set.create(message=_('File uploaded'))
+            return HttpResponseRedirect(bug.get_absolute_url())
+    else:
+        bugFileForm = BugFileForm()
+    
+    return render_to_response('picket/bug_file_form.html',
+        {'bug': bug, 'bug_file_form': bugFileForm,},
+        context_instance=RequestContext(request))
+
 @login_required
 def annotate(request, bug_id):
     
