@@ -116,3 +116,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 AUTH_PROFILE_MODULE = 'users.profile'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+
+DATE_FORMAT = 'j.m.Y'
+TIME_FORMAT = 'G:i'

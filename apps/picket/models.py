@@ -398,6 +398,7 @@ class Bugnote(models.Model):
     
     def save(self):
         self.bug.num_bugnotes = self.bug.bugnote_set.all().count()
+        self.bug.save()
         super(Bugnote, self).save()
     
     class Meta():
