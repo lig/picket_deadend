@@ -21,9 +21,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
-from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from django.views.generic.simple import direct_to_template
 
 from apps.picket import custom
 from apps.picket.forms import (BugForm, BugUpdateForm, BugnoteForm,
@@ -33,15 +33,10 @@ from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
                                 BugHistory, BugMonitor)
 from apps.picket.settings import *
 
-"""
-@todo: refactor render_to_response via direct_to_template generic view
-"""
-
 @login_required
 def index(request):
     
-    return render_to_response('picket/index.html', {},
-        context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/index.html', {})
     
 @login_required
 def bugs(request, category_id=None, sort_field=None, sort_dir=None):
@@ -73,10 +68,9 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     sticky_bugs = bugs.filter(sticky=True)
     bugs = bugs.filter(sticky=False)
     
-    return render_to_response('picket/bugs.html',
+    return direct_to_template(request, 'picket/bugs.html',
         {'bugs': bugs, 'sticky_bugs': sticky_bugs,
-            'project': project, 'category': category,},
-        context_instance=RequestContext(request))
+            'project': project, 'category': category,})
 
 @login_required
 def filebug(request, clone=False, clone_id=None):
@@ -124,10 +118,9 @@ def filebug(request, clone=False, clone_id=None):
             bugForm = BugForm()
         bugFileForm = BugFileForm(prefix='bugfile')
     
-    return render_to_response('picket/bug_form.html',
+    return direct_to_template(request, 'picket/bug_form.html',
         {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
-            'is_clone': clone,},
-        context_instance=RequestContext(request))
+            'is_clone': clone,})
 
 @login_required
 def bug(request, bug_id):
@@ -153,15 +146,14 @@ def bug(request, bug_id):
     
     bugHistoryItems = BugHistory.objects.filter(bug=bug)
     
-    return render_to_response('picket/bug.html',
+    return direct_to_template(request, 'picket/bug.html',
         {'bug': bug, 'bugnote_form': bugnoteForm, 'assign_form': assignForm,
             'status_form': statusForm, 'bugmonitor_users': bugmonitor_users,
             'is_bugmonitor_user': is_bugmonitor_user,
             'bug_relationship_form': bugRelationshipForm,
             'bug_relationships': bugRelationships,
             'bug_file_form': bugFileForm,
-            'bug_history_items': bugHistoryItems,},
-        context_instance=RequestContext(request))
+            'bug_history_items': bugHistoryItems,})
 
 @login_required
 def update(request, bug_id):
@@ -192,10 +184,9 @@ def update(request, bug_id):
         bugUpdateForm = BugUpdateForm(instance=bug)
         bugnoteForm = BugnoteForm(prefix='note')
     
-    return render_to_response('picket/bug_update.html',
+    return direct_to_template(request, 'picket/bug_update.html',
         {'bug': bug, 'bug_update_form': bugUpdateForm,
-            'bugnote_form': bugnoteForm,},
-        context_instance=RequestContext(request))
+            'bugnote_form': bugnoteForm,})
 
 @login_required
 def update_field(request, bug_id, form_class):
@@ -213,8 +204,8 @@ def update_field(request, bug_id, form_class):
     else:
         form = Form(instance=bug)
     
-    return render_to_response('picket/bug_update_field.html',
-        {'field_form': form,}, context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/bug_update_field.html',
+        {'field_form': form,})
 
 @login_required
 def update_monitor(request, bug_id, mute):
@@ -280,9 +271,8 @@ def bug_file_upload(request, bug_id):
     else:
         bugFileForm = BugFileForm()
     
-    return render_to_response('picket/bug_file_form.html',
-        {'bug': bug, 'bug_file_form': bugFileForm,},
-        context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/bug_file_form.html',
+        {'bug': bug, 'bug_file_form': bugFileForm,})
 
 @login_required
 def annotate(request, bug_id):
@@ -302,9 +292,8 @@ def annotate(request, bug_id):
             request.user.message_set.create(message=_('Bugnote filed'))
             return HttpResponseRedirect(bugnote.get_absolute_url())
         else:
-            return render_to_response('picket/bugnote_form.html',
-                {'bugnote_form': bugnoteForm, 'bug': bug,},
-                context_instance=RequestContext(request))
+            return direct_to_template(request, 'picket/bugnote_form.html',
+                {'bugnote_form': bugnoteForm, 'bug': bug,})
     else:
         return HttpResponseRedirect(bug.get_absolute_url())
 
@@ -346,8 +335,8 @@ def choose_project(request, view_name='picket-bugs'):
     """
     form for choosing project 
     """
-    return render_to_response('picket/choose_project.html',
-        {'view_name': view_name,}, context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/choose_project.html',
+        {'view_name': view_name,})
 
 @login_required
 def set_project(request, view_name='picket-bugs'):
