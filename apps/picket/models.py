@@ -334,10 +334,6 @@ class BugMonitorManager(models.Manager):
         return self.get_query_set().filter(mute=False)
 
 class BugMonitor(models.Model):
-    """
-    @todo: automate BugMonitor from bug.reporter, bug.handler, bugnote.author
-    to make sense of mute feature
-    """
     objects = BugMonitorManager()
     
     user = models.ForeignKey(User, verbose_name=_('bug monitor user'))

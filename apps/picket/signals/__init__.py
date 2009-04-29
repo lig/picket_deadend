@@ -21,10 +21,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 @todo: bug reminders and notifications mechanism
 """
 
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 
 from middleware import PicketSignalsMiddleware
-from ..models import BugRelationship
+from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote
 from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
 
@@ -71,6 +72,45 @@ def bugrelationship_reverse_remove(*args, **kwargs):
     else:
         reverse_relationship.delete()
 
+def bugmonitor_update_from_bughistory(*args, **kwargs):
+    """
+    @author: lig
+    """
+    history_entry = kwargs.pop('instance')
+    
+    """ process appropriate field if changed reporter, handler, or author or
+        all possible fields if bug just created """
+    if history_entry.field_name in ['reporter_id', 'handler_id',] and \
+        history_entry.new_value is not None:
+        
+        try:
+            user = User.objects.get(pk=history_entry.new_value)
+        except User.DoesNotExist:
+            pass
+        else:
+            monitor, created = BugMonitor.objects.get_or_create(
+                user=user, bug=history_entry.bug)
+            if created: monitor.save()
+    
+    elif history_entry.type == 0:
+        
+        bug = history_entry.bug
+        BugMonitor(user=bug.reporter, bug=bug).save()
+        if bug.handler: BugMonitor(user=bug.handler, bug=bug).save()
+
+def bugmonitor_update_from_bugnote(*args, **kwargs):
+    """
+    @author: lig
+    """
+    bugnote = kwargs.pop('instance')
+    
+    monitor, created = BugMonitor.objects.get_or_create(
+        user=bugnote.reporter, bug=bugnote.bug)
+    if created: monitor.save()
+
 
 post_save.connect(bugrelationship_reverse_update, BugRelationship)
 post_delete.connect(bugrelationship_reverse_remove, BugRelationship)
+
+post_save.connect(bugmonitor_update_from_bughistory, BugHistory)
+post_save.connect(bugmonitor_update_from_bugnote, Bugnote)
