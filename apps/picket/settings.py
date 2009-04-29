@@ -159,7 +159,7 @@ ETA_CHOICES = (
 ETA_CHOICES_DEFAULT = 10
 
 
-# @note: not used. scopes used instead yet.
+""" @note: not used. scopes used instead yet. """
 ACCESS_LEVELS_CHOICES = (
     (10, _('viewer'),),
     (25, _('reporter'),),
