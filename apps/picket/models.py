@@ -349,10 +349,6 @@ class BugMonitor(models.Model):
         verbose_name_plural = _('bug monitor entries')
 
 class BugRelationship(models.Model):
-    """
-    @todo: automate bug relationship reverse connection creation and its
-    synchronized deletion to allow one direction queries  
-    """
     objects = models.Manager()
     
     source_bug = models.ForeignKey(Bug,
@@ -362,14 +358,10 @@ class BugRelationship(models.Model):
         verbose_name=_('bug relationship destination'),
         related_name='destination')
     relationship_type = models.IntegerField(
-        _('bug relationship type'), choices=(
-            (1,_('related to'),),
-            (2,_('parent of'),),
-            (3,_('child of'),),
-            (0,_('duplicate of'),),
-            (4,_('has duplicate'),),
-        ))
-        
+        _('bug relationship type'), choices=BUGRELATIONSHIP_TYPE_CHOICES)
+    is_reverse = models.BooleanField(_('is it reverse bug relationship'),
+        default=False, editable=False)
+    
     class Meta():
         verbose_name = _('bug relationship entry')
         verbose_name_plural = _('bug relationship entries')

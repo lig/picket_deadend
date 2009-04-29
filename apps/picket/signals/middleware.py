@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko, Alexey Smirnov
+Copyright 2008-2009 Serge Matveenko, Alexey Smirnov
 
 This file is part of Picket.
 
@@ -15,10 +15,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-"""
-@todo: bug reminders and notifications mechanism
 """
 
 from django.db.models.signals import post_init, post_save
@@ -86,4 +82,3 @@ class PicketSignalsMiddleware(object):
         post_init.connect(self.bug_post_init_handler, Bug)
         post_save.connect(self.bug_post_save_handler, Bug)
         return None
-

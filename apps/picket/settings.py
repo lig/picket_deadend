@@ -116,9 +116,25 @@ RESOLUTION_CHOICES = (
 RESOLUTION_CHOICES_DEFAULT = 10
 
 
-# Status to assign to the bug when reopened.
+""" Status to assign to the bug when reopened. """
 BUG_REOPEN_STATUS = 20; # 20: feedback
 
+
+BUGRELATIONSHIP_TYPE_CHOICES = (
+    (1,_('related to'),),
+    (2,_('parent of'),),
+    (3,_('child of'),),
+    (0,_('duplicate of'),),
+    (4,_('has duplicate'),),
+)
+
+BUGRELATIONSHIP_TYPE_REVERSE_MAP = {
+    1: 1,
+    2: 3,
+    3: 2,
+    0: 4,
+    4: 0,
+}
 
 PROJECTION_CHOICES = (
     (10, _('none'),),
