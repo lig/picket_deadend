@@ -1,0 +1,57 @@
+{% extends 'picket/base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block picketcontent %}
+
+<br />
+<form method="post" action="" enctype="multipart/form-data">
+
+<table class="width100" cellspacing="1">
+
+<!-- Title -->
+<tr>
+    <td class="form-title" colspan="3" width="50%">
+        {% trans 'Uploading file' %}
+    </td>
+    <td class="right" colspan="3" width="50%">[ <a href="{{ bug.get_absolute_url }}">{% trans 'Back to bug' %}</a> ]</td>
+</tr>
+
+<!-- File -->
+<tr>
+    <td class="right" colspan="3">{{ bug_file_form.file.label_tag }}{% if bug_file_form.errors.file %}<br/><span class="required">{{ bug_file_form.errors.file }}</span>{% endif %}</td>
+    <td class="left" colspan="3">{{ bug_file_form.file }}</td>
+</tr>
+
+<!-- File title -->
+<tr>
+    <td class="right" colspan="3">{{ bug_file_form.title.label_tag }}{% if bug_file_form.errors.title %}<br/><span class="required">{{ bug_file_form.errors.title }}</span>{% endif %}</td>
+    <td class="left" colspan="3">{{ bug_file_form.title }}</td>
+</tr>
+
+<!-- Submit button -->
+<tr>
+    <td class="center" colspan="6"><input type="submit" name="sumbit" value="{% trans 'Upload file' %}" /></td>
+</tr>
+
+</table>
+
+</form>
+
+{% endblock picketcontent %}
