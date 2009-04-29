@@ -74,4 +74,4 @@ class BugnoteForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta():
         model = Project
-        fields = ['name', 'status', 'enabled', 'scope', 'url', 'description', '', '', '', '', '', '', '', '', ]
+        fields = ['name', 'status', 'enabled', 'scope', 'url', 'description',]
