@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -21,8 +21,9 @@ from django.conf import settings
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 
-from apps.picket import custom
-from apps.picket.models import Bug
+import custom
+from models import Bug
+
 
 register = Library()
 

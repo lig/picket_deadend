@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -25,13 +25,12 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
 
-from apps.picket import custom
-from apps.picket.forms import (BugForm, BugUpdateForm, BugnoteForm,
-                               BugFileForm, AssignForm, StatusForm,
-                               BugRelationshipForm)
-from apps.picket.models import (Bug, Project, Category, Scope, BugRelationship,
-                                BugHistory, BugMonitor)
-from apps.picket.settings import *
+import custom
+from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
+                   AssignForm, StatusForm, BugRelationshipForm)
+from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
+                    BugMonitor)
+from settings import *
 
 @login_required
 def index(request):

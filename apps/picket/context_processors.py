@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from apps.picket            import COPYING
-from apps.picket.models     import Project
-from apps.picket            import settings as config
+import COPYING
+import settings as config
+from models import Project
+
 
 def picket(request):
     
@@ -45,4 +46,3 @@ def picket(request):
     return { 'picket_projects': projects, 'cur_project': cur_project,
         'cur_url': cur_url, 'config': config, 'COPYING': COPYING,
         'legend': legend }
-

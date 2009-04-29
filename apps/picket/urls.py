@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -21,6 +21,8 @@ from django.conf.urls.defaults  import *
 
 """
 @todo: project view with project summary not administration
+
+@todo: make urls includable with any picket app path
 """
 urlpatterns = patterns('apps.picket.views',
     

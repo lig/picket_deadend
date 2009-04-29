@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -18,13 +18,14 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import user_passes_test
-from django.http                    import HttpResponseRedirect
-from django.shortcuts               import render_to_response, get_object_or_404 
-from django.template                import RequestContext
-from django.utils.translation       import ugettext as _
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404 
+from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
-from apps.picket.forms    import ProjectForm
-from apps.picket.models   import Project
+from forms import ProjectForm
+from models import Project
+
 
 is_su = lambda user: user.is_superuser
 

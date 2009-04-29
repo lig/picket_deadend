@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -19,9 +19,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
 
-from apps.picket.models import Bug, BugFile, BugHistory, BugMonitor, Bugnote, \
-                               BugRelationship, Category, Project, \
-                               ProjectFile, ProjectUserList, Scope, ScopeGroup
+from models import (Bug, BugFile, BugHistory, BugMonitor, Bugnote,
+                    BugRelationship, Category, Project, ProjectFile,
+                    ProjectUserList, Scope, ScopeGroup)
+
 
 class BugFileInline(admin.StackedInline):
     model = BugFile

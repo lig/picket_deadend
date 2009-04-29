@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models.signals import post_init, post_save
 
-from apps.picket.models import Bug, BugHistory
+from models import Bug, BugHistory
 
 """
 type = models.PositiveIntegerField(_('bug history entry type'),
