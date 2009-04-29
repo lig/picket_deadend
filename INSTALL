@@ -1,4 +1,4 @@
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -20,24 +20,27 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 This is short installation instructions for Picket
 (http://sourceforge.net/projects/picket).
 
-1. Install Python (http://python.org/).
+1. Install Python 2.6 (http://python.org/).
 
-2. Install Django (http://www.djangoproject.com/).
+2. Install Django 1.1 (http://www.djangoproject.com/).
 
-3. Checkout latest revision of Picket from Subversion repository from here:
-http://sourceforge.net/svn/?group_id=210642
+3. Install Python markdown2 library
+(http://code.google.com/p/python-markdown2/).
 
-4. Change working directory to the root directory of your local Picket copy.
+4. Checkout latest version of Picket from Git repository located here:
+http://sourceforge.net/scm/?type=git&group_id=210642
 
-5. Copy file "settings_sample.py" to "settings.py" and edit it if you need.
+5. Change working directory to the root directory of your local Picket copy.
 
-6. Run in terminal for making default database file:
+6. Copy file "settings_sample.py" to "settings.py" and edit it if you need.
+
+7. Run in terminal to make default database file:
 $ ./manage.py syncdb
 
-7. Run in terminal for start picket:
+8. Run in terminal to start picket:
 $ ./manage.py runserver
 
-8. Point your browser at:
+9. Point your browser at:
 http://localhost:8000/
 
 You are done!
