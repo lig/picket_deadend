@@ -164,10 +164,6 @@ def update(request, bug_id):
             if bugnoteForm.is_valid():
                 bugnote = bugnoteForm.save(commit=False)
                 bugnote.bug, bugnote.reporter = bug, request.user
-                """ @todo: automate default bugnote.scope from bug.scope via
-                signals """ 
-                if bugnote.scope is None:
-                    bugnote.scope = bug.scope
                 bugnote.save()
                 request.user.message_set.create(
                     message=_('bugnote #%(bugnote_id)s added' %
@@ -278,10 +274,6 @@ def annotate(request, bug_id):
         if bugnoteForm.is_valid():
             bugnote = bugnoteForm.save(commit=False)
             bugnote.bug, bugnote.reporter = bug, request.user
-            """ @todo: automate default bugnote.scope from bug.scope via
-            signals """ 
-            if bugnote.scope is None:
-                bugnote.scope = bug.scope
             bugnote.save()
             request.user.message_set.create(message=_('Bugnote filed'))
             return HttpResponseRedirect(bugnote.get_absolute_url())

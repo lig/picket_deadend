@@ -384,18 +384,20 @@ class Bugnote(models.Model):
     note_attr = models.CharField(_('bugnote attr'),
         max_length=750, blank=True)
     
+    def save(self, *args, **kwargs):
+        if self.scope is None:
+            self.scope = self.bug.scope
+        self.bug.num_bugnotes = self.bug.bugnote_set.all().count()
+        self.bug.save()
+        super(Bugnote, self).save(*args, **kwargs)
+    
     def __unicode__(self):
         return u'%s: %s at %s' % (
             self.bug, self.reporter, self.date_submitted)
     
     def get_absolute_url(self):
         return '%s#bugnote%s' % (self.bug.get_absolute_url(), self.id)
-    
-    def save(self):
-        self.bug.num_bugnotes = self.bug.bugnote_set.all().count()
-        self.bug.save()
-        super(Bugnote, self).save()
-    
+        
     class Meta():
         verbose_name = _('bugnote')
         verbose_name_plural = _('bugnotes')
