@@ -23,8 +23,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from forms import ProjectForm
-from models import Project
+from ..forms import ProjectForm
+from ..models import Project
 
 
 is_su = lambda user: user.is_superuser

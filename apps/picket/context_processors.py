@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import COPYING
 import settings as config
+from . import COPYING
 from models import Project
 
 
