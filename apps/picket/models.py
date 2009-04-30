@@ -217,6 +217,13 @@ class Bug(models.Model):
         through='BugRelationship')
     num_bugnotes = models.PositiveIntegerField(_('bug notes count'), default=0)
     
+    def save(self, *args, **kwargs):
+        if self.project_id is None:
+            self.project = self.category.project
+        if self.scope is None:
+            self.scope = self.project.scope
+        super(Bug, self).save(*args, **kwargs)
+    
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
     
