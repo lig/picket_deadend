@@ -21,8 +21,8 @@ from django.conf import settings
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.template.loader import get_template
 
-import ..custom
-from ..models import Bug
+""" @note: relative import will not work here """
+from apps.picket.models import Bug
 
 
 register = Library()
