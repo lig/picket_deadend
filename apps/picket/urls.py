@@ -68,6 +68,8 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bug-move',),
     
     ## various bug operations
+    (r'^bug/(?P<bug_id>\d+)/remind/$', 'remind', {},
+        'picket-bug-reminder',),
     (r'^bug/(?P<bug_id>\d+)/monitor/$', 'update_monitor', {'mute': False,},
         'picket-bug-monitor',),
     (r'^bug/(?P<bug_id>\d+)/mute/$', 'update_monitor', {'mute': True,},

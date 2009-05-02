@@ -18,6 +18,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django import forms
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from models import Bug, Bugnote, Project, BugFile, BugRelationship
@@ -76,3 +77,10 @@ class ProjectForm(forms.ModelForm):
     class Meta():
         model = Project
         fields = ['name', 'status', 'enabled', 'scope', 'url', 'description',]
+
+class ReminderForm(forms.Form):
+    recipients = forms.ModelMultipleChoiceField(label=_('Reminder recipients'),
+        queryset=User.objects.filter(is_active=True),
+        widget=forms.SelectMultiple(attrs={'size': '10',}))
+    text = forms.CharField(label=_('Reminder text'),
+        widget=forms.Textarea(attrs={'cols': '65', 'rows': '10',}))

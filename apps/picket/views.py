@@ -26,8 +26,9 @@ from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
 
 import custom
+from alerts import send_alerts
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
-                   AssignForm, StatusForm, BugRelationshipForm)
+                   AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
                     BugMonitor)
 from settings import *
@@ -199,9 +200,6 @@ def update_field(request, bug_id, form_class):
 
 @login_required
 def update_monitor(request, bug_id, mute):
-    """
-    @todo: bug monitoring handling
-    """
     bug = get_object_or_404(Bug, id=bug_id)
     
     if request.method == 'POST':
@@ -263,6 +261,24 @@ def bug_file_upload(request, bug_id):
     
     return direct_to_template(request, 'picket/bug_file_form.html',
         {'bug': bug, 'bug_file_form': bugFileForm,})
+
+@login_required
+def remind(request, bug_id):
+    
+    bug = get_object_or_404(Bug, id=bug_id)
+    
+    if request.method == 'POST':
+        reminderForm = ReminderForm(request.POST)
+        if reminderForm.is_valid():
+            send_alerts(bug, reminderForm.cleaned_data['recipients'],
+                reminderForm.cleaned_data['text'])
+            request.user.message_set.create(message=_('Reminder(s) sent'))
+            return HttpResponseRedirect(bug.get_absolute_url())
+    else:
+        reminderForm = ReminderForm()
+    
+    return direct_to_template(request, 'picket/reminder.html',
+        {'bug': bug, 'reminder_form': reminderForm,})
 
 @login_required
 def annotate(request, bug_id):

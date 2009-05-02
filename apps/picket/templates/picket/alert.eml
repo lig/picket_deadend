@@ -1,0 +1,51 @@
+{% load i18n %}{% spaceless %}
+{% comment %}
+Copyright 2009 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% endspaceless %}{{ message }}
+
+{% trans 'ID' %}: {{ bug.get_id_display }}
+{% trans 'Project' %}: {{ bug.project.name }}
+{% trans 'Category' %}: {{ bug.category.name }}
+{% trans 'Severity' %}: {{ bug.get_severity_display }}
+{% trans 'Reproducibility' %}: {{ bug.get_reproducibility_display }}
+{% trans 'Date submitted' %}: {{ bug.date_submitted|date }}
+{% trans 'Last update' %}: {{ bug.last_updated|date }}
+
+{% trans 'Reporter' %}: {{ bug.reporter }}
+{% trans 'Scope' %}: {{ bug.scope.name }}
+
+{% trans 'Assigned to' %}: {% if bug.handler %}{{ bug.handler }}{% else %}{% trans 'Nobody' %}{% endif %}
+{% trans 'Priority' %}: {{ bug.get_priority_display }}
+{% trans 'Resolution' %}: {{ bug.get_resolution_display }}
+{% trans 'Status' %}: {{ bug.get_status_display }}
+{% if bug.duplicate %}{% trans 'Duplicate id' %}: {{ bug.duplicate }}{% endif %}
+{% trans 'Projection' %}: {{ bug.get_projection_display }}
+{% trans 'ETA' %}: {{ bug.get_eta_display }}
+
+{% trans 'Summary' %}: {{ bug.summary }}
+
+{% trans 'Description' %}:
+{{ bug.description }}
+
+{% trans 'Steps to reproduce' %}:
+{{ bug.steps_to_reproduce }}
+
+{% trans 'Additional information' %}:
+{{ bug.additional_information }}
