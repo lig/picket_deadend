@@ -399,26 +399,10 @@ class Bugnote(models.Model):
         verbose_name_plural = _('bugnotes')
         ordering = ['date_submitted',]
 
-class ProjectUserList(models.Model):
-    """
-    @todo: automate me for caching scopes
-    """
-    
-    project = models.ForeignKey(Project, verbose_name=_('project'))
-    user = models.ForeignKey(User, verbose_name=_('user'))
-    access_level = models.PositiveIntegerField(
-        _('project user access level'), choices=ACCESS_LEVELS_CHOICES)
-    class Meta:
-        unique_together = (('project', 'user'),)
-    def __unicode__(self):
-        return u'%s in %s is %s' % (
-            self.user, self.project, self.get_access_level_display())
-    class Meta():
-        verbose_name = _('project user list entry')
-        verbose_name_plural = _('project user list entries')
-        pass
 
 """
+@note: Models discovered from Mantis database scheme
+
 class Config(models.Model):
     key = models.CharField(max_length=192)
     project = models.ForeignKey(Project)
