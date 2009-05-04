@@ -20,8 +20,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
 
 from ..models import (Bug, BugFile, BugHistory, BugMonitor, Bugnote,
-                      BugRelationship, Category, Project, ProjectFile,
-                      ProjectUserList, Scope, ScopeGroup)
+                      BugRelationship, Category, Project, ProjectFile, Scope,
+                      ScopeGroup)
 
 
 class BugFileInline(admin.StackedInline):
