@@ -20,11 +20,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picketcontent %}
 
-<div id="picketfilter">
-{% block picketfilter %}
-
-{% endblock picketfilter %}
-</div>
+<form action="{% url picket-bugs %}"
+{{ bug_filter.form }}
+<input type="submit" value="{% trans 'Filter' %}">
+</form>
 
 <table id="buglist" class="width100" cellspacing="1">
 
