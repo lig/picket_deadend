@@ -61,14 +61,9 @@ class ProjectFileInline(admin.StackedInline):
     model = ProjectFile
     extra = 1
 
-class ProjectUserListInline(admin.TabularInline):
-    model = ProjectUserList
-    extra = 1
-
 class ProjectAdmin(admin.ModelAdmin):
     inlines = [
         ProjectFileInline,
-        ProjectUserListInline,
     ]
 admin.site.register(Project, ProjectAdmin)
 
