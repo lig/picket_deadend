@@ -75,28 +75,18 @@ class Project(models.Model):
 
     name = models.CharField(_('project name'),
         unique=True, max_length=255)
-
     status = models.PositiveIntegerField(_('project status'),
         choices=PROJECT_STATUS_CHOICES,
         default=PROJECT_STATUS_CHOICES_DEFAULT)
-
     enabled = models.BooleanField(_('project enabled'), default=True)
-
     scope = models.ForeignKey(Scope,
         verbose_name=_('project scope'))
-
     url = models.URLField(_('project url'), verify_exists=False, blank=True)
-
     description = models.TextField(_('project description'),
         blank=True)
-
     parent = models.ForeignKey('Project',
         verbose_name=_('project parent'), blank=True, null=True)
         
-    user_list = models.ManyToManyField(User,
-        verbose_name=_('project user list'), blank=True, null=True,
-        related_name='project_list', through='ProjectUserList')
-    
     def __unicode__(self):
         return u'%s' % self.name
     
@@ -402,7 +392,7 @@ class Bugnote(models.Model):
 
 """
 @note: Models discovered from Mantis database scheme
-
+    
 class Config(models.Model):
     key = models.CharField(max_length=192)
     project = models.ForeignKey(Project)
