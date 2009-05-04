@@ -30,7 +30,7 @@ from alerts import send_alerts
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
                    AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
-                    BugMonitor)
+                    BugMonitor, Bugnote)
 from settings import *
 
 @login_required
@@ -268,14 +268,22 @@ def remind(request, bug_id):
     bug = get_object_or_404(Bug, id=bug_id)
     
     if request.method == 'POST':
-        reminderForm = ReminderForm(request.POST)
+        reminderForm = ReminderForm(request.POST, user=request.user)
         if reminderForm.is_valid():
-            send_alerts(bug, reminderForm.cleaned_data['recipients'],
-                reminderForm.cleaned_data['text'])
+            reminder_text = reminderForm.cleaned_data['text']
+            reminder_recipients = reminderForm.cleaned_data['recipients']
+            """ save note """
+            bugnote = Bugnote(bug=bug, reporter=request.user,
+                text='Reminder to %s: %s' %
+                    (', '.join(map(str, reminder_recipients)), reminder_text),
+                scope=reminderForm.cleaned_data['scope'])
+            bugnote.save()
+            """ send reminder """
+            send_alerts(bug, reminder_recipients, reminder_text)
             request.user.message_set.create(message=_('Reminder(s) sent'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
-        reminderForm = ReminderForm()
+        reminderForm = ReminderForm(user=request.user)
     
     return direct_to_template(request, 'picket/reminder.html',
         {'bug': bug, 'reminder_form': reminderForm,})

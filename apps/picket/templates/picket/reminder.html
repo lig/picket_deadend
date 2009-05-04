@@ -43,8 +43,15 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	</td>
 </tr>
 <tr class="{% cycle 'row-1' 'row-2' as row-class %}">
-	<td>{{ reminder_form.recipients }}</td>
-	<td class="center">{{ reminder_form.text }}</td>
+    <td>{{ reminder_form.recipients }}</td>
+    <td class="center">{{ reminder_form.text }}</td>
+</tr>
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Reminder note scope' %}
+        <br /><span class="required">{{ reminder_form.scope.errors.as_text }}</span>
+    </td>
+    <td class="center">{{ reminder_form.scope }}</td>
 </tr>
 <tr>
 	<td class="center" colspan="2">
