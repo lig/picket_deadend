@@ -23,7 +23,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
+from django.utils.translation import ugettext_lazy as _
 
+from ..alerts import send_alerts
 from middleware import PicketSignalsMiddleware
 from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote
 from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
@@ -108,9 +110,57 @@ def bugmonitor_update_from_bugnote(*args, **kwargs):
         user=bugnote.reporter, bug=bugnote.bug)
     if created: monitor.save()
 
+def bug_notify_change(*args, **kwargs):
+    """
+    @author: lig
+    """
+    history_entry = kwargs.pop('instance')
+    bug = history_entry.bug
+    
+    recipients = User.objects.filter(bugmonitor__bug=bug)
+    
+    """ @todo: handle relationship change """
+    if history_entry.type == 0:
+        """ bug created """
+        message = _('''Bug #%(bug_id)s is created''' %
+            {'bug_id': bug.get_id_display(),})
+    elif history_entry.type == 1:
+        """ bug changed """
+        message = _('''Bug #%(bug_id)s is changed:
+field %(field_name)s was %(old_value)s changed to %(new_value)s''' %
+            {'bug_id': bug.get_id_display(),
+                'field_name': history_entry.field_name,
+                'old_value': history_entry.old_value,
+                'new_value': history_entry.new_value,})
+    else:
+        """ bug changed somehow """
+        message = _('''Bug #%(bug_id)s is changed''' %
+            {'bug_id': bug.get_id_display(),})
+    
+    send_alerts(bug, recipients, message)
+
+def bug_notify_bugnote(*args, **kwargs):
+    """
+    @author: lig
+    """
+    bugnote = kwargs.pop('instance')
+    bug = bugnote.bug
+    
+    recipients = User.objects.filter(bugmonitor__bug=bug)
+    
+    message = _('''User %(user)s has added bugnote to the bug #%(bug_id)s:
+%(bugnote_text)s''' %
+        {'user': bugnote.reporter, 'bug_id': bug.get_id_display(),
+            'bugnote_text': bugnote.text,})
+    
+    send_alerts(bug, recipients, message)
+
 
 post_save.connect(bugrelationship_reverse_update, BugRelationship)
 post_delete.connect(bugrelationship_reverse_remove, BugRelationship)
 
 post_save.connect(bugmonitor_update_from_bughistory, BugHistory)
 post_save.connect(bugmonitor_update_from_bugnote, Bugnote)
+
+post_save.connect(bug_notify_change, BugHistory)
+post_save.connect(bug_notify_bugnote, Bugnote)
