@@ -153,8 +153,8 @@ class BugManager(models.Manager):
     def permited(self, user, project=None, category=None):
         
         bugs = self.select_related().filter(
-            scope__in=Scope.objects.permited(user),
-            project__in=Project.objects.permited(user))
+            scope__in=Scope.objects.get_permited(user),
+            project__in=Project.objects.get_permited(user))
         
         bugs = bugs.filter(project=project) if project is not None else bugs
         
