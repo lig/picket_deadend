@@ -42,16 +42,13 @@ class ScopeGroup(models.Model):
     group = models.ForeignKey(Group, verbose_name=_('group'))
 
 class ScopeManager(models.Manager):
-    def permited(self, user):
-        scopes = []
-        for group in user.groups.all():
-            scopes.append(group.scope_set.all())
-        scopes += list(Scope.objects.filter(anonymous_access=True))
-        return scopes
-
+    def get_permited(self, user):
+        return self.filter(models.Q(groups__user=user) |
+            models.Q(anonymous_access=True))
 
 class Scope(models.Model):
     objects = ScopeManager()
+    
     name = models.CharField(_('scope name'),
         unique=True, max_length=255)
     groups = models.ManyToManyField(Group,
@@ -70,9 +67,8 @@ class Scope(models.Model):
         verbose_name_plural = _('scopes')
 
 class ProjectManager(models.Manager):
-    def permited(self, user):
-        #return self.filter(scope__groups__user=user.id)
-        return self.filter(scope__in=Scope.objects.permited(user))
+    def get_permited(self, user):
+        return self.filter(scope__in=Scope.objects.get_permited(user))
         
 class Project(models.Model):
     objects = ProjectManager()

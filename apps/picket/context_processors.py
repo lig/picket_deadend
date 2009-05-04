@@ -24,10 +24,10 @@ from models import Project
 
 def picket(request):
     
-    projects = list(Project.objects.permited(request.user))
+    projects = list(Project.objects.get_permited(request.user))
     
     try:
-        cur_project = Project.objects.permited(request.user).get(
+        cur_project = Project.objects.get_permited(request.user).get(
             pk=request.session.get('project_id', 0))
     except Project.DoesNotExist:
         cur_project = None
