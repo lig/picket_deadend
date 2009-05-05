@@ -42,12 +42,12 @@ class ScopeManager(models.Manager):
     
     def get_permited(self, user):
         
-        scopes = self.filter(models.Q(anonymous_access=True))
+        q = models.Q(anonymous_access=True)
         
         if not user.is_anonymous():
-            scopes = scopes.filter(models.Q(groups__user=user))
+            q |= models.Q(groups__user=user)
         
-        return scopes
+        return self.filter(q)
 
 class ProjectManager(models.Manager):
     def get_permited(self, user):
