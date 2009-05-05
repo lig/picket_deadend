@@ -1,0 +1,39 @@
+{% load i18n picket_tags %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+<form action="{% url picket-bugs %}"
+{{ bug_filter.form }}
+<input type="submit" value="{% trans 'Filter' %}">
+</form>
+
+<table class="width100" cellspacing="1">
+    <tr class="row-category2">
+        <td class="small-caption" valign="top"></td>
+    </tr>
+    <tr class="row-1">
+        <td class="small-caption" valign="top"></td>
+    </tr>
+</table>
+
+{% for field in bug_filter.form %}
+<span class="fill_my_contents_out"><a href="" onclick="document.getElementById('id_{{ field.name }}_value').style.display='none';document.getElementById('id_{{ field.name }}_field').style.display='block';this.parentNode.innerHTML=this.innerHTML;return false;">{{ field.label }}</a></span>
+<div id="id_{{ field.name }}_value">{% field_value field %}</div>
+<div id="id_{{ field.name }}_field" style="display: none;">{{ field }}</div>
+{% endfor %}

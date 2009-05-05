@@ -51,9 +51,9 @@ class MultiCharFilter(fltr.Filter):
 class BugFilter(fltr.FilterSet):
     
     project = fltr.ModelMultipleChoiceFilter(queryset=Project.objects.all())
-    reporter = fltr.ModelMultipleChoiceFilter(
+    reporter = fltr.ModelChoiceFilter(
         queryset=User.objects.filter(is_active=True))
-    handler = fltr.ModelMultipleChoiceFilter(
+    handler = fltr.ModelChoiceFilter(
         queryset=User.objects.filter(is_active=True))
     priority = fltr.MultipleChoiceFilter(choices=PRIORITY_CHOICES)
     severity = fltr.MultipleChoiceFilter(choices=SEVERITY_CHOICES)
