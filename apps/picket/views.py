@@ -90,7 +90,7 @@ def filebug(request, clone=False, clone_id=None):
                 reverse('picket-choose-project-gonext',
                     kwargs={'view_name': view_name,}))
     
-    scopes = Scope.objects.permited(request.user)
+    scopes = Scope.objects.get_permited(request.user)
     
     if request.method == 'POST':
         bugForm = BugForm(request.POST)
