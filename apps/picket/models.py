@@ -28,23 +28,53 @@ import custom
 from settings import *
 
 
-class IntegrationError(Exception):
-    pass
-
 RIGHTS = (
     ('r', 'Read'),
     ('rw', 'Read/Write')
 )
 
+
+class IntegrationError(Exception):
+    pass
+
+
+class ScopeManager(models.Manager):
+    
+    def get_permited(self, user):
+        
+        scopes = self.filter(models.Q(anonymous_access=True))
+        
+        if not user.is_anonymous():
+            scopes = scopes.filter(models.Q(groups__user=user))
+        
+        return scopes
+
+class ProjectManager(models.Manager):
+    def get_permited(self, user):
+        return self.filter(scope__in=Scope.objects.get_permited(user))
+
+class BugManager(models.Manager):
+    
+    def permited(self, user, project=None, category=None):
+                
+        bugs = self.select_related().filter(
+            scope__in=Scope.objects.get_permited(user),
+            project__in=Project.objects.get_permited(user))
+        
+        bugs = bugs.filter(project=project) if project is not None else bugs
+        bugs = bugs.filter(category=category) if category is not None else bugs
+        
+        return bugs
+
+class BugMonitorManager(models.Manager):
+    def active(self):
+        return self.get_query_set().filter(mute=False)
+
+
 class ScopeGroup(models.Model):
     rights = models.CharField(_('rights'), choices=RIGHTS, max_length=2)
     scope = models.ForeignKey('Scope', verbose_name=_('scope'))
     group = models.ForeignKey(Group, verbose_name=_('group'))
-
-class ScopeManager(models.Manager):
-    def get_permited(self, user):
-        return self.filter(models.Q(groups__user=user) |
-            models.Q(anonymous_access=True))
 
 class Scope(models.Model):
     objects = ScopeManager()
@@ -66,10 +96,6 @@ class Scope(models.Model):
         verbose_name = _('scope')
         verbose_name_plural = _('scopes')
 
-class ProjectManager(models.Manager):
-    def get_permited(self, user):
-        return self.filter(scope__in=Scope.objects.get_permited(user))
-        
 class Project(models.Model):
     objects = ProjectManager()
 
@@ -137,20 +163,6 @@ class Category(models.Model):
         verbose_name = _('category')
         verbose_name_plural = _('categories')
         unique_together = (('project', 'name'),)
-
-class BugManager(models.Manager):
-    
-    def permited(self, user, project=None, category=None):
-        
-        bugs = self.select_related().filter(
-            scope__in=Scope.objects.get_permited(user),
-            project__in=Project.objects.get_permited(user))
-        
-        bugs = bugs.filter(project=project) if project is not None else bugs
-        
-        bugs = bugs.filter(category=category) if category is not None else bugs
-        
-        return bugs
 
 class Bug(models.Model):
     objects = BugManager()
@@ -321,10 +333,6 @@ class BugHistory(models.Model):
         verbose_name = _('bug history entry')
         verbose_name_plural = _('bug history entries')
         ordering = ['date_modified',]
-
-class BugMonitorManager(models.Manager):
-    def active(self):
-        return self.get_query_set().filter(mute=False)
 
 class BugMonitor(models.Model):
     objects = BugMonitorManager()
