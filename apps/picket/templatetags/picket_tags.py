@@ -85,12 +85,11 @@ class FieldValueNode(Node):
             field = self.field.resolve(context)
             if hasattr(field.field, 'choices'):
                 field_choices = dict(field.field.choices)
-                field_data = field.form.data.get(field.name, [])
+                field_data = field.data or []
                 field_values = (field_choices[int(key)] for key in field_data)
                 return ', '.join(field_values)
             else:
-                """ @todo: handle fields with no choices """
-                return ''
+                return field.data or ''
         except TemplateSyntaxError, e:
             if settings.TEMPLATE_DEBUG:
                 raise

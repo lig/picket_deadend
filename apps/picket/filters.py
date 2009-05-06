@@ -28,7 +28,7 @@ from settings import *
 
 class FilterableQ(Q):
     def filter(self, **kwargs):
-        self = Q(self, Q(**kwargs))
+        return Q(self, Q(**kwargs))
 
 class MultiCharFilter(fltr.Filter):
     field_class = forms.CharField

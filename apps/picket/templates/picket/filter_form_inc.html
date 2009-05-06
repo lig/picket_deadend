@@ -19,21 +19,22 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 <form action="{% url picket-bugs %}"
-{{ bug_filter.form }}
-<input type="submit" value="{% trans 'Filter' %}">
-</form>
-
-<table class="width100" cellspacing="1">
+<table class="width100">
     <tr class="row-category2">
-        <td class="small-caption" valign="top"></td>
+    {% for field in bug_filter.form %}
+        <td class="small-caption">
+            <span><a href="" onclick="document.getElementById('id_{{ field.name }}_value').style.display='none';document.getElementById('id_{{ field.name }}_field').style.display='block';this.parentNode.innerHTML=this.innerHTML;return false;">{{ field.label }}</a></span>
+        </td>
+    {% endfor %}
     </tr>
     <tr class="row-1">
-        <td class="small-caption" valign="top"></td>
+    {% for field in bug_filter.form %}
+        <td class="small-caption">
+            <div id="id_{{ field.name }}_value">{% field_value field %}</div>
+            <div id="id_{{ field.name }}_field" style="display: none;">{{ field }}</div>
+        </td>
+    {% endfor %}
     </tr>
 </table>
-
-{% for field in bug_filter.form %}
-<span class="fill_my_contents_out"><a href="" onclick="document.getElementById('id_{{ field.name }}_value').style.display='none';document.getElementById('id_{{ field.name }}_field').style.display='block';this.parentNode.innerHTML=this.innerHTML;return false;">{{ field.label }}</a></span>
-<div id="id_{{ field.name }}_value">{% field_value field %}</div>
-<div id="id_{{ field.name }}_field" style="display: none;">{{ field }}</div>
-{% endfor %}
+<p><input type="submit" value="{% trans 'Apply filter' %}"> <input type="reset" value="{% trans 'Reset filter' %}" onclick="document.location.href='{% url picket-bugs %}'; return false;" /></p>
+</form>
