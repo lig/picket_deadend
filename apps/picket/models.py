@@ -42,29 +42,38 @@ class ScopeManager(models.Manager):
     
     def get_permited(self, user):
         
-        q = models.Q(anonymous_access=True)
-        
-        if not user.is_anonymous():
-            q |= models.Q(groups__user=user)
-        
-        return self.filter(q)
+        if user.is_superuser:
+            return self.all()
+        else:            
+            q = models.Q(anonymous_access=True)
+            
+            if not user.is_anonymous():
+                q |= models.Q(groups__user=user)
+            
+            return self.filter(q)
 
 class ProjectManager(models.Manager):
     def get_permited(self, user):
-        return self.filter(scope__in=Scope.objects.get_permited(user))
+        if user.is_superuser:
+            return self.all()
+        else:
+            return self.filter(scope__in=Scope.objects.get_permited(user))
 
 class BugManager(models.Manager):
     
     def permited(self, user, project=None, category=None):
-                
-        bugs = self.select_related().filter(
-            scope__in=Scope.objects.get_permited(user),
-            project__in=Project.objects.get_permited(user))
         
-        bugs = bugs.filter(project=project) if project is not None else bugs
-        bugs = bugs.filter(category=category) if category is not None else bugs
-        
-        return bugs
+        if user.is_superuser:
+            return self.all()
+        else:
+            bugs = self.select_related().filter(
+                scope__in=Scope.objects.get_permited(user),
+                project__in=Project.objects.get_permited(user))
+            
+            bugs = bugs.filter(project=project) if project is not None else bugs
+            bugs = bugs.filter(category=category) if category is not None else bugs
+            
+            return bugs
 
 class BugMonitorManager(models.Manager):
     def active(self):
