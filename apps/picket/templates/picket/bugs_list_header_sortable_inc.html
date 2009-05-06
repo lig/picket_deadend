@@ -22,4 +22,4 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% else %}{% ifequal column_sort 'DESC' %}
 <span class="sort_arrow">&#8593;</span>
 {% endifequal %}{% endifequal %}
-<a href="{% url picket-bugs-ordered sort_field=column_name sort_dir=column_link_sort %}">{{ column_title }}</a>
+<a href="{% url picket-bugs-ordered sort_field=column_name sort_dir=column_link_sort %}?{{ query_string }}">{{ column_title }}</a>

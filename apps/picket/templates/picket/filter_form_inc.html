@@ -18,7 +18,11 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<form action="{% url picket-bugs %}"
+{% if sort_field %}
+<form action="{% url picket-bugs-ordered sort_field=sort_field sort_dir=sort_dir %}">
+{% else %}
+<form action="{% url picket-bugs %}">
+{% endif %}
 <table class="width100">
     <tr class="row-category2">
     {% for field in bug_filter.form %}

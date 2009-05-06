@@ -71,9 +71,9 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     bugs = bugFilter.qs.filter(sticky=False)
     
     return direct_to_template(request, 'picket/bugs.html',
-        {'bugs': bugs, 'sticky_bugs': sticky_bugs,
-            'project': project, 'category': category,
-            'bug_filter': bugFilter,})
+        {'bugs': bugs, 'sticky_bugs': sticky_bugs, 'project': project,
+            'category': category, 'bug_filter': bugFilter,
+            'sort_field': sort_field, 'sort_dir': sort_dir,})
 
 @login_required
 def filebug(request, clone=False, clone_id=None):

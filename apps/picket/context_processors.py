@@ -42,7 +42,11 @@ def picket(request):
     legend = []
     for (k, v) in config.BUG_STATUS_CHOICES:
         legend.append((v, config.BUG_STATUS_COLORS[k]))
-        
-    return { 'picket_projects': projects, 'cur_project': cur_project,
+    
+    """ passing query string to context to prevent loosing filter on bug list
+        sorting """
+    query_string = request.META['QUERY_STRING']
+    
+    return {'picket_projects': projects, 'cur_project': cur_project,
         'cur_url': cur_url, 'config': config, 'COPYING': COPYING,
-        'legend': legend }
+        'legend': legend,  'query_string': query_string,}
