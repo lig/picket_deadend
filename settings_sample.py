@@ -51,3 +51,5 @@ MANAGERS = ADMINS
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 TIME_ZONE = 'Europe/London'
+
+SEND_ALERTS = True
