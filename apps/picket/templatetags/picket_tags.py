@@ -76,6 +76,25 @@ class ColumnHeaderNode(Node):
                 raise
             return ''
 
+class FieldValueNode(Node):
+    def __init__(self, field):
+        self.field = Variable(field)
+        
+    def render(self, context):
+        try:
+            field = self.field.resolve(context)
+            if hasattr(field.field, 'choices'):
+                field_choices = dict(field.field.choices)
+                field_data = field.data or []
+                field_values = (field_choices[int(key)] for key in field_data)
+                return ', '.join(field_values)
+            else:
+                return field.data or ''
+        except TemplateSyntaxError, e:
+            if settings.TEMPLATE_DEBUG:
+                raise
+            return ''
+
 def do_include_join(parser, token):
     """
     Loads a template from joined path and renders it with the current context.
@@ -98,5 +117,15 @@ def do_column_header(parser, token):
     
     return ColumnHeaderNode(bits[1])
 
+def do_field_value(parser, token):
+    
+    bits = token.contents.split()
+    
+    if len(bits) != 2:
+        raise TemplateSyntaxError('field_value accepts exactly one argument')
+    
+    return FieldValueNode(bits[1])
+
 register.tag('include_join', do_include_join)
 register.tag('column_header', do_column_header)
+register.tag('field_value', do_field_value)

@@ -1,0 +1,40 @@
+{% load i18n picket_tags %}
+{% comment %}
+Copyright 2008 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+<form action="{% url picket-bugs %}"
+<table class="width100">
+    <tr class="row-category2">
+    {% for field in bug_filter.form %}
+        <td class="small-caption">
+            <span><a href="" onclick="document.getElementById('id_{{ field.name }}_value').style.display='none';document.getElementById('id_{{ field.name }}_field').style.display='block';this.parentNode.innerHTML=this.innerHTML;return false;">{{ field.label }}</a></span>
+        </td>
+    {% endfor %}
+    </tr>
+    <tr class="row-1">
+    {% for field in bug_filter.form %}
+        <td class="small-caption">
+            <div id="id_{{ field.name }}_value">{% field_value field %}</div>
+            <div id="id_{{ field.name }}_field" style="display: none;">{{ field }}</div>
+        </td>
+    {% endfor %}
+    </tr>
+</table>
+<p><input type="submit" value="{% trans 'Apply filter' %}"> <input type="reset" value="{% trans 'Reset filter' %}" onclick="document.location.href='{% url picket-bugs %}'; return false;" /></p>
+</form>

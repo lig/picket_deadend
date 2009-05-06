@@ -27,6 +27,7 @@ from django.views.generic.simple import direct_to_template
 
 import custom
 from alerts import send_alerts
+from filters import BugFilter
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
                    AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
@@ -64,13 +65,15 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
         else:
             raise Http404
     
+    bugFilter = BugFilter(request.GET, queryset=bugs, user=request.user)
     
-    sticky_bugs = bugs.filter(sticky=True)
-    bugs = bugs.filter(sticky=False)
+    sticky_bugs = bugFilter.qs.filter(sticky=True)
+    bugs = bugFilter.qs.filter(sticky=False)
     
     return direct_to_template(request, 'picket/bugs.html',
         {'bugs': bugs, 'sticky_bugs': sticky_bugs,
-            'project': project, 'category': category,})
+            'project': project, 'category': category,
+            'bug_filter': bugFilter,})
 
 @login_required
 def filebug(request, clone=False, clone_id=None):
