@@ -18,35 +18,35 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import user_passes_test
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404 
+from django.shortcuts import get_object_or_404 
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
+from django.views.generic.simple import direct_to_template
 
-from ..forms import ProjectForm
-from ..models import Project
+from ..forms import ProjectForm, CategoryForm, CategoryQuickForm
+from ..models import Project, Category
 
 
 is_su = lambda user: user.is_superuser
 
 @user_passes_test(is_su)
 def index(request):
-    return render_to_response('picket/admin/index.html', {},
-        context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/admin/index.html', {})
 
 @user_passes_test(is_su)
 def users(request):
     """ @todo: implement users administration interface """
-    return render_to_response('picket/admin/index.html', {},
-        context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/admin/index.html', {})
 
 @user_passes_test(is_su)
 def projects(request):
     
     projects = Project.objects.all()
     
-    return render_to_response('picket/admin/projects.html',
-        {'projects': projects,}, context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/admin/projects.html',
+        {'projects': projects,})
 
 @user_passes_test(is_su)
 def add_project(request):
@@ -60,12 +60,11 @@ def add_project(request):
     else:
         projectForm = ProjectForm()
     
-    return render_to_response('picket/admin/project_add.html',
-        {'project_form': projectForm,}, context_instance=RequestContext(request))
+    return direct_to_template(request, 'picket/admin/project_add.html',
+        {'project_form': projectForm,})
 
 @user_passes_test(is_su)
 def project(request, projectId):
-    projectId = int(projectId)
     
     project = get_object_or_404(Project, pk=projectId)
     
@@ -78,5 +77,64 @@ def project(request, projectId):
     else:
         projectForm = ProjectForm(instance=project)
     
-    return render_to_response('picket/admin/project_manage.html',
-        {'project_form': projectForm,}, context_instance=RequestContext(request))
+    categoryForm = CategoryQuickForm()
+    
+    return direct_to_template(request, 'picket/admin/project_manage.html',
+        {'project_form': projectForm, 'project': project,
+            'category_form': categoryForm,})
+
+@user_passes_test(is_su)
+def remove_project(request, projectId):
+    
+    project = get_object_or_404(Project, pk=projectId)
+    
+    if request.method == 'POST':
+        project.delete()
+        request.user.message_set.create(message=_('Project deleted'))
+        return HttpResponseRedirect(reverse('picket-admin-projects'))
+    else:
+        return HttpResponseRedirect(project.get_absolute_url())
+
+@user_passes_test(is_su)
+def add_category(request, projectId):
+    
+    project = get_object_or_404(Project, pk=projectId)
+    
+    if request.method == 'POST':
+        categoryForm = CategoryQuickForm(request.POST)
+        if categoryForm.is_valid():
+            category = categoryForm.save(commit=False)
+            category.project = project
+            category.save()
+            request.user.message_set.create(message=_('Category added'))
+    
+    return HttpResponseRedirect(project.get_absolute_url())
+
+@user_passes_test(is_su)
+def category(request, categoryId):
+    
+    category = get_object_or_404(Category, pk=categoryId)
+    
+    if request.method == 'POST':
+        categoryForm = CategoryForm(request.POST, instance=category)
+        if categoryForm.is_valid():
+            category = categoryForm.save()
+            request.user.message_set.create(message=_('Category updated'))
+            return HttpResponseRedirect(category.project.get_absolute_url())
+    else:
+        categoryForm = CategoryForm(instance=category)
+    
+    return direct_to_template(request, 'picket/admin/category_manage.html',
+        {'category': category, 'category_form': categoryForm,})
+
+@user_passes_test(is_su)
+def remove_category(request, categoryId):
+    
+    category = get_object_or_404(Category, pk=categoryId)
+    
+    if request.method == 'POST':
+        project = category.project
+        category.delete()
+        request.user.message_set.create(message=_('Category deleted'))
+    
+    return HttpResponseRedirect(project.get_absolute_url())

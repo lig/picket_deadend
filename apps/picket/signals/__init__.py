@@ -17,17 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-"""
-@todo: bug reminders and notifications mechanism
-"""
-
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from ..alerts import send_alerts
 from middleware import PicketSignalsMiddleware
-from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote
+from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote, Bug
 from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
 
@@ -155,6 +151,21 @@ def bug_notify_bugnote(*args, **kwargs):
     
     send_alerts(bug, recipients, message)
 
+def bug_assign_to_category_handler(*args, **kwargs):
+    """
+    @author: lig
+    """
+    bug = kwargs.pop('instance')
+    created = kwargs.pop('created')
+    
+    if created and bug.category.handler:
+        if not bug.handler:
+            bug.handler = bug.category.handler
+        else:
+            monitor, created = BugMonitor.objects.get_or_create(
+                user=bug.category.handler, bug=bug)
+            if created: monitor.save()
+
 
 post_save.connect(bugrelationship_reverse_update, BugRelationship)
 post_delete.connect(bugrelationship_reverse_remove, BugRelationship)
@@ -164,3 +175,5 @@ post_save.connect(bugmonitor_update_from_bugnote, Bugnote)
 
 post_save.connect(bug_notify_change, BugHistory)
 post_save.connect(bug_notify_bugnote, Bugnote)
+
+post_save.connect(bug_assign_to_category_handler, Bug)

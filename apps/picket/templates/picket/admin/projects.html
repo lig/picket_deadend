@@ -27,6 +27,13 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Projects' %} <small>(<a href="{% url picket-admin-projects-add %}">{% trans 'add' %}</a>)</small>
     </td>
 </tr>
+<tr class="row-category">
+    <td>{% trans 'Project' %}</td>
+    <td>{% trans 'Status' %}</td>
+    <td>{% trans 'Enabled' %}</td>
+    <td>{% trans 'Scope' %}</td>
+    <td>{% trans 'Description' %}</td>
+</tr>
 {% for project in projects %}
 <tr class="{% cycle 'row-1' 'row-2' %}">
     <td><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>

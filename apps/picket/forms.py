@@ -21,7 +21,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from models import Bug, Bugnote, Project, BugFile, BugRelationship, Scope
+from models import (Bug, Bugnote, Project, BugFile, BugRelationship, Scope,
+                    Category)
 
 
 class BugForm(forms.ModelForm):
@@ -77,6 +78,16 @@ class ProjectForm(forms.ModelForm):
     class Meta():
         model = Project
         fields = ['name', 'status', 'enabled', 'scope', 'url', 'description',]
+
+class CategoryForm(forms.ModelForm):
+    class Meta():
+        model = Category
+        fields = ['name', 'handler',]
+
+class CategoryQuickForm(forms.ModelForm):
+    class Meta():
+        model = Category
+        fields = ['name',]
 
 class ReminderForm(forms.Form):
     

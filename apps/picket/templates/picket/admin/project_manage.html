@@ -22,7 +22,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <br />
 <div align="center">
-<form method="post" action="">
+
+<form method="post" action="{% url picket-admin-project projectId=project.id %}">
 <table class="width75" cellspacing="1">
 {% include 'picket/admin/project_form_inc.html' %}
 <tr>
@@ -32,6 +33,53 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 </tr>
 </table>
 </form>
+
+<br />
+
+<form method="post" action="{% url picket-admin-project-delete projectId=project.id %}">
+<table class="width50" cellspacing="1">
+<tr>
+    <td class="center" colspan="2">
+        <input type="submit" class="button" value="{% trans 'Delete project' %}" onclick="return confirm('{% trans 'Are you sure you want to delete this project and all of its categories and bugs?' %}');" />
+    </td>
+</tr>
+</table>
+</form>
+
+<br />
+
+<table class="width75" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="3">{% trans 'Categories' %}</td>
+</tr>
+<tr class="row-category">
+    <td>{% trans 'Category' %}</td>
+    <td>{% trans 'Assign to' %}</td>
+    <td>{% trans 'Actions' %}</td>
+</tr>
+{% for category in project.category_set.all %}
+<tr class="{% cycle 'row-1' 'row-2' %}">
+    <td>{{ category.name }}</a></td>
+    <td>{% firstof category.handler '' %}</td>
+    <td>
+        <form method="get" action="{% url picket-admin-category-edit categoryId=category.id %}">
+            <input type="submit" value="{% trans 'edit' %}" />
+        </form>
+        <form method="post" action="{% url picket-admin-category-delete categoryId=category.id %}">
+            <input type="submit" value="{% trans 'delete' %}" onclick="return confirm('{% trans 'Are you sure you want to delete this category and all of its bugs?' %}');" />
+        </form>
+    </td>
+</tr>
+{% endfor %}
+<tr>
+    <td colspan="3">
+        <form method="post" action="{% url picket-admin-categories-add projectId=project.id %}">
+            <span>{{ category_form.name }} <input type="submit" value="{% trans 'Add category' %}" /></span>
+        </form>
+    </td>
+</tr>
+</table>
+
 </div>
 
 {% endblock picketadmincontent %}
