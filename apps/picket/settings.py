@@ -30,9 +30,9 @@ __all__ = ['PROJECT_STATUS_CHOICES', 'PROJECT_STATUS_CHOICES_DEFAULT',
     'PROJECTION_CHOICES', 'PROJECTION_CHOICES_DEFAULT', 'ETA_CHOICES',
     'ETA_CHOICES_DEFAULT', 'ACCESS_LEVELS_CHOICES',
     'ACCESS_LEVELS_CHOICES_DEFAULT', 'COLUMNS_BUGS_VIEW', 'EMAIL_SEND_ALERTS',
-    'INTEGRATION', 'INTEGRATION_MODEL', 'INTEGRATION_ALLOW_INTERNAL_PROJECTS',
-    'INTEGRATION_FOREIGN_ABSOLUTE_URL', 'USE_JAVASCRIPT',
-    'SHOW_PROJECT_MENU_BAR', 'SHOW_VERSION', 'SHOW_LEGEND']
+    'RIGHTS', 'INTEGRATION', 'INTEGRATION_MODEL',
+    'INTEGRATION_ALLOW_INTERNAL_PROJECTS', 'INTEGRATION_FOREIGN_ABSOLUTE_URL',
+    'USE_JAVASCRIPT', 'SHOW_PROJECT_MENU_BAR', 'SHOW_VERSION', 'SHOW_LEGEND']
 
 PROJECT_STATUS_CHOICES = (
     (10, _('development'),),
@@ -201,6 +201,14 @@ COLUMNS_BUGS_VIEW = (
 
 """ behaviour settings """
 EMAIL_SEND_ALERTS = True
+
+""" access rights lists. every string is a list of the possible rights """
+RIGHTS = (
+    ('r', 'Read'),
+    ('rw', 'Read/Write'),
+    #('rwd', 'Read/Write/Delete'),
+    #('w', 'Write only'),
+)
 
 """ settings for integration in some other django project as app """
 INTEGRATION = True

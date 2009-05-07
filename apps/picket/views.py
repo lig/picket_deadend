@@ -16,11 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
+"""
+@todo: write test cases for permissions
+"""
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound, Http404
+from django.http import (HttpResponseRedirect, HttpResponseNotFound,
+                         HttpResponseForbidden, Http404)
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
@@ -32,14 +36,16 @@ from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
                    AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
                     BugMonitor, Bugnote)
+from permissions import permited_project_required, permited_bug_required
 from settings import *
+
 
 @login_required
 def index(request):
     
     return direct_to_template(request, 'picket/index.html', {})
     
-@login_required
+@permited_project_required(required_rights='r')
 def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     """
     @note: Add order_by_field_name method to custom.py module to order by
@@ -75,7 +81,7 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
             'category': category, 'bug_filter': bugFilter,
             'sort_field': sort_field, 'sort_dir': sort_dir,})
 
-@login_required
+@permited_project_required(required_rights='w')
 def filebug(request, clone=False, clone_id=None):
     """
     @todo: handle relationship with parent in case of cloning
@@ -120,13 +126,11 @@ def filebug(request, clone=False, clone_id=None):
         {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
             'is_clone': clone,})
 
-@login_required
-def bug(request, bug_id):
+@permited_bug_required(required_rights='r')
+def bug(request, bug):
     """
     View bug by its id
     """
-    
-    bug = get_object_or_404(Bug, id=bug_id)
     
     bugnoteForm = BugnoteForm()
     assignForm = AssignForm(instance=bug)
@@ -153,10 +157,8 @@ def bug(request, bug_id):
             'bug_file_form': bugFileForm,
             'bug_history_items': bugHistoryItems,})
 
-@login_required
-def update(request, bug_id):
-    
-    bug = get_object_or_404(Bug, id=bug_id)
+@permited_bug_required(required_rights='w')
+def update(request, bug):
     
     if request.method == 'POST':
         bugUpdateForm = BugUpdateForm(instance=bug, data=request.POST)
@@ -182,12 +184,11 @@ def update(request, bug_id):
         {'bug': bug, 'bug_update_form': bugUpdateForm,
             'bugnote_form': bugnoteForm,})
 
-@login_required
-def update_field(request, bug_id, form_class):
+@permited_bug_required(required_rights='w')
+def update_field(request, bug, form_class):
+    
     Form = __import__('apps.picket.forms', globals(), locals(),
         fromlist=[form_class,]).__getattribute__(form_class)
-    
-    bug = get_object_or_404(Bug, id=bug_id)
     
     if request.method == 'POST':
         form = Form(instance=bug, data=request.POST)
@@ -201,9 +202,8 @@ def update_field(request, bug_id, form_class):
     return direct_to_template(request, 'picket/bug_update_field.html',
         {'field_form': form,})
 
-@login_required
-def update_monitor(request, bug_id, mute):
-    bug = get_object_or_404(Bug, id=bug_id)
+@permited_bug_required(required_rights='r')
+def update_monitor(request, bug, mute):
     
     if request.method == 'POST':
         bugMonitor, created = BugMonitor.objects.get_or_create(
@@ -215,11 +215,9 @@ def update_monitor(request, bug_id, mute):
     else:
         raise Http404
 
-@login_required
-def add_relationship(request, bug_id):
-    
-    bug = get_object_or_404(Bug, id=bug_id)
-    
+@permited_bug_required(required_rights='w')
+def add_relationship(request, bug):
+        
     if request.method == 'POST':
         bugRelationshipForm = BugRelationshipForm(request.POST)
         if bugRelationshipForm.is_valid():
@@ -246,10 +244,8 @@ def add_relationship(request, bug_id):
     
     return HttpResponseRedirect(bug.get_absolute_url())
 
-@login_required
-def bug_file_upload(request, bug_id):
-    
-    bug = get_object_or_404(Bug, id=bug_id)
+@permited_bug_required(required_rights='w')
+def bug_file_upload(request, bug):
     
     if request.method == 'POST':
         bugFileForm = BugFileForm(request.POST, request.FILES)
@@ -265,10 +261,8 @@ def bug_file_upload(request, bug_id):
     return direct_to_template(request, 'picket/bug_file_form.html',
         {'bug': bug, 'bug_file_form': bugFileForm,})
 
-@login_required
-def remind(request, bug_id):
-    
-    bug = get_object_or_404(Bug, id=bug_id)
+@permited_bug_required(required_rights='r')
+def remind(request, bug):
     
     if request.method == 'POST':
         reminderForm = ReminderForm(request.POST, user=request.user)
@@ -291,10 +285,11 @@ def remind(request, bug_id):
     return direct_to_template(request, 'picket/reminder.html',
         {'bug': bug, 'reminder_form': reminderForm,})
 
-@login_required
-def annotate(request, bug_id):
-    
-    bug = get_object_or_404(Bug, id=bug_id)
+@permited_bug_required(required_rights='r')
+def annotate(request, bug):
+    """
+    @todo: handle bugnotes access rights
+    """
     
     if request.method == 'POST':
         bugnoteForm = BugnoteForm(request.POST)
@@ -310,13 +305,11 @@ def annotate(request, bug_id):
     else:
         return HttpResponseRedirect(bug.get_absolute_url())
 
-@login_required
-def delete(request, bug_id):
+@permited_bug_required(required_rights='d')
+def delete(request, bug):
     """
     Delete bug by its id
     """
-    
-    bug = get_object_or_404(Bug, id=bug_id)
     
     bug.delete()
     
@@ -324,7 +317,7 @@ def delete(request, bug_id):
     
     return HttpResponseRedirect(reverse('picket-bugs'))
 
-@login_required
+@permited_bug_required(required_rights='w')
 def delete_relationship(request, bug_relationship_id):
     
     bugRelationship = get_object_or_404(BugRelationship,
@@ -338,7 +331,7 @@ def delete_relationship(request, bug_relationship_id):
     
     return HttpResponseRedirect(bug.get_absolute_url())
 
-@login_required
+@permited_project_required(required_rights='r')
 def project(request, project_id):
     return HttpResponseRedirect(reverse('picket-admin-project',
         args=(project_id,)))
@@ -361,7 +354,10 @@ def set_project(request, view_name='picket-bugs'):
     
     if projectId is not None:
         project = get_object_or_404(Project, id=projectId)
-        request.session['project_id'] = project.id
+        if project.is_permited(request.user):
+            request.session['project_id'] = project.id
+        else:
+            return HttpResponseForbidden()
         return HttpResponseRedirect(reverse(view_name))
     else:
         if request.session.has_key('project_id'):
@@ -387,7 +383,6 @@ def dummy(request):
     """
     just redirecting to bugs view now
     """
-    
     return HttpResponseRedirect(reverse('picket-bugs'))
 
 """

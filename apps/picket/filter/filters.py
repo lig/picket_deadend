@@ -79,7 +79,6 @@ class MultipleChoiceFilter(Filter):
     """
     field_class = forms.MultipleChoiceField
     
-    """ @todo: contribute MultipleChoiceFilter fix to upstream """
     def filter(self, qs, value):
         if value:
             q = Q()

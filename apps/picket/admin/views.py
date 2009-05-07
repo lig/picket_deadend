@@ -27,9 +27,8 @@ from django.views.generic.simple import direct_to_template
 
 from ..forms import ProjectForm, CategoryForm, CategoryQuickForm
 from ..models import Project, Category
+from ..permissions import is_su
 
-
-is_su = lambda user: user.is_superuser
 
 @user_passes_test(is_su)
 def index(request):

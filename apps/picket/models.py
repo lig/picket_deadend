@@ -28,12 +28,6 @@ import custom
 from settings import *
 
 
-RIGHTS = (
-    ('r', 'Read'),
-    ('rw', 'Read/Write')
-)
-
-
 class IntegrationError(Exception):
     pass
 
@@ -81,6 +75,8 @@ class BugMonitorManager(models.Manager):
 
 
 class ScopeGroup(models.Model):
+    objects = models.Manager()
+    
     rights = models.CharField(_('rights'), choices=RIGHTS, max_length=2)
     scope = models.ForeignKey('Scope', verbose_name=_('scope'))
     group = models.ForeignKey(Group, verbose_name=_('group'))
@@ -121,7 +117,16 @@ class Project(models.Model):
         blank=True)
     parent = models.ForeignKey('Project',
         verbose_name=_('project parent'), blank=True, null=True)
-        
+    
+    def is_permited(self, user, required_rights='r'):
+        def check_permissions():
+            permission = ScopeGroup.objects.get(
+                scope=self.scope, group__in=user.groups.all())
+            return all(
+                (right in permission.rights for right in required_rights))
+        return (user.is_superuser or self.scope.anonymous_access or
+            self in Project.objects.get_permited(user) and check_permissions())
+    
     def __unicode__(self):
         return u'%s' % self.name
     
@@ -230,6 +235,15 @@ class Bug(models.Model):
         if self.scope is None:
             self.scope = self.project.scope
         super(Bug, self).save(*args, **kwargs)
+    
+    def is_permited(self, user, required_rights='r'):
+        def check_permissions():
+            permission = ScopeGroup.objects.get(
+                scope=self.project.scope, group=user.group)
+            return all(
+                (right in permission.rights for right in required_rights))
+        return (user.is_superuser or self.scope.anonymous_access or
+            self in Bug.objects.permited(user) and check_permissions())
     
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
