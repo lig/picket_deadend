@@ -184,6 +184,8 @@ COLUMNS_BUGS_VIEW = (
     ('summary', _('Summary'),),
 )
 
+""" behaviour settings """
+EMAIL_SEND_ALERTS = True
 
 """ settings for integration in some other django project as app """
 INTEGRATION = True

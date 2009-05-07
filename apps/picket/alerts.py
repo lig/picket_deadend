@@ -16,15 +16,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
-from django.conf import settings
+
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
 
+from settings import *
+
 def send_alerts(bug, recipients, message=None):
-
-    if settings.SEND_ALERTS:
+    
+    if EMAIL_SEND_ALERTS:
+        
         site = Site.objects.get_current()
-
         for recipient in recipients:
             if recipient.email:
                 recipient.email_user(
