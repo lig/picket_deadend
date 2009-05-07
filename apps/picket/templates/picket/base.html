@@ -28,7 +28,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <tr>
 <td class="login-info-left">
     {% if user.is_authenticated %}
-    {% trans 'Logged in as' %}: <span class="italic">{{ user.username }}</span> <span class="small">({%  firstof user.username user.get_fullname %} - {{ user.groups.all|join:", " }})</span> | <a href="{% url logout %}">{% trans 'Logout' %}</a>
+    {% trans 'Logged in as' %}: {% include 'picket/user_link_inc.html' %} - {% if user.is_superuser %}{% trans 'superuser' %}{% else %}{{ user.groups.all|join:", " }}{% endif %}</span> | <a href="{% url logout %}">{% trans 'Logout' %}</a>
     {% else %}
     {% trans 'Anonymous' %} | <a href="{% url login %}?next={{ cur_url }}">{% trans 'Login' %}</a> | <a href="{% url signup %}">{% trans 'Signup for a new account' %}</a>
     {% endif %}
