@@ -1,6 +1,6 @@
 {% load i18n %}
 {% comment %}
-Copyright 2008-2009 Serge Matveenko
+Copyright 2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,12 +17,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
-<table class="width100" cellspacing="0">
-<tr>
-<td class="menu">
-<a href="{% url picket-admin-users %}">{% trans 'Manage users' %}</a> <small>(<a href="{% url picket-admin-users-add %}">{% trans 'Add user' %}</a>)</small>
-| <a href="{% url picket-admin-projects %}">{% trans 'Manage projects' %}</a> <small>(<a href="{% url picket-admin-projects-add %}">{% trans 'Add project' %}</a>)</small>
-| <a href="{% url picket-admin-scopes %}">{% trans 'Manage scopes' %}</a> <small>(<a href="{% url picket-admin-scopes-add %}">{% trans 'Add scope' %}</a>)</small>
-</td>
+
+<tr class="{% cycle 'row-1' 'row-2' as row_class %}">
+    <td class="category" width="25%">
+        <span class="required">*</span>{% trans 'Name' %}
+        <br /><span class="required">{{ scope_form.name.errors.as_text }}</span>
+    </td>
+    <td width="75%">
+        {{ scope_form.name }}
+    </td>
 </tr>
-</table>
+<tr class="{% cycle row_class %}">
+    <td class="category" width="25%">
+        {% trans 'Allow anonymous access' %}
+        <br /><span class="required">{{ scope_form.anonymous_access.errors.as_text }}</span>
+    </td>
+    <td width="75%">
+        {{ scope_form.anonymous_access }}
+    </td>
+</tr>

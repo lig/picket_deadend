@@ -18,26 +18,123 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.forms import UserCreationForm, AdminPasswordChangeForm
+from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404 
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
 
 from ..forms import ProjectForm, CategoryForm, CategoryQuickForm
-from ..models import Project, Category
+from ..models import Project, Category, Scope
 from ..permissions import is_su
+from ..settings import INTEGRATION_ENABLED
 
+from forms import UserForm, GroupForm, ScopeForm, ScopegroupFormset
 
 @user_passes_test(is_su)
 def index(request):
-    return direct_to_template(request, 'picket/admin/index.html', {})
+    return redirect('picket-admin-users')
 
 @user_passes_test(is_su)
 def users(request):
-    """ @todo: implement users administration interface """
-    return direct_to_template(request, 'picket/admin/index.html', {})
+    
+    users = User.objects.all()
+    groups = Group.objects.all()
+    
+    return direct_to_template(request, 'picket/admin/users.html',
+        {'users': users, 'groups': groups,})
+
+@user_passes_test(is_su)
+def add_user(request):
+    
+    if INTEGRATION_ENABLED:
+        return redirect('users-add')
+    else:    
+        if request.method == 'POST':
+            userForm = UserCreationForm(request.POST)
+            if userForm.is_valid():
+                user = userForm.save()
+                request.user.message_set.create(message=_('User created'))
+                return redirect('picket-admin-user', userId=user.id)
+        else:
+            userForm = UserCreationForm()
+        
+        return direct_to_template(request, 'picket/admin/user_add.html',
+            {'user_form': userForm, 'user': user,})
+
+@user_passes_test(is_su)
+def edit_user(request, userId):
+    
+    user = get_object_or_404(User, id=userId)
+    
+    if INTEGRATION_ENABLED:
+        return redirect('user-edit', user=user.pk)
+    else:
+        if request.method == 'POST':
+            userForm = UserForm(request.POST, instance=user)
+            if userForm.is_valid():
+                user = userForm.save()
+                request.user.message_set.create(message=_('User updated'))
+                return redirect('picket-admin-users')
+        else:
+            userForm = UserForm(instance=user)
+        
+        return direct_to_template(request, 'picket/admin/user_edit.html',
+            {'user_form': userForm,})
+
+@user_passes_test(is_su)
+def add_group(request):
+    
+    if request.method == 'POST':
+        groupForm = GroupForm(request.POST)
+        if groupForm.is_valid():
+            group = groupForm.save()
+            request.user.message_set.create(message=_('Group created'))
+            return redirect('picket-admin-users')
+    else:
+        groupForm = GroupForm()
+    
+    return direct_to_template(request, 'picket/admin/group_add.html',
+        {'group_form': groupForm,})
+
+@user_passes_test(is_su)
+def edit_group(request, groupId):
+    
+    group = get_object_or_404(Group, id=groupId)
+    
+    if request.method == 'POST':
+        groupForm = GroupForm(request.POST, instance=group)
+        if groupForm.is_valid():
+            group = groupForm.save()
+            request.user.message_set.create(message=_('Group updated'))
+            return redirect('picket-admin-users')
+    else:
+        groupForm = GroupForm(instance=group)
+    
+    return direct_to_template(request, 'picket/admin/group_edit.html',
+        {'group_form': groupForm,})
+
+@user_passes_test(is_su)
+def change_user_password(request, userId):
+    
+    user = get_object_or_404(User, id=userId)
+    
+    if INTEGRATION_ENABLED:
+        return redirect('user-password', user=user.pk)
+    else:
+        if request.method == 'POST':
+            passwordForm = AdminPasswordChangeForm(user, request.POST)
+            if passwordForm.is_valid():
+                user = passwordForm.save()
+                request.user.message_set.create(message=_('Password updated'))
+                return redirect('picket-admin-users')
+        else:
+            passwordForm = AdminPasswordChangeForm(user=user)
+        
+        return direct_to_template(request, 'picket/admin/user_password.html',
+            {'password_form': passwordForm,})
 
 @user_passes_test(is_su)
 def projects(request):
@@ -55,7 +152,7 @@ def add_project(request):
         if projectForm.is_valid():
             project = projectForm.save()
             request.user.message_set.create(message=_('Project created'))
-            return HttpResponseRedirect(project.get_absolute_url())
+            return redirect(project.get_absolute_url())
     else:
         projectForm = ProjectForm()
     
@@ -72,7 +169,7 @@ def project(request, projectId):
         if projectForm.is_valid():
             project = projectForm.save()
             request.user.message_set.create(message=_('Project updated'))
-            return HttpResponseRedirect(project.get_absolute_url())
+            return redirect(project.get_absolute_url())
     else:
         projectForm = ProjectForm(instance=project)
     
@@ -90,9 +187,9 @@ def remove_project(request, projectId):
     if request.method == 'POST':
         project.delete()
         request.user.message_set.create(message=_('Project deleted'))
-        return HttpResponseRedirect(reverse('picket-admin-projects'))
+        return redirect('picket-admin-projects')
     else:
-        return HttpResponseRedirect(project.get_absolute_url())
+        return redirect(project.get_absolute_url())
 
 @user_passes_test(is_su)
 def add_category(request, projectId):
@@ -107,7 +204,7 @@ def add_category(request, projectId):
             category.save()
             request.user.message_set.create(message=_('Category added'))
     
-    return HttpResponseRedirect(project.get_absolute_url())
+    return redirect(project.get_absolute_url())
 
 @user_passes_test(is_su)
 def category(request, categoryId):
@@ -119,7 +216,7 @@ def category(request, categoryId):
         if categoryForm.is_valid():
             category = categoryForm.save()
             request.user.message_set.create(message=_('Category updated'))
-            return HttpResponseRedirect(category.project.get_absolute_url())
+            return redirect(category.project.get_absolute_url())
     else:
         categoryForm = CategoryForm(instance=category)
     
@@ -136,4 +233,48 @@ def remove_category(request, categoryId):
         category.delete()
         request.user.message_set.create(message=_('Category deleted'))
     
-    return HttpResponseRedirect(project.get_absolute_url())
+    return redirect(project.get_absolute_url())
+
+@user_passes_test(is_su)
+def scopes(request):
+    
+    scopes = Scope.objects.all()
+    groups = Group.objects.all()
+    
+    return direct_to_template(request, 'picket/admin/scopes.html',
+        {'scopes': scopes, 'groups': groups,})
+
+@user_passes_test(is_su)
+def add_scope(request):
+    
+    if request.method == 'POST':
+        scopeForm = ScopeForm(request.POST)
+        if scopeForm.is_valid():
+            scope = scopeForm.save()
+            request.user.message_set.create(message=_('Scope created'))
+            return redirect('picket-admin-scope', scopeId=scope.id)
+    else:
+        scopeForm = ScopeForm()
+    
+    return direct_to_template(request, 'picket/admin/scope_add.html',
+        {'scope_form': scopeForm,})
+
+@user_passes_test(is_su)
+def scope(request, scopeId):
+    
+    scope = get_object_or_404(Scope, id=scopeId)
+    
+    if request.method == 'POST':
+        scopeForm = ScopeForm(request.POST, instance=scope)
+        scopegroupFormset = ScopegroupFormset(request.POST, instance=scope)
+        if scopeForm.is_valid() and scopegroupFormset.is_valid():
+            scope = scopeForm.save()
+            scopegroups = scopegroupFormset.save()
+            request.user.message_set.create(message=_('Scope updated'))
+            return redirect('picket-admin-scopes')
+    else:
+        scopeForm = ScopeForm(instance=scope)
+        scopegroupFormset = ScopegroupFormset(instance=scope)
+    
+    return direct_to_template(request, 'picket/admin/scope_edit.html',
+        {'scope_form': scopeForm, 'scopegroup_formset': scopegroupFormset,})

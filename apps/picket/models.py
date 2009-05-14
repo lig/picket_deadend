@@ -19,10 +19,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 
-from django.conf                import settings
+from django.conf import settings
 from django.contrib.auth.models import User, Group
-from django.db                  import models
-from django.utils.translation   import ugettext_lazy as _
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 import custom
 from settings import *
@@ -132,28 +133,11 @@ class Project(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('picket-project', [str(self.id)]) \
-            if not INTEGRATION_FOREIGN_ABSOLUTE_URL \
-                else self.get_integrated().get_absolute_url()
-    
-    def get_integrated(self):
-        """
-        @return: integrated project if available
-        @raise IntegrationError: if integration is improperly \
-        configured
-        @todo: make _integration_cache working as cache
-        """
-        if not hasattr(self, '_integration_cache'):
-            if not INTEGRATION_MODEL:
-                raise IntegrationError
-            try:
-                app_label, model_name = INTEGRATION_MODEL.split('.')
-                model = models.get_model(app_label, model_name)
-                self._integration_cache = model._default_manager.get(
-                    project__id__exact=self.id)
-            except ImportError:
-                raise IntegrationError
-        return self._integration_cache
+        if INTEGRATION_ENABLED and INTEGRATION_PROJECT_VIEW:
+            return reverse(INTEGRATION_PROJECT_VIEW,
+                kwargs={'mantis_project': self.pk})
+        else:
+            return ('picket-project', [str(self.id)])
     
     class Meta():
         verbose_name = _('project')

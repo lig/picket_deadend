@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -22,6 +22,12 @@ from django.conf.urls.defaults  import *
 urlpatterns = patterns('apps.picket.admin.views',
     (r'^$', 'index', {}, 'picket-admin',),
     (r'^users/$', 'users', {}, 'picket-admin-users',),
+    (r'^users/add/$', 'add_user', {}, 'picket-admin-users-add',),
+    (r'^user/(?P<userId>\d+)/edit/$', 'edit_user', {}, 'picket-admin-user',),
+    (r'^user/(?P<userId>\d+)/password/$', 'change_user_password', {},
+        'picket-admin-user-password',),
+    (r'^groups/add/$', 'add_group', {}, 'picket-admin-groups-add',),
+    (r'^group/(?P<groupId>\d+)/edit/$', 'edit_group', {}, 'picket-admin-group',),
     (r'^projects/$', 'projects', {}, 'picket-admin-projects',),
     (r'^projects/add/$', 'add_project', {}, 'picket-admin-projects-add',),
     (r'^project/(?P<projectId>\d+)/$', 'project', {}, 'picket-admin-project',),
@@ -33,4 +39,7 @@ urlpatterns = patterns('apps.picket.admin.views',
         'picket-admin-category-edit',),
     (r'^category/(?P<categoryId>\d+)/delete/$', 'remove_category', {},
         'picket-admin-category-delete',),
+    (r'^scopes/$', 'scopes', {}, 'picket-admin-scopes',),
+    (r'^scopes/add/$', 'add_scope', {}, 'picket-admin-scopes-add',),
+    (r'^scope/(?P<scopeId>\d+)/$', 'scope', {}, 'picket-admin-scope',),
 )

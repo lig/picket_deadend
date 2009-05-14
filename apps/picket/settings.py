@@ -30,8 +30,7 @@ __all__ = ['PROJECT_STATUS_CHOICES', 'PROJECT_STATUS_CHOICES_DEFAULT',
     'PROJECTION_CHOICES', 'PROJECTION_CHOICES_DEFAULT', 'ETA_CHOICES',
     'ETA_CHOICES_DEFAULT', 'ACCESS_LEVELS_CHOICES',
     'ACCESS_LEVELS_CHOICES_DEFAULT', 'COLUMNS_BUGS_VIEW', 'EMAIL_SEND_ALERTS',
-    'RIGHTS', 'INTEGRATION', 'INTEGRATION_MODEL',
-    'INTEGRATION_ALLOW_INTERNAL_PROJECTS', 'INTEGRATION_FOREIGN_ABSOLUTE_URL',
+    'RIGHTS', 'INTEGRATION_ENABLED', 'INTEGRATION_PROJECT_VIEW',
     'USE_JAVASCRIPT', 'SHOW_PROJECT_MENU_BAR', 'SHOW_VERSION', 'SHOW_LEGEND']
 
 PROJECT_STATUS_CHOICES = (
@@ -210,20 +209,27 @@ RIGHTS = (
     #('w', 'Write only'),
 )
 
-""" settings for integration in some other django project as app """
-INTEGRATION = True
 
-INTEGRATION_MODEL = ''
-
-INTEGRATION_ALLOW_INTERNAL_PROJECTS = True
-
-INTEGRATION_FOREIGN_ABSOLUTE_URL = False
+"""
+Is Picket integrated as app. Work as standalone project in other case.
+This MUST be implemented in case of integration:
+ * Template named 'base.html' must exist and contain 'content' block.
+ * contrib.auth.models.User.get_absolute_url method MUST return valid url
+ * View named 'users-add' MUST exist and allow somebody usually superuser to
+     add users.
+ * View named 'user-edit' MUST exist and accept 'user' parameter as
+     contrib.auth.models.User.pk value.
+ * View named 'user-password' MUST exist and accept 'user' parameter as
+     contrib.auth.models.User.pk value.
+ * INTEGRATION_PROJECT_VIEW MAY contain name of the view to show for project.
+     This view MUST accept 'mantis_project' keyword argument as
+     picket.models.Project.pk value.
+"""
+INTEGRATION_ENABLED = False
+INTEGRATION_PROJECT_VIEW = False
 
 """ settings inherited from Mantis """
 USE_JAVASCRIPT = True
-
 SHOW_PROJECT_MENU_BAR = True
-
 SHOW_VERSION = True
-
 SHOW_LEGEND = True

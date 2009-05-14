@@ -1,0 +1,57 @@
+{% extends 'picket/admin/base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2009 Serge Matveenko
+
+This file is part of Picket.
+
+Picket is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Picket is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Picket.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% block picketadmincontent %}
+
+<br />
+<div align="center">
+<form method="post" action="">
+<table class="width75" cellspacing="1">
+<tr>
+    <td class="form-title" colspan="2">
+        {% trans 'Edit scope' %}
+        {% if scope_form.errors or scopegroup_formset.errors %}
+        <br /><span class="required">{% trans 'Please fix errors in the form' %}</span>
+        {% endif %}
+    </td>
+</tr>
+{% include 'picket/admin/scope_form_inc.html' %}
+{% for scopegroup_form in scopegroup_formset.forms %}
+<tr class="{% cycle 'row-1' 'row-2' %}">
+    <td class="category" width="25%">{{ scopegroup_form.id }}
+        {{ scopegroup_form.group }}
+        <br /><span class="required">{{ scopegroup_form.group.errors.as_text }}</span>
+    </td>
+    <td width="75%">
+        {{ scopegroup_form.rights }}
+        <br /><span class="required">{{ scopegroup_form.rights.errors.as_text }}</span>
+    </td>
+</tr>
+{% endfor %}
+<tr>
+    <td class="center" colspan="2">{{ scopegroup_formset.management_form }}
+        <input type="submit" class="button" value="{% trans 'Update scope' %}" />
+    </td>
+</tr>
+</table>
+</form>
+</div>
+
+{% endblock picketadmincontent %}

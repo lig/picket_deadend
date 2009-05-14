@@ -1,6 +1,6 @@
 {% load i18n %}
 {% comment %}
-Copyright 2008-2009 Serge Matveenko
+Copyright 2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,12 +17,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
-<table class="width100" cellspacing="0">
+
+<table class="width100" cellspacing="1">
 <tr>
-<td class="menu">
-<a href="{% url picket-admin-users %}">{% trans 'Manage users' %}</a> <small>(<a href="{% url picket-admin-users-add %}">{% trans 'Add user' %}</a>)</small>
-| <a href="{% url picket-admin-projects %}">{% trans 'Manage projects' %}</a> <small>(<a href="{% url picket-admin-projects-add %}">{% trans 'Add project' %}</a>)</small>
-| <a href="{% url picket-admin-scopes %}">{% trans 'Manage scopes' %}</a> <small>(<a href="{% url picket-admin-scopes-add %}">{% trans 'Add scope' %}</a>)</small>
-</td>
+    <td class="form-title">
+        {% trans 'Groups' %} <small>(<a href="{% url picket-admin-groups-add %}">{% trans 'add' %}</a>)</small>
+    </td>
 </tr>
+<tr class="row-category">
+    <td>{% trans 'Group' %}</td>
+</tr>
+{% for group in groups %}
+<tr class="{% cycle 'row-1' 'row-2' %}">
+    <td><a href="{% url picket-admin-group groupId=group.id %}">{{ group.name }}</a></td>
+</tr>
+{% endfor %}
 </table>
