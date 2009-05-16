@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from django.contrib.auth.models import User, Group
 
-from ..models import Scope, ScopeGroup
+from ..models import Scope, ScopeGroup, Project, Category
 
 class UserForm(forms.ModelForm):
     class Meta():
@@ -36,6 +36,21 @@ class ScopeForm(forms.ModelForm):
     class Meta():
         model = Scope
         fields = ['name', 'anonymous_access',]
+
+class ProjectForm(forms.ModelForm):
+    class Meta():
+        model = Project
+        fields = ['name', 'status', 'enabled', 'scope', 'url', 'description',]
+
+class CategoryForm(forms.ModelForm):
+    class Meta():
+        model = Category
+        fields = ['name', 'handler', 'mail_addr,']
+
+class CategoryQuickForm(forms.ModelForm):
+    class Meta():
+        model = Category
+        fields = ['name',]
 
 ScopegroupFormset = forms.models.inlineformset_factory(parent_model=Scope,
     model=ScopeGroup, fields=['group', 'rights',])
