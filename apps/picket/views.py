@@ -103,7 +103,10 @@ def filebug(request, clone=False, clone_id=None):
     
     if request.method == 'POST':
         bugForm = BugForm(request.POST)
-        bugFileForm = BugFileForm(request.POST, request.FILES, prefix='bugfile')
+        bugFileForm = BugFileForm(request.POST, request.FILES,
+            prefix='bugfile')
+        if clone:
+            bugRelationshipForm = BugRelationshipForm(request.POST)
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
             bug.reporter = request.user
@@ -113,18 +116,29 @@ def filebug(request, clone=False, clone_id=None):
                 bugFile = bugFileForm.save(commit=False)
                 bugFile.bug = bug
                 bugFile.save()
-                request.user.message_set.create(message=_('file for bug uploaded'))
+                request.user.message_set.create(
+                    message=_('file for bug uploaded'))
+            if bugRelationshipForm.is_valid():
+                bugRelationship = bugRelationshipForm.save(commit=False)
+                bugRelationship.source_bug = bug
+                bugRelationship.save()
+                request.user.message_set.create(
+                    message=_('relationship added'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
         if clone:
             bugForm = BugForm(instance=cloningBug)
+            bugRelationshipForm = BugRelationshipForm(
+                initial={'bugrelationship_type':
+                    BUGRELATIONSHIP_TYPE_DEFAULT,})
         else:
             bugForm = BugForm()
         bugFileForm = BugFileForm(prefix='bugfile')
     
     return direct_to_template(request, 'picket/bug_form.html',
         {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
-            'is_clone': clone,})
+            'is_clone': clone, 'cloning_bug': cloningBug,
+            'bug_relationship_form': bugRelationshipForm,})
 
 @permited_bug_required(required_rights='r')
 def bug(request, bug):

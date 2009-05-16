@@ -158,6 +158,24 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     <td colspan="2"></td>
 </tr>
 
+<!-- Relationship (in case of cloned bug creation...) -->
+{% if is_clone %}
+<tr class="{% cycle row-class %}">
+    <td class="category">
+        {% trans 'Relationship with parent' %}
+    </td>
+    <td>
+        {{ bug_relationship_form.relationship_type }}
+        <b>#{{ cloning_bug.get_id_display }}<input type="hidden" name="destination_bug" value="{{ cloning_bug.id }}"></b>
+    </td>
+</tr>
+{% endif %}
+
+<!-- spacer -->
+<tr class="spacer">
+    <td colspan="2"></td>
+</tr>
+
 <!-- Scope -->
 <tr class="{% cycle row-class %}">
     <td class="category">

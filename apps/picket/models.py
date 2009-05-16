@@ -361,8 +361,9 @@ class BugRelationship(models.Model):
     destination_bug = models.ForeignKey(Bug,
         verbose_name=_('bug relationship destination'),
         related_name='destination')
-    relationship_type = models.IntegerField(
-        _('bug relationship type'), choices=BUGRELATIONSHIP_TYPE_CHOICES)
+    relationship_type = models.IntegerField(_('bug relationship type'),
+        choices=BUGRELATIONSHIP_TYPE_CHOICES,
+        default=BUGRELATIONSHIP_TYPE_DEFAULT, blank=True)
     is_reverse = models.BooleanField(_('is it reverse bug relationship'),
         default=False, editable=False)
     
