@@ -17,22 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.sites.models import Site
-from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
-from settings import *
+def markdown_from_part(part):
+    if part.get_content_subtype() == 'html':
+        return '\n\r%s\n\r' % part.get_payload(decode=True)
+    else:
+        return '\n\r<pre>%s</pre>\n\r' % part.get_payload(decode=True)
 
-def send_alerts(bug, recipients, message=None):
-    
-    if EMAIL_SEND_ALERTS:
-        
-        site = Site.objects.get_current()
-        from_email = bug.category.mail_addr or None
-        
-        for recipient in recipients:
-            if recipient.email:
-                recipient.email_user(
-                    subject='[%s #%s] %s' % (site.name, bug.id, bug.summary),
-                    message=render_to_string('picket/alert.eml',
-                        {'bug': bug, 'message': message}),
-                    from_email=from_email)
+def text_from_part(part):
+    if part.get_content_subtype() == 'html':
+        return strip_tags(part.get_payload(decode=True))
+    else:
+        return part.get_payload(decode=True)

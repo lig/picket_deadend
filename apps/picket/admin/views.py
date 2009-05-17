@@ -26,7 +26,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
 
-from ..forms import ProjectForm, CategoryForm, CategoryQuickForm
+from forms import ProjectForm, CategoryForm, CategoryQuickForm
 from ..models import Project, Category, Scope
 from ..permissions import is_su
 from ..settings import INTEGRATION_ENABLED

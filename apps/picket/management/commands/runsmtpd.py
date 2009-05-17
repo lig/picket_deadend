@@ -17,22 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.sites.models import Site
-from django.template.loader import render_to_string
+import asyncore
 
-from settings import *
+from django.core.management.base import NoArgsCommand
 
-def send_alerts(bug, recipients, message=None):
-    
-    if EMAIL_SEND_ALERTS:
-        
-        site = Site.objects.get_current()
-        from_email = bug.category.mail_addr or None
-        
-        for recipient in recipients:
-            if recipient.email:
-                recipient.email_user(
-                    subject='[%s #%s] %s' % (site.name, bug.id, bug.summary),
-                    message=render_to_string('picket/alert.eml',
-                        {'bug': bug, 'message': message}),
-                    from_email=from_email)
+from ...settings import SMTP_LISTEN_TO
+from ...mail_server import PicketServer
+
+class Command(NoArgsCommand):
+    def handle_noargs(self, *args, **kwargs):
+        server = PicketServer(SMTP_LISTEN_TO, None)
+        asyncore.loop()

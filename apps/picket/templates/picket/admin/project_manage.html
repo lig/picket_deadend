@@ -1,6 +1,6 @@
 {% extends 'picket/admin/base.html' %}{% load i18n %}
 {% comment %}
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -50,17 +50,19 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <table class="width75" cellspacing="1">
 <tr>
-    <td class="form-title" colspan="3">{% trans 'Categories' %}</td>
+    <td class="form-title" colspan="4">{% trans 'Categories' %}</td>
 </tr>
 <tr class="row-category">
     <td>{% trans 'Category' %}</td>
     <td>{% trans 'Assign to' %}</td>
+    <td>{% trans 'Email address' %}</td>
     <td>{% trans 'Actions' %}</td>
 </tr>
 {% for category in project.category_set.all %}
 <tr class="{% cycle 'row-1' 'row-2' %}">
     <td>{{ category.name }}</a></td>
     <td>{% firstof category.handler '' %}</td>
+    <td>{% firstof category.mail_addr '' %}</td>
     <td>
         <form method="get" action="{% url picket-admin-category-edit categoryId=category.id %}">
             <input type="submit" value="{% trans 'edit' %}" />
@@ -72,7 +74,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 </tr>
 {% endfor %}
 <tr>
-    <td colspan="3">
+    <td colspan="4">
         <form method="post" action="{% url picket-admin-categories-add projectId=project.id %}">
             <span>{{ category_form.name }} <input type="submit" value="{% trans 'Add category' %}" /></span>
         </form>

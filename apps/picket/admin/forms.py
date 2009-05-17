@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
 from django.contrib.auth.models import User, Group
+from django.utils.translation import ugettext_lazy as _
 
 from ..models import Scope, ScopeGroup, Project, Category
 
@@ -43,9 +44,16 @@ class ProjectForm(forms.ModelForm):
         fields = ['name', 'status', 'enabled', 'scope', 'url', 'description',]
 
 class CategoryForm(forms.ModelForm):
+    
+    def clean_mail_addr(self):
+        mail_addr = self.cleaned_data['mail_addr']
+        if Category.objects.filter(mail_addr=mail_addr).count() > 0:
+            raise forms.ValidationError(_('Email address already in use'))
+        return mail_addr
+    
     class Meta():
         model = Category
-        fields = ['name', 'handler', 'mail_addr,']
+        fields = ['name', 'handler', 'mail_addr',]
 
 class CategoryQuickForm(forms.ModelForm):
     class Meta():

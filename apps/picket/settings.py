@@ -231,6 +231,9 @@ This MUST be implemented in case of integration:
 INTEGRATION_ENABLED = False
 INTEGRATION_PROJECT_VIEW = False
 
+""" SMTP server settings """
+SMTP_LISTEN_TO = ('localhost', 2500)
+
 """ settings inherited from Mantis """
 USE_JAVASCRIPT = True
 SHOW_PROJECT_MENU_BAR = True

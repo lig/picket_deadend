@@ -1,6 +1,6 @@
 {% extends 'picket/admin/base.html' %}{% load i18n %}
 {% comment %}
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -49,6 +49,15 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     </td>
     <td width="75%">
         {{ category_form.handler }}
+    </td>
+</tr>
+<tr class="row-1">
+    <td class="category" width="25%">
+        {% trans 'Email address for incoming mail' %}
+        <br /><span class="required">{{ category_form.mail_addr.errors.as_text }}</span>
+    </td>
+    <td width="75%">
+        {{ category_form.mail_addr }}
     </td>
 </tr>
 <tr>

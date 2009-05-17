@@ -18,16 +18,18 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import os
+from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
+from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 import custom
+from mail_utils import markdown_from_part, text_from_part
 from settings import *
-
 
 class IntegrationError(Exception):
     pass
@@ -144,19 +146,22 @@ class Project(models.Model):
         verbose_name_plural = _('projects')
 
 class Category(models.Model):
+    objects = models.Manager()
+    
     project = models.ForeignKey(Project,
         verbose_name=_('category project'))
     name = models.CharField(_('category name'), max_length=192)
     handler = models.ForeignKey(User,
         verbose_name=_('category handler'), blank=True, null=True)
-
+    mail_addr = models.EmailField(_('category email'), blank=True, null=True)
+    
     def __unicode__(self):
         return u'%s' % self.name
-
+    
     @models.permalink
     def get_absolute_url(self):
         return ('picket-category', [str(self.project_id), str(self.id)])
-
+    
     class Meta():
         verbose_name = _('category')
         verbose_name_plural = _('categories')
@@ -260,6 +265,30 @@ class Bug(models.Model):
     def field_is_sortable(field):
         return Bug.has_field(field) or Bug.has_custom_sorter(field)
     
+    @staticmethod
+    def from_message(category, reporter, message):
+        bug = Bug(reporter=reporter, summary=message['subject'],
+            category=category)
+        
+        bugfiles = []
+        if message.get_content_maintype() == 'text':
+            bug.description = markdown_from_part(message)
+        elif message.get_content_maintype() == 'multipart':
+            bug.description = ''
+            for part in message.walk():
+                if part['Content-Disposition'] == 'inline':
+                    bug.description += markdown_from_part(part)
+                elif part['Content-Disposition'] and \
+                  part['Content-Disposition'].startswith('attachment;'):
+                    bugfiles.append(BugFile.from_message_part(bug, part))
+        
+        """ save bug and add files to it if needed """
+        bug.save()
+        for bugfile in bugfiles:
+            bug.bugfile_set.add(bugfile)
+        
+        return bug
+    
     class Meta():
         verbose_name = _('bug')
         verbose_name_plural = _('bugs')
@@ -289,6 +318,19 @@ class BugFile(models.Model):
         elif not os.path.exists(os.path.join(fileicons_path, icon_name)):
             icon_name = 'unknown.gif'
         return os.path.join(fileicons_url, icon_name)
+    
+    @staticmethod
+    def from_message_part(bug, part):
+        filename = part.get_filename()
+        
+        bugFile = BugFile(bug=bug, title=filename)
+        
+        file = File(NamedTemporaryFile())
+        file.write(part.get_payload(decode=True))
+        
+        bugFile.file.save(filename, file, save=False)
+        
+        return bugFile
     
     class Meta():
         verbose_name = _('bug file')
@@ -399,7 +441,32 @@ class Bugnote(models.Model):
     
     def get_absolute_url(self):
         return '%s#bugnote%s' % (self.bug.get_absolute_url(), self.id)
+    
+    @staticmethod
+    def from_message(bug, reporter, message):
+        bugnote = Bugnote(bug=bug, reporter=reporter)
         
+        if message.get_content_maintype() == 'text':
+            bugnote.text = text_from_part(message)
+        elif message.get_content_maintype() == 'multipart':
+            bugnote.text = ''
+            for part in message.walk():
+                if part['Content-Disposition'] == 'inline':
+                    bugnote.text += text_from_part(part)
+                elif part['Content-Disposition'] and \
+                  part['Content-Disposition'].startswith('attachment;'):
+                    BugFile.from_message_part(bug, part).save()
+        
+        """ cleanup quotes from reply and save bugnote """
+        bugnote_lines = []
+        for line in bugnote.text.splitlines():
+            if not line.startswith('>'):
+                bugnote_lines.append(line)
+        bugnote.text = '\n\r'.join(bugnote_lines)
+        bugnote.save()
+        
+        return bugnote
+    
     class Meta():
         verbose_name = _('bugnote')
         verbose_name_plural = _('bugnotes')
