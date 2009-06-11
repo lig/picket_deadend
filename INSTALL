@@ -37,8 +37,8 @@ http://picket.nophp.ru/pages/download/
 
 5. Change working directory to the root directory of your local Picket copy.
 
-6. Copy file "settings_sample.py" to "settings.py" and edit it to provide db
-connection information (use sqlite3 to quickstart).
+6. Copy file "settings/sample_local.py" to "settings/local.py" and edit it to
+provide db connection information (sqlite3 good for quick testing).
 
 7. Run in terminal to make database structure:
 $ ./manage.py syncdb

@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,14 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# Local Django settings for picket project.
+""" @note: Local Django settings for picket project. """
 
-try:
-    from settings_global import *
-except ImportError:
-    import sys
-    sys.stderr.write('Unable to import settings_global.py\n')
-    sys.exit(1)
+from dist import *
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG

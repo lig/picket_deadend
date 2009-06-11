@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# Distribution Django settings for picket project.
+""" @note: Distribution Django settings for picket project. """
 
 import os
 
-PROJECT_ROOT = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
+    os.path.pardir))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
