@@ -26,7 +26,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <p>{% trans 'Your username and password didn&#39;t match. Please try again.' %}</p>
 {% endif %}
 
-<p>{% blocktrans %}Not yet registered on {{ site_name }}?{% endblocktrans %}<br/>
+<p>{% blocktrans with site.name as site_name %}Not yet registered on {{ site_name }}?{% endblocktrans %}<br/>
 <a href="/accounts/registration/">{% blocktrans %}Do it now!{% endblocktrans %}</a></p>
 
 <form method="post" action=".">

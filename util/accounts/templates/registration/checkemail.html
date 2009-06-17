@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block content %}
 
-<p>{% blocktrans %}To activate your account on {{ site_name }} you must follow
+<p>{% blocktrans with site.name as site_name %}To activate your account on {{ site_name }} you must follow
  the link sent to you by email or enter validation code sent in the same email
  in the form below.{% endblocktrans %}</p>
 

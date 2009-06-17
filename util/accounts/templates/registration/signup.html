@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block content %}
 
-<p>{% blocktrans %}To sign up for {{ site_name }} please fill registration form bellow.{% endblocktrans %}</p>
+<p>{% blocktrans with site.name as site_name %}To sign up for {{ site_name }} please fill registration form bellow.{% endblocktrans %}</p>
 
 <form method="post" action=".">
 <table>
