@@ -51,6 +51,19 @@ http://localhost:8000/
 
 You are done!
 
+----
+
+Mail server installation steps.
+
+1. Make steps from 1 to 7 of the main Picket installation instructions.
+
+2.  Run in terminal to start picket:
+$ ./manage.py runsmtpd
+
+You are done!
+
+----
+
 Feel free to report any bugs here:
 
 http://sourceforge.net/tracker/?group_id=210642&atid=1014558
