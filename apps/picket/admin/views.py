@@ -49,6 +49,8 @@ def users(request):
 @user_passes_test(is_su)
 def add_user(request):
     
+    user = None
+    
     if INTEGRATION_ENABLED:
         return redirect('users-add')
     else:    
