@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 This is short installation instructions for Picket
 (http://sourceforge.net/projects/picket).
 
-1. Install Python 2.x (http://python.org/) (2.6 recommended).
+1. Install Python 2.x (http://python.org/).
 
 2. Install Django 1.1 (http://www.djangoproject.com/).
 
@@ -37,7 +37,7 @@ http://picket.nophp.ru/pages/download/
 
 5. Change working directory to the root directory of your local Picket copy.
 
-6. Copy file "settings/sample_local.py" to "settings/local.py" and edit it to
+6. Copy file "settings/local_sample.py" to "settings/local.py" and edit it to
 provide db connection information (sqlite3 good for quick testing).
 
 7. Run in terminal to make database structure:
