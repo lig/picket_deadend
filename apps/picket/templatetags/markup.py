@@ -32,8 +32,8 @@ def markdown(value, arg=''):
         import markdown2
     except ImportError:
         if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% markdown %} filter: The Python markdown2 library isn't installed."
-        return force_unicode(value)
+            print("Error in {% markdown %} filter: The Python markdown2 library isn't installed.")
+        return u'<pre>%s</pre>' % force_unicode(value)
     else:
         extensions = [e for e in arg.split(",") if e]
         if len(extensions) > 0 and extensions[0] == "safe":

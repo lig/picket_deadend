@@ -24,7 +24,7 @@ This is short installation instructions for Picket
 
 2. Install Django 1.1 (http://www.djangoproject.com/).
 
-3. Install Python markdown2 library
+3. Install Python markdown2 library (optional)
 (http://code.google.com/p/python-markdown2/).
 
 4. Checkout latest version of Picket from Git repository located here:
