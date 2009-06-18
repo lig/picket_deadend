@@ -97,7 +97,7 @@ class PicketServer(SMTPServer):
                         else:
                             return
             
-            """ bug didn't found thus we creating new one """
+            """ bug wasn't found thus we creating new one """
             try:
                 Bug.from_message(categories[0], user, message).save()
             except Exception, e:
