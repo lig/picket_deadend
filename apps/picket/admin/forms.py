@@ -47,7 +47,8 @@ class CategoryForm(forms.ModelForm):
     
     def clean_mail_addr(self):
         mail_addr = self.cleaned_data['mail_addr']
-        if Category.objects.filter(mail_addr=mail_addr).count() > 0:
+        if (mail_addr and
+                Category.objects.filter(mail_addr=mail_addr).count() > 0):
             raise forms.ValidationError(_('Email address already in use'))
         return mail_addr
     
