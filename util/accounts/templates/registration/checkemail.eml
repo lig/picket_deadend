@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block letter %}
 
-{% blocktrans %}
+{% blocktrans with site.name as site_name %}
 Hello {{ newUser }}!
 
 Your or somebody else probably has enter your email address "{{ newUser_email }}"
