@@ -25,7 +25,7 @@ COPYING = {}
 """
 Picket home page url.
 """
-COPYING['PICKET_URL'] = 'http://picket.nophp.ru/'
+COPYING['URL'] = 'http://picket.nophp.ru/'
 
 """
 Picket version. Possibly with branch name
