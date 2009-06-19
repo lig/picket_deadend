@@ -90,6 +90,8 @@ def filebug(request, clone=False, clone_id=None):
     
     if clone:
         cloningBug = get_object_or_404(Bug, id=clone_id)
+    else:
+        cloningBug = None
     
     if not 'project_id' in request.session:
         if clone:
