@@ -107,8 +107,12 @@ def filebug(request, clone=False, clone_id=None):
         bugForm = BugForm(request.POST)
         bugFileForm = BugFileForm(request.POST, request.FILES,
             prefix='bugfile')
+        
         if clone:
             bugRelationshipForm = BugRelationshipForm(request.POST)
+        else:
+            bugRelationshipForm = BugRelationshipForm()
+        
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
             bug.reporter = request.user
