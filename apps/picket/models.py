@@ -393,6 +393,7 @@ class BugMonitor(models.Model):
     class Meta():
         verbose_name = _('bug monitor entry')
         verbose_name_plural = _('bug monitor entries')
+        unique_together = ('user', 'bug',)
 
 class BugRelationship(models.Model):
     objects = models.Manager()

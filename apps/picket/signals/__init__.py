@@ -93,8 +93,12 @@ def bugmonitor_update_from_bughistory(*args, **kwargs):
     elif history_entry.type == 0:
         
         bug = history_entry.bug
-        BugMonitor(user=bug.reporter, bug=bug).save()
-        if bug.handler: BugMonitor(user=bug.handler, bug=bug).save()
+        
+        BugMonitor.objects.get_or_create(user=bug.reporter, bug=bug).save()
+        
+        if bug.handler:
+            BugMonitor.objects.get_or_create(user=bug.handler, bug=bug).save()
+
 
 def bugmonitor_update_from_bugnote(*args, **kwargs):
     """
