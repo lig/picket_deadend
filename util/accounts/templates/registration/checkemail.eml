@@ -1,4 +1,4 @@
-{% extends 'email.eml' %}{% load i18n %}
+{% extends 'email.eml' %}{% load i18n picket_tags %}
 {% comment %}
 Copyright 2008 Serge Matveenko
 
@@ -23,16 +23,16 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% blocktrans with site.name as site_name %}
 Hello {{ newUser }}!
 
-Your or somebody else probably has enter your email address "{{ newUser_email }}"
+You or somebody else probably has enter your email address "{{ newUser_email }}"
  for registering at the {{ site_name }}.
 
 If it was not you just do nothing.
 
 Otherwise here is your validation code: {{ valCode }} (six digits).
 
-Please go to {{ validation_url }} and enter this code
+Please go to {{ validation_url|site_url }} and enter this code
  into the form on this page or just go to the url below:
-{{ validation_url }}?user={{ newUser }}&code={{ valCode }}
+{{ validation_url|site_url }}?user={{ newUser }}&code={{ valCode }}
 {% endblocktrans %}
 
 {% endblock letter %}

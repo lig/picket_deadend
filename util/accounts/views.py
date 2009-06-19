@@ -17,15 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.auth            import authenticate, login
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models     import User
-from django.core.urlresolvers       import reverse
-from django.http                    import HttpResponseRedirect
-from django.shortcuts               import render_to_response
-from django.template                import RequestContext
-from django.template.loader         import render_to_string
-from django.utils.translation       import ugettext as _
+from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext as _
 
 from util.accounts.forms import RegForm, ValForm, PassForm
 from util.accounts.models import Validator
@@ -46,7 +47,8 @@ def registration(req):
                 render_to_string('registration/checkemail.eml',
                 {'newUser': newUser, 'newUser_email': newUser.email,
                     'valCode': validator.code,
-                    'validation_url': reverse('validate'),},
+                    'validation_url': reverse('validate'),
+                    'site': Site.objects.get_current()},
                 context_instance=RequestContext(req)))
             newUser.set_password(validator.code)
             newUser.save()
