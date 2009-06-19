@@ -18,7 +18,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.template import Library, Node, Variable, TemplateSyntaxError
+from django.template.defaultfilters import stringfilter
 from django.template.loader import get_template
 
 """ @note: relative import will not work here """
@@ -129,3 +131,10 @@ def do_field_value(parser, token):
 register.tag('include_join', do_include_join)
 register.tag('column_header', do_column_header)
 register.tag('field_value', do_field_value)
+
+
+@stringfilter
+def site_url_filter(value):
+    return 'http://%s%s' % (Site.objects.get_current().domain, value)
+
+register.filter('site_url', site_url_filter)

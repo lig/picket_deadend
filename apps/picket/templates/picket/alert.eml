@@ -1,4 +1,4 @@
-{% load i18n %}{% spaceless %}
+{% load i18n picket_tags %}{% spaceless %}
 {% comment %}
 Copyright 2009 Serge Matveenko
 
@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 {% endspaceless %}{{ message }}
+{{ bug.get_absolute_url|site_url }}
 
 {% trans 'ID' %}: {{ bug.get_id_display }}
 {% trans 'Project' %}: {{ bug.project.name }}
