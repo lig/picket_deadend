@@ -135,7 +135,10 @@ def filebug(request, clone=False, clone_id=None):
                     BUGRELATIONSHIP_TYPE_DEFAULT,})
         else:
             bugForm = BugForm()
+            bugRelationshipForm = None
+            
         bugFileForm = BugFileForm(prefix='bugfile')
+        
     
     return direct_to_template(request, 'picket/bug_form.html',
         {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
