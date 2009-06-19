@@ -23,9 +23,14 @@ dictionary for storing copyrights and other project stuff
 COPYING = {}
 
 """
+Picket home page url.
+"""
+COPYING['PICKET_URL'] = 'http://picket.nophp.ru/'
+
+"""
 Picket version. Possibly with branch name
 """
-COPYING['PICKET_VERSION'] = '0.1 mantis-templates'
+COPYING['PICKET_VERSION'] = '0.1-master'
 
 """
 List of Picket authors in order of their code appearence
