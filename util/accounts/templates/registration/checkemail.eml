@@ -20,19 +20,19 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block letter %}
 
-{% blocktrans with site.name as site_name %}
+{% blocktrans with site.name as site_name with validation_url|site_url as full_validation_url %}
 Hello {{ newUser }}!
 
-You or somebody else probably has enter your email address "{{ newUser_email }}"
+You or somebody else probably has entered your email address "{{ newUser_email }}"
  for registering at the {{ site_name }}.
 
 If it was not you just do nothing.
 
 Otherwise here is your validation code: {{ valCode }} (six digits).
 
-Please go to {{ validation_url|site_url }} and enter this code
+Please go to {{ full_validation_url }} and enter this code
  into the form on this page or just go to the url below:
-{{ validation_url|site_url }}?user={{ newUser }}&code={{ valCode }}
+{{ full_validation_url }}?user={{ newUser }}&code={{ valCode }}
 {% endblocktrans %}
 
 {% endblock letter %}
