@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
 
-from filters import Filter, CharFilter, BooleanFilter, ChoiceFilter, \
+from filter.filters import Filter, CharFilter, BooleanFilter, ChoiceFilter, \
     DateFilter, DateTimeFilter, TimeFilter, ModelChoiceFilter, \
     ModelMultipleChoiceFilter, NumberFilter
 
@@ -28,7 +28,7 @@ def get_declared_filters(bases, attrs, with_base_filters=True):
     else:
         for base in bases[::-1]:
             if hasattr(base, 'declared_filters'):
-                filters = base.declared_fields.items() + filters
+                filters = base.declared_filters.items() + filters
 
     return SortedDict(filters)
 
@@ -79,7 +79,7 @@ class FilterSetMetaclass(type):
         else:
             filters = declared_filters
 
-        if any(filter_ is None for filter_ in filters.values()):
+        if None in filters.values():
             raise TypeError("Meta.fields contains a field that isn't defined "
                 "on this FilterSet")
 
@@ -138,6 +138,9 @@ FILTER_FOR_DBFIELD_DEFAULTS = {
     models.PositiveIntegerField: {
         'filter_class': NumberFilter,
     },
+    models.PositiveSmallIntegerField: {
+        'filter_class': NumberFilter,
+    },
     models.FloatField: {
         'filter_class': NumberFilter,
     },
@@ -146,18 +149,37 @@ FILTER_FOR_DBFIELD_DEFAULTS = {
     },
     models.SlugField: {
         'filter_class': CharFilter,
-    }
+    },
+    models.EmailField: {
+        'filter_class': CharFilter,
+    },
+    models.FilePathField: {
+        'filter_class': CharFilter,
+    },
+    models.URLField: {
+        'filter_class': CharFilter,
+    },
+    models.XMLField: {
+        'filter_class': CharFilter,
+    },
+    models.IPAddressField: {
+        'filter_class': CharFilter,
+    },
+    models.CommaSeparatedIntegerField: {
+        'filter_class': CharFilter,
+    },
 }
 
 class BaseFilterSet(object):
     filter_overrides = {}
 
-    def __init__(self, data=None, queryset=None):
+    def __init__(self, data=None, queryset=None, prefix=None):
         self.is_bound = data is not None
         self.data = data or {}
         if queryset is None:
             queryset = self._meta.model._default_manager.all()
         self.queryset = queryset
+        self.form_prefix = prefix
 
         self.filters = deepcopy(self.base_filters)
 
@@ -177,7 +199,9 @@ class BaseFilterSet(object):
                     pass
             if self._meta.order_by:
                 try:
-                    qs = qs.order_by(self.form.fields[ORDER_BY_FIELD].clean(self.form[ORDER_BY_FIELD].data))
+                    value = self.form.fields[ORDER_BY_FIELD].clean(self.form[ORDER_BY_FIELD].data)
+                    if value:
+                        qs = qs.order_by(value)
                 except forms.ValidationError:
                     pass
             self._qs = qs
@@ -187,18 +211,27 @@ class BaseFilterSet(object):
     def form(self):
         if not hasattr(self, '_form'):
             fields = SortedDict([(name, filter_.field) for name, filter_ in self.filters.iteritems()])
-            if self._meta.order_by:
-                if isinstance(self._meta.order_by, (list, tuple)):
-                    choices = [(f, capfirst(f)) for f in self._meta.order_by]
-                else:
-                    choices = [(f, capfirst(f)) for f in self.filters]
-                fields[ORDER_BY_FIELD] = forms.ChoiceField(label="Ordering", required=False, choices=choices)
+            fields[ORDER_BY_FIELD] = self.ordering_field
             Form =  type('%sForm' % self.__class__.__name__, (self._meta.form,), fields)
             if self.is_bound:
-                self._form = Form(self.data)
+                self._form = Form(self.data, prefix=self.form_prefix)
             else:
-                self._form = Form()
+                self._form = Form(prefix=self.form_prefix)
         return self._form
+
+    def get_ordering_field(self):
+        if self._meta.order_by:
+            if isinstance(self._meta.order_by, (list, tuple)):
+                choices = [(f, capfirst(f)) for f in self._meta.order_by]
+            else:
+                choices = [(f, capfirst(f)) for f in self.filters]
+            return forms.ChoiceField(label="Ordering", required=False, choices=choices)
+
+    @property
+    def ordering_field(self):
+        if not hasattr(self, '_ordering_field'):
+            self._ordering_field = self.get_ordering_field()
+        return self._ordering_field
 
     @classmethod
     def filter_for_field(cls, f, name):

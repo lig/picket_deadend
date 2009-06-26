@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 from django import forms
 from django.db.models import Q
 from django.db.models.sql.constants import QUERY_TERMS
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
-from fields import RangeField, LookupTypeField
+from filter.fields import RangeField, LookupTypeField
 
 __all__ = [
     'Filter', 'CharFilter', 'BooleanFilter', 'ChoiceFilter',
@@ -50,12 +50,14 @@ class Filter(object):
         return self._field
 
     def filter(self, qs, value):
+        if isinstance(value, (list, tuple)):
+            lookup = str(value[1])
+            if not lookup:
+                lookup = 'exact' # we fallback to exact if no choice for lookup is provided
+            value = value[0]
+        else:
+            lookup = self.lookup_type
         if value:
-            if isinstance(value, (list, tuple)):
-                lookup = str(value[1])
-                value = value[0]
-            else:
-                lookup = self.lookup_type
             return qs.filter(**{'%s__%s' % (self.name, lookup): value})
         return qs
 
@@ -78,14 +80,12 @@ class MultipleChoiceFilter(Filter):
     This filter preforms an OR query on the selected options.
     """
     field_class = forms.MultipleChoiceField
-    
+
     def filter(self, qs, value):
-        if value:
-            q = Q()
-            for v in value:
-                q |= Q(**{self.name: v})
-            qs = qs.filter(q).distinct()
-        return qs
+        q = Q()
+        for v in value:
+            q |= Q(**{self.name: v})
+        return qs.filter(q).distinct()
 
 class DateFilter(Filter):
     field_class = forms.DateField
@@ -123,7 +123,7 @@ class DateRangeFilter(ChoiceFilter):
         })),
         2: (_('Past 7 days'), lambda qs, name: qs.filter(**{
             '%s__gte' % name: (datetime.today() - timedelta(days=7)).strftime('%Y-%m-%d'),
-            '%s__lte' % name: datetime.today().strftime('%Y-%m-%d'),
+            '%s__lt' % name: (datetime.today()+timedelta(days=1)).strftime('%Y-%m-%d'),
         })),
         3: (_('This month'), lambda qs, name: qs.filter(**{
             '%s__year' % name: datetime.today().year,
