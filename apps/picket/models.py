@@ -228,7 +228,7 @@ class Bug(models.Model):
     def is_permited(self, user, required_rights='r'):
         def check_permissions():
             permission = ScopeGroup.objects.get(
-                scope=self.project.scope, group=user.group)
+                scope=self.project.scope, group__in=user.groups.all())
             return all(
                 (right in permission.rights for right in required_rights))
         return (user.is_superuser or self.scope.anonymous_access or
