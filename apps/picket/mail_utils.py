@@ -30,3 +30,14 @@ def text_from_part(part):
         return strip_tags(part.get_payload(decode=True))
     else:
         return part.get_payload(decode=True)
+
+def decode(hdr):
+    import chardet
+    from email import header
+
+    result = []
+    for text, enc in header.decode_header(hdr):
+        enc = enc if enc else chardet.detect(text)['encoding']
+        result.append(unicode(text.decode(enc)) if enc else unicode(text))
+
+    return ''.join(result)
