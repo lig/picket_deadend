@@ -23,13 +23,13 @@ from smtpd import SMTPServer
 
 from django.contrib.auth.models import User
 
-from models import Category, Bug, Bugnote 
+from models import Category, Bug, Bugnote
 
 """ typical subject is: '(re|fw): [site.name #bug.id] bug.summary' """
 subject_regex = re.compile(r'\[.* #(?P<bug_id>\d+)\] .*$')
 
 class PicketServer(SMTPServer):
-    
+
     def process_message(self, peer, mailfrom, rcpttos, data):
         """
         peer is a tuple containing (ipaddr, port) of the client that made the
@@ -49,7 +49,7 @@ class PicketServer(SMTPServer):
 
         This function should return None, for a normal `250 Ok' response;
         otherwise it returns the desired response string in RFC 821 format.
-        
+
         Picket mail processing algorithm:
           1. Find category via rcpttos or drop message
           2. Try to find user for mailfrom or create new one
@@ -60,13 +60,17 @@ class PicketServer(SMTPServer):
               and text from message body
           3. Create bugfiles from attachments
         """
-        
+
+        """ HACK """
+        from django.db import connection
+        connection.close()
+
         """ find all categories mail sent to """
         categories = Category.objects.filter(mail_addr__in=rcpttos)
-        
+
         """ do anything if there is any categories only """
         if categories.count() > 0:
-            
+
             """ find or create user for mailfrom """
             try:
                 user = User.objects.get(email=mailfrom)
@@ -74,10 +78,10 @@ class PicketServer(SMTPServer):
                 username = mailfrom.split('@', 1)[0] + \
                     str(User.objects.all().order_by('-id')[0].id + 1)
                 user = User.objects.create_user(username, mailfrom)
-            
+
             """ make message object """
             message = email.message_from_string(data)
-            
+
             """ try to find bug """
             subject_parsed = subject_regex.search(message['subject'])
             if subject_parsed:
@@ -96,7 +100,7 @@ class PicketServer(SMTPServer):
                             return '451 %s' % e
                         else:
                             return
-            
+
             """ bug wasn't found thus we creating new one """
             try:
                 Bug.from_message(categories[0], user, message).save()
@@ -104,7 +108,7 @@ class PicketServer(SMTPServer):
                 return '451 %s' % e
             else:
                 return
-        
+
         else:
             """ go away silently if there is nothing to do """
             return
