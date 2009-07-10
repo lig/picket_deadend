@@ -61,7 +61,11 @@ class PicketServer(SMTPServer):
           3. Create bugfiles from attachments
         """
 
-        """ HACK """
+        """
+            HACK aka crutch
+            Reopen database connection in current thread.
+            We close it, and django open it again in current thread.
+        """
         from django.db import connection
         connection.close()
 
