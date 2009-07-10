@@ -31,6 +31,7 @@ from django.views.generic.simple import direct_to_template
 
 import custom
 from alerts import send_alerts
+from decorators import bug_relationship_to_bug
 from filters import BugFilter
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
                    AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
@@ -340,13 +341,9 @@ def delete(request, bug):
     
     return HttpResponseRedirect(reverse('picket-bugs'))
 
+@bug_relationship_to_bug
 @permited_bug_required(required_rights='w')
-def delete_relationship(request, bug_relationship_id):
-    
-    bugRelationship = get_object_or_404(BugRelationship,
-        id=bug_relationship_id)
-    
-    bug = bugRelationship.source_bug
+def delete_relationship(request, bug, bugRelationship):
     
     bugRelationship.delete()
     
