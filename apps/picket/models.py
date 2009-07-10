@@ -61,16 +61,16 @@ class BugManager(models.Manager):
     def permited(self, user, project=None, category=None):
 
         if user.is_superuser:
-            return self.all()
+            bugs = self.select_related()
         else:
             bugs = self.select_related().filter(
                 scope__in=Scope.objects.get_permited(user),
                 project__in=Project.objects.get_permited(user))
 
-            bugs = bugs.filter(project=project) if project is not None else bugs
-            bugs = bugs.filter(category=category) if category is not None else bugs
+        bugs = bugs.filter(project=project) if project is not None else bugs
+        bugs = bugs.filter(category=category) if category is not None else bugs
 
-            return bugs
+        return bugs
 
 class BugMonitorManager(models.Manager):
     def active(self):
