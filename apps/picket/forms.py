@@ -21,10 +21,18 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from models import Bug, Bugnote, BugFile, BugRelationship, Scope
+from models import Bug, Bugnote, BugFile, BugRelationship, Scope, Category
 
 
 class BugForm(forms.ModelForm):
+    
+    def __init__(self, *args, **kwargs):
+        project_id = kwargs.pop('project_id', None)
+        super(BugForm, self).__init__(*args, **kwargs)
+        if project_id is not None:
+            self.fields['category'].queryset = Category.objects.filter(
+                project=project_id)
+    
     class Meta():
         model = Bug
         fields = ['category', 'reproducibility', 'severity', 'priority',

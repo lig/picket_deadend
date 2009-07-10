@@ -134,12 +134,13 @@ def filebug(request, clone=False, clone_id=None):
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
         if clone:
-            bugForm = BugForm(instance=cloningBug)
+            bugForm = BugForm(instance=cloningBug,
+                project_id=request.session['project_id'])
             bugRelationshipForm = BugRelationshipForm(
                 initial={'bugrelationship_type':
                     BUGRELATIONSHIP_TYPE_DEFAULT,})
         else:
-            bugForm = BugForm()
+            bugForm = BugForm(project_id=request.session['project_id'])
             bugRelationshipForm = None
             
         bugFileForm = BugFileForm(prefix='bugfile')
