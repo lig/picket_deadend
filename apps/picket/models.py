@@ -269,7 +269,9 @@ class Bug(models.Model):
     def from_message(category, reporter, message):
         bug = Bug(reporter=reporter, summary=decode(message['subject']),
             category=category)
-
+        
+        bug.additional_information = message.as_string()
+        
         bugfiles = []
         if message.get_content_maintype() == 'text':
             bug.description = markdown_from_part(message)
@@ -281,12 +283,12 @@ class Bug(models.Model):
                 elif part['Content-Disposition'] and \
                   part['Content-Disposition'].startswith('attachment;'):
                     bugfiles.append(BugFile.from_message_part(bug, part))
-
+        
         """ save bug and add files to it if needed """
         bug.save()
         for bugfile in bugfiles:
             bug.bugfile_set.add(bugfile)
-
+        
         return bug
 
     class Meta():
