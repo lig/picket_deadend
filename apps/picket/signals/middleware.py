@@ -48,7 +48,8 @@ class PicketSignalsMiddleware(object):
     
     def bug_post_save_handler(self, sender, instance, created, **kwargs):
         if created:
-            bugHistory = BugHistory(bug=instance, type=0, user=self._req.user)
+            bugHistory = BugHistory(bug=instance, type=0,
+                user_id=self._req.user.id)
             bugHistory.save()
             del bugHistory
         else:

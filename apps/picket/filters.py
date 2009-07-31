@@ -18,12 +18,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django import forms
-from django.contrib.auth.models import User
 from django.db.models import Q
 
 import filter as fltr
 
-from models import Bug, Project, Category, Scope
+from models import Bug, Project, Category, Scope, User
 from settings import *
 
 class FilterableQ(Q):
