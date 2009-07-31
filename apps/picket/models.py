@@ -21,7 +21,7 @@ import os
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User as DjangoUser, Group
 from django.core.files import File
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -35,6 +35,9 @@ class IntegrationError(Exception):
     pass
 
 
+"""
+@todo: move managers classes to separate file
+"""
 class ScopeManager(models.Manager):
 
     def get_permited(self, user):
@@ -75,6 +78,12 @@ class BugManager(models.Manager):
 class BugMonitorManager(models.Manager):
     def active(self):
         return self.get_query_set().filter(mute=False)
+
+
+class User(DjangoUser):
+    class Meta:
+        proxy = True
+        ordering = ["username"]
 
 
 class ScopeGroup(models.Model):

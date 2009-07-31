@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from ..alerts import send_alerts
 from middleware import PicketSignalsMiddleware
-from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote, Bug
+from ..models import (BugRelationship, BugMonitor, BugHistory, Bugnote, Bug,
+    User)
 from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
 
