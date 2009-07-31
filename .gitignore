@@ -3,5 +3,6 @@
 *.pyc
 /local.db
 /settings/local.py
+/apps/picket/settings/local.py
 /django
 /media/bugs/*
