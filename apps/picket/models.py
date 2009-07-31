@@ -80,7 +80,18 @@ class BugMonitorManager(models.Manager):
         return self.get_query_set().filter(mute=False)
 
 
+class UserManager(models.Manager):
+    def have_permissions(self, permissions, scope):
+        rights_q = reduce(lambda q1, q2: q1 | q2,
+            map(lambda char: models.Q(
+                    groups__scopegroup__rights__contains='h'),
+                permissions))
+        return self.filter(rights_q, groups__scope=scope)
+
+
 class User(DjangoUser):
+    objects = UserManager()
+    
     class Meta:
         proxy = True
         ordering = ["username"]
