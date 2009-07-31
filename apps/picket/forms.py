@@ -21,7 +21,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from models import Bug, Bugnote, BugFile, BugRelationship, Scope, Category
+from models import (Bug, Bugnote, BugFile, BugRelationship, Scope, Category,
+    PicketUser)
 
 
 class BugForm(forms.ModelForm):
@@ -46,11 +47,20 @@ class BugUpdateForm(forms.ModelForm):
             'scope', 'handler', 'priority', 'resolution', 'status', 'summary',
             'description', 'steps_to_reproduce', 'additional_information',]
 
+
 class AssignForm(forms.ModelForm):
+    
     _message = _('Bug handler updated')
+    
+    def __init__(self, *args, **kwargs):
+        super(AssignForm, self).__init__(*args, **kwargs)
+        self.fields['handler'].queryset = PicketUser.objects.have_permissions(
+            'h', self.instance.scope)
+    
     class Meta():
         model = Bug
         fields = ['handler',]
+        
 
 class StatusForm(forms.ModelForm):
     _message = _('Bug status updated')

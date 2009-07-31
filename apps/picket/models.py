@@ -35,6 +35,9 @@ class IntegrationError(Exception):
     pass
 
 
+"""
+@todo: move managers classes to separate file
+"""
 class ScopeManager(models.Manager):
 
     def get_permited(self, user):
@@ -75,6 +78,23 @@ class BugManager(models.Manager):
 class BugMonitorManager(models.Manager):
     def active(self):
         return self.get_query_set().filter(mute=False)
+
+
+class PicketUserManager(models.Manager):
+    def have_permissions(self, permissions, scope):
+        rights_q = reduce(lambda q1, q2: q1 | q2,
+            map(lambda char: models.Q(
+                    groups__scopegroup__rights__contains=char),
+                permissions))
+        return self.filter(rights_q, groups__scope=scope)
+
+
+class PicketUser(User):
+    objects = PicketUserManager()
+    
+    class Meta:
+        proxy = True
+        ordering = ["username"]
 
 
 class ScopeGroup(models.Model):
