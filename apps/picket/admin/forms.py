@@ -18,10 +18,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import Scope, ScopeGroup, Project, Category, User
+from ..models import Scope, ScopeGroup, Project, Category
 
 class UserForm(forms.ModelForm):
     class Meta():

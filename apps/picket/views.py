@@ -21,6 +21,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponseRedirect, HttpResponseNotFound,
                          HttpResponseForbidden, Http404)
@@ -35,7 +36,7 @@ from filters import BugFilter
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
                    AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
-                    BugMonitor, Bugnote, User)
+                    BugMonitor, Bugnote)
 from permissions import permited_project_required, permited_bug_required
 from settings import *
 
