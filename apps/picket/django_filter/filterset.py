@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
 
-from filter.filters import Filter, CharFilter, BooleanFilter, ChoiceFilter, \
+from filters import Filter, CharFilter, BooleanFilter, ChoiceFilter, \
     DateFilter, DateTimeFilter, TimeFilter, ModelChoiceFilter, \
     ModelMultipleChoiceFilter, NumberFilter
 
