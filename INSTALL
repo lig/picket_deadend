@@ -40,13 +40,15 @@ http://picket.nophp.ru/pages/download/
 6. Copy file "settings/local_sample.py" to "settings/local.py" and edit it to
 provide db connection information (sqlite3 good for quick testing).
 
-7. Run in terminal to make database structure:
+7. Create empty file "apps/picket/settings/local.py" 
+
+8. Run in terminal to make database structure:
 $ ./manage.py syncdb
 
-8. Run in terminal to start picket:
+9. Run in terminal to start picket test web server:
 $ ./manage.py runserver
 
-9. Point your browser at:
+10. Point your browser at:
 http://localhost:8000/
 
 You are done!
@@ -57,7 +59,7 @@ Mail server installation steps.
 
 1. Make steps from 1 to 7 of the main Picket installation instructions.
 
-2.  Run in terminal to start picket:
+2.  Run in terminal to start picket mail server:
 $ ./manage.py runsmtpd
 
 You are done!
