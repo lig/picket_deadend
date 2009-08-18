@@ -194,7 +194,6 @@ EMAIL_SEND_ALERTS = True
 RIGHTS = (
     ('r', 'Read'),
     ('rw', 'Read/Write'),
-    ('rwh', 'Read/Write/Handle'),
     #('rwd', 'Read/Write/Delete'),
     #('w', 'Write only'),
 )
