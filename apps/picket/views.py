@@ -115,7 +115,7 @@ def filebug(request, clone=False, clone_id=None):
         
         if bugForm.is_valid():
             bug = bugForm.save(commit=False)
-            bug.reporter_id = request.user.id
+            bug.reporter = request.user
             bug.save()
             request.user.message_set.create(message=_('bug filed'))
             if bugFileForm.is_valid():

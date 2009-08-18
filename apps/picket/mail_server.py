@@ -21,7 +21,9 @@ import email
 import re
 from smtpd import SMTPServer
 
-from models import Category, Bug, Bugnote, ExternalUser as User
+from django.contrib.auth.models import User
+
+from models import Category, Bug, Bugnote
 
 """ typical subject is: '(re|fw): [site.name #bug.id] bug.summary' """
 subject_regex = re.compile(r'\[.* #(?P<bug_id>\d+)\] .*$')

@@ -20,7 +20,6 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.sites.models import Site
 from django.template.loader import render_to_string
 
-from models import ExternalUser
 from settings import *
 
 def send_alerts(bug, recipients, message=None):
@@ -31,16 +30,9 @@ def send_alerts(bug, recipients, message=None):
         from_email = bug.category.mail_addr or None
         
         for recipient in recipients:
-            
             if recipient.email:
-                
-                if isinstance(recipient, ExternalUser):
-                    message_template = 'picket/alert_external.eml'
-                else:
-                    message_template = 'picket/alert.eml'
-                
                 recipient.email_user(
                     subject='[%s #%s] %s' % (site.name, bug.id, bug.summary),
-                    message=render_to_string(message_template,
+                    message=render_to_string('picket/alert.eml',
                         {'bug': bug, 'message': message}),
                     from_email=from_email)

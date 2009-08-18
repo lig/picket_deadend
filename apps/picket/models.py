@@ -86,10 +86,6 @@ class User(DjangoUser):
         ordering = ["username"]
 
 
-class ExternalUser(User):
-    is_external = models.BooleanField(_('is user external'), default=True)
-
-
 class ScopeGroup(models.Model):
     objects = models.Manager()
 
