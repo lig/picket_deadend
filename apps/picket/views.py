@@ -59,7 +59,6 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
     
     category = get_object_or_404(Category, id=category_id) \
         if category_id is not None else None
-    
     bugs = Bug.objects.permited(request.user, project, category)
     
     if sort_field is not None:

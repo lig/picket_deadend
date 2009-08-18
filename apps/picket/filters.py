@@ -21,7 +21,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-import filter as fltr
+import django_filter as fltr
 
 from models import Bug, Project, Category, Scope
 from settings import *
