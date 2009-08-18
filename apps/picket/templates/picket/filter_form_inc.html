@@ -40,5 +40,5 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     {% endfor %}
     </tr>
 </table>
-<p><input type="submit" value="{% trans 'Apply filter' %}"> <input type="reset" value="{% trans 'Reset filter' %}" onclick="document.location.href='{% url picket-bugs %}'; return false;" /></p>
+<p><input type="submit" value="{% trans 'Apply filter' %}"><input type="reset" value="{% trans 'Reset filter' %}" onclick="document.location.href='{% url picket-bugs %}?reset_filter=True'; return false;" /></p>
 </form>

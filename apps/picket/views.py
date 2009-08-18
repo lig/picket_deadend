@@ -20,6 +20,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 @todo: write test cases for permissions
 """
 
+import cPickle
+from copy import copy
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -71,7 +74,16 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
         else:
             raise Http404
     
-    bugFilter = BugFilter(request.GET, queryset=bugs, user=request.user)
+    if 'get_filterset_data' in request.session and not request.GET:
+        initial_filter = copy(
+            cPickle.loads(request.session['get_filterset_data']))
+    elif request.GET.get('reset_filter'):
+        initial_filter = {}
+    else:
+        initial_filter = request.GET
+
+    bugFilter = BugFilter(initial_filter, queryset=bugs, user=request.user) 
+    request.session['get_filterset_data'] = cPickle.dumps(bugFilter.data)
     
     sticky_bugs = bugFilter.qs.filter(sticky=True)
     bugs = bugFilter.qs.filter(sticky=False)
