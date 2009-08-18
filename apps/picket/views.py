@@ -28,7 +28,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import (HttpResponseRedirect, HttpResponseNotFound,
                          HttpResponseForbidden, Http404)
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic.simple import direct_to_template
 
@@ -74,16 +74,14 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
         else:
             raise Http404
     
-    if 'get_filterset_data' in request.session and not request.GET:
+    if 'bug_filterset_data' in request.session and not request.GET:
         initial_filter = copy(
-            cPickle.loads(request.session['get_filterset_data']))
-    elif request.GET.get('reset_filter'):
-        initial_filter = {}
+            cPickle.loads(request.session['bug_filterset_data']))
     else:
         initial_filter = request.GET
 
     bugFilter = BugFilter(initial_filter, queryset=bugs, user=request.user) 
-    request.session['get_filterset_data'] = cPickle.dumps(bugFilter.data)
+    request.session['bug_filterset_data'] = cPickle.dumps(bugFilter.data)
     
     sticky_bugs = bugFilter.qs.filter(sticky=True)
     bugs = bugFilter.qs.filter(sticky=False)
@@ -92,6 +90,16 @@ def bugs(request, category_id=None, sort_field=None, sort_dir=None):
         {'bugs': bugs, 'sticky_bugs': sticky_bugs, 'project': project,
             'category': category, 'bug_filter': bugFilter,
             'sort_field': sort_field, 'sort_dir': sort_dir,})
+
+
+@permited_project_required(required_rights='r')
+def reset_bug_filter(request):
+    
+    if 'bug_filterset_data' in request.session:
+        del request.session['bug_filterset_data']
+    
+    return redirect('picket-bugs')
+
 
 @permited_project_required(required_rights='w')
 def filebug(request, clone=False, clone_id=None):

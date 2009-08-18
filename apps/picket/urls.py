@@ -47,6 +47,8 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bugs-ordered',),
     (r'^bugs/c(?P<category_id>\d+)/$', 'bugs', {},
         'picket-category',),
+    (r'^bugs/reset/$', 'reset_bug_filter', {},
+        'picket-bugs-filter-reset',),
     
     ## bug view
     (r'^bug/(?P<bug_id>\d+)/$', 'bug', {},
