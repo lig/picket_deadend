@@ -86,7 +86,7 @@ class PicketUserManager(models.Manager):
             map(lambda char: models.Q(
                     groups__scopegroup__rights__contains=char),
                 permissions))
-        return self.filter(rights_q, groups__scope=scope)
+        return self.filter(rights_q, groups__scope=scope).distinct()
 
 
 class PicketUser(User):
