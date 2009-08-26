@@ -89,7 +89,7 @@ class FieldValueNode(Node):
                 field_choices = dict(field.field.choices)
                 field_data = field.data or []
                 field_values = (field_choices[int(key)] for key in field_data)
-                return ', '.join(field_values)
+                return ', '.join(map(unicode, field_values))
             else:
                 return field.data or ''
         except TemplateSyntaxError, e:
