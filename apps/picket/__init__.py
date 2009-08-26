@@ -40,7 +40,7 @@ COPYING['AUTHORS'] = ['Serge Matveenko',]
 """
 List of years of project development
 """
-COPYING['YEARS'] = [2008,]
+COPYING['YEARS'] = [2008, 2009,]
 
 """
 GPL warning text as of 2008-10-10
