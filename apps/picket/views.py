@@ -37,7 +37,7 @@ from alerts import send_alerts
 from decorators import bug_relationship_to_bug
 from filters import BugFilter
 from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
-                   AssignForm, StatusForm, BugRelationshipForm, ReminderForm)
+                   AssignStatusForm, BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
                     BugMonitor, Bugnote)
 from permissions import permited_project_required, permited_bug_required
@@ -177,8 +177,7 @@ def bug(request, bug):
     """
     
     bugnoteForm = BugnoteForm()
-    assignForm = AssignForm(instance=bug)
-    statusForm = StatusForm(instance=bug)
+    assignStatusForm = AssignStatusForm(instance=bug)
     
     bugFileForm = BugFileForm()
     
@@ -193,8 +192,9 @@ def bug(request, bug):
     bugHistoryItems = BugHistory.objects.filter(bug=bug)
     
     return direct_to_template(request, 'picket/bug.html',
-        {'bug': bug, 'bugnote_form': bugnoteForm, 'assign_form': assignForm,
-            'status_form': statusForm, 'bugmonitor_users': bugmonitor_users,
+        {'bug': bug, 'bugnote_form': bugnoteForm,
+            'assign_status_form': assignStatusForm,
+            'bugmonitor_users': bugmonitor_users,
             'is_bugmonitor_user': is_bugmonitor_user,
             'bug_relationship_form': bugRelationshipForm,
             'bug_relationships': bugRelationships,

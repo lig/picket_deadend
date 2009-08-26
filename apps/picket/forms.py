@@ -40,6 +40,7 @@ class BugForm(forms.ModelForm):
             'summary', 'description', 'steps_to_reproduce',
             'additional_information', 'scope',]
 
+
 class BugUpdateForm(forms.ModelForm):
     class Meta():
         model = Bug
@@ -48,31 +49,26 @@ class BugUpdateForm(forms.ModelForm):
             'description', 'steps_to_reproduce', 'additional_information',]
 
 
-class AssignForm(forms.ModelForm):
+class AssignStatusForm(forms.ModelForm):
     
-    _message = _('Bug handler updated')
+    _message = _('Bug handler and status updated')
     
     def __init__(self, *args, **kwargs):
-        super(AssignForm, self).__init__(*args, **kwargs)
+        super(AssignStatusForm, self).__init__(*args, **kwargs)
         self.fields['handler'].queryset = PicketUser.objects.have_permissions(
             'h', self.instance.scope)
     
     class Meta():
         model = Bug
-        fields = ['handler',]
+        fields = ['handler', 'status',]
         
-
-class StatusForm(forms.ModelForm):
-    _message = _('Bug status updated')
-    class Meta():
-        model = Bug
-        fields = ['status',]
 
 class BugMoveForm(forms.ModelForm):
     _message = _('Bug moved')
     class Meta():
         model = Bug
         fields = ['project',]
+
 
 class BugRelationshipForm(forms.ModelForm):
     destination_bug = forms.ModelChoiceField(queryset=Bug.objects.all(),
@@ -81,15 +77,18 @@ class BugRelationshipForm(forms.ModelForm):
         model = BugRelationship
         fields = ['relationship_type', 'destination_bug',]
 
+
 class BugFileForm(forms.ModelForm):
     class Meta():
         model = BugFile
         fields = ['title', 'file',]
 
+
 class BugnoteForm(forms.ModelForm):
     class Meta():
         model = Bugnote
         fields = ['text', 'scope',]
+
 
 class ReminderForm(forms.Form):
     
