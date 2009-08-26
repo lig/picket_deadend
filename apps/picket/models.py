@@ -100,7 +100,8 @@ class PicketUser(User):
 class ScopeGroup(models.Model):
     objects = models.Manager()
 
-    rights = models.CharField(_('rights'), choices=RIGHTS, max_length=2)
+    rights = models.CharField(_('rights'), choices=RIGHTS,
+        max_length=max(len(right[0]) for right in RIGHTS))
     scope = models.ForeignKey('Scope', verbose_name=_('scope'))
     group = models.ForeignKey(Group, verbose_name=_('group'))
 
