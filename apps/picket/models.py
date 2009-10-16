@@ -262,6 +262,14 @@ class Bug(models.Model):
     def get_absolute_url(self):
         return ('picket-bug', [str(self.id)])
 
+    def add_monitor(self, user):
+        """
+        @author: TrashNRoll
+        """
+        monitor, created = BugMonitor.objects.get_or_create(user=user, bug=self)
+        if created: monitor.save()
+        return (monitor, created)
+
     def get_status_color(self):
         return BUG_STATUS_COLORS[self.status]
 
