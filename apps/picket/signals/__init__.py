@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ..alerts import send_alerts
 from middleware import PicketSignalsMiddleware
-from ..models import BugRelationship, BugMonitor, BugHistory, Bugnote, Bug
+from ..models import BugRelationship, BugHistory, Bugnote, Bug
 from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
 
@@ -72,32 +72,19 @@ def bugrelationship_reverse_remove(*args, **kwargs):
 
 def bugmonitor_update_from_bughistory(*args, **kwargs):
     """
-    @author: lig
+    @author: lig, TrashNRoll
     """
     history_entry = kwargs.pop('instance')
     
     """ process appropriate field if changed reporter, handler, or author or
         all possible fields if bug just created """
-    if history_entry.field_name in ['reporter_id', 'handler_id',] and \
-        history_entry.new_value is not None:
-        
-        try:
-            user = User.objects.get(pk=history_entry.new_value)
-        except User.DoesNotExist:
-            pass
-        else:
-            monitor, created = BugMonitor.objects.get_or_create(
-                user=user, bug=history_entry.bug)
-            if created: monitor.save()
-    
-    elif history_entry.type == 0:
-        
-        bug = history_entry.bug
-        
-        BugMonitor.objects.get_or_create(user=bug.reporter, bug=bug)[0].save()
-        
-        if bug.handler:
-            BugMonitor.objects.get_or_create(user=bug.handler, bug=bug)[0].save()
+    bug = history_entry.bug
+
+    if history_entry.type == 0:
+        bug.add_monitor(bug.reporter)
+        bug.add_monitor(bug.handler)
+    elif history_entry.field_name == 'handler_id' and bug.handler:
+        bug.add_monitor(bug.handler)
 
 
 def bugmonitor_update_from_bugnote(*args, **kwargs):
@@ -105,10 +92,7 @@ def bugmonitor_update_from_bugnote(*args, **kwargs):
     @author: lig
     """
     bugnote = kwargs.pop('instance')
-    
-    monitor, created = BugMonitor.objects.get_or_create(
-        user=bugnote.reporter, bug=bugnote.bug)
-    if created: monitor.save()
+    bugnote.bug.add_monitor(bugnote.reporter)
 
 def bug_notify_change(*args, **kwargs):
     """
@@ -166,9 +150,7 @@ def bug_assign_to_category_handler(*args, **kwargs):
         if not bug.handler:
             bug.handler = bug.category.handler
         else:
-            monitor, created = BugMonitor.objects.get_or_create(
-                user=bug.category.handler, bug=bug)
-            if created: monitor.save()
+            bug.add_monitor(bug.category.handler)
 
 
 post_save.connect(bugrelationship_reverse_update, BugRelationship)

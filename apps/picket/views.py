@@ -250,8 +250,7 @@ def update_field(request, bug, form_class):
 def update_monitor(request, bug, mute):
     
     if request.method == 'POST':
-        bugMonitor, created = BugMonitor.objects.get_or_create(
-            user=request.user, bug=bug)
+        bugMonitor, created = bug.add_monitor(request.user)
         bugMonitor.mute = mute
         bugMonitor.save()
         request.user.message_set.create(message=_('Bug monitoring updated'))
