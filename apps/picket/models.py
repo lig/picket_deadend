@@ -279,6 +279,19 @@ class Bug(models.Model):
     def get_id_display(self):
         return '%07d' % self.id
 
+    def get_handler_id_display(self):
+        """
+        @author: TrashNRoll
+        """
+        if self.handler:
+            full_name = self.handler.get_full_name()
+            if full_name:
+                return u'%s (%s)' % (self.handler, full_name)
+            else:
+                return unicode(self.handler)
+        else:
+            return None
+
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
 
