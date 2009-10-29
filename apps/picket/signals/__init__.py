@@ -1,5 +1,5 @@
 """
-Copyright 2008-2009 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko, TrashNRoll
 
 This file is part of Picket.
 

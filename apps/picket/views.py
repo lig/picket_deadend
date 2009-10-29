@@ -1,5 +1,5 @@
 """
-Copyright 2008-2009 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko, TrashNRoll
 
 This file is part of Picket.
 
@@ -250,7 +250,7 @@ def update_field(request, bug, form_class):
 def update_monitor(request, bug, mute):
     
     if request.method == 'POST':
-        bugMonitor, created = bug.add_monitor(request.user)
+        bugMonitor = bug.add_monitor(request.user)
         bugMonitor.mute = mute
         bugMonitor.save()
         request.user.message_set.create(message=_('Bug monitoring updated'))

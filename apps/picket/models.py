@@ -1,5 +1,5 @@
 """
-Copyright 2008-2009 Serge Matveenko
+Copyright 2008-2009 Serge Matveenko, TrashNRoll
 
 This file is part of Picket.
 
@@ -264,11 +264,9 @@ class Bug(models.Model):
 
     def add_monitor(self, user):
         """
-        @author: TrashNRoll
+        @author: TrashNRoll, lig
         """
-        monitor, created = BugMonitor.objects.get_or_create(user=user, bug=self)
-        if created: monitor.save()
-        return (monitor, created)
+        return BugMonitor.objects.get_or_create(user=user, bug=self)[0]
 
     def get_status_color(self):
         return BUG_STATUS_COLORS[self.status]
