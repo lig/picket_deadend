@@ -80,7 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.doc.XViewMiddleware',
     ## picket
-    'apps.picket.signals.PicketSignalsMiddleware',
+    'apps.picket.middleware.PicketSignalsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'

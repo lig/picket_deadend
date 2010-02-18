@@ -1,5 +1,5 @@
 """
-Copyright 2008-2009 Serge Matveenko, TrashNRoll
+Copyright 2008-2009 Serge Matveenko, TrashNRoll, Alexey Smirnov
 
 This file is part of Picket.
 
@@ -18,13 +18,12 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models.signals import post_save, post_delete, post_init
 from django.utils.translation import ugettext_lazy as _
 
-from ..alerts import send_alerts
-from middleware import PicketSignalsMiddleware
-from ..models import BugRelationship, BugHistory, Bugnote, Bug
-from ..settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
+from alerts import send_alerts
+from models import BugRelationship, BugHistory, Bugnote, Bug
+from settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
 
 def bugrelationship_reverse_update(*args, **kwargs):
@@ -51,6 +50,8 @@ def bugrelationship_reverse_update(*args, **kwargs):
         
         reverse_relationship.save()
 
+post_save.connect(bugrelationship_reverse_update, BugRelationship)
+
 
 def bugrelationship_reverse_remove(*args, **kwargs):
     """
@@ -70,6 +71,9 @@ def bugrelationship_reverse_remove(*args, **kwargs):
     else:
         reverse_relationship.delete()
 
+post_delete.connect(bugrelationship_reverse_remove, BugRelationship)
+
+
 def bugmonitor_update_from_bughistory(*args, **kwargs):
     """
     @author: lig, TrashNRoll
@@ -86,6 +90,8 @@ def bugmonitor_update_from_bughistory(*args, **kwargs):
     elif history_entry.field_name == 'handler_id' and bug.handler:
         bug.add_monitor(bug.handler)
 
+post_save.connect(bugmonitor_update_from_bughistory, BugHistory)
+
 
 def bugmonitor_update_from_bugnote(*args, **kwargs):
     """
@@ -93,6 +99,9 @@ def bugmonitor_update_from_bugnote(*args, **kwargs):
     """
     bugnote = kwargs.pop('instance')
     bugnote.bug.add_monitor(bugnote.reporter)
+
+post_save.connect(bugmonitor_update_from_bugnote, Bugnote)
+
 
 def bug_notify_change(*args, **kwargs):
     """
@@ -123,6 +132,9 @@ field %(field_name)s was %(old_value)s changed to %(new_value)s''' %
     
     send_alerts(bug, recipients, message)
 
+post_save.connect(bug_notify_change, BugHistory)
+
+
 def bug_notify_bugnote(*args, **kwargs):
     """
     @author: lig
@@ -139,6 +151,9 @@ def bug_notify_bugnote(*args, **kwargs):
     
     send_alerts(bug, recipients, message)
 
+post_save.connect(bug_notify_bugnote, Bugnote)
+
+
 def bug_assign_to_category_handler(*args, **kwargs):
     """
     @author: lig
@@ -152,14 +167,69 @@ def bug_assign_to_category_handler(*args, **kwargs):
         else:
             bug.add_monitor(bug.category.handler)
 
-
-post_save.connect(bugrelationship_reverse_update, BugRelationship)
-post_delete.connect(bugrelationship_reverse_remove, BugRelationship)
-
-post_save.connect(bugmonitor_update_from_bughistory, BugHistory)
-post_save.connect(bugmonitor_update_from_bugnote, Bugnote)
-
-post_save.connect(bug_notify_change, BugHistory)
-post_save.connect(bug_notify_bugnote, Bugnote)
-
 post_save.connect(bug_assign_to_category_handler, Bug)
+
+
+class BugHistoryHandler(object):
+    
+    def __init__(self, user):
+        self._bug_cache={}
+        self._user = user
+        post_init.connect(self.bug_post_init_handler, Bug)
+        post_save.connect(self.bug_post_save_handler, Bug)
+    
+    def bug_post_init_handler(self, sender, instance, **kwargs):
+        if not instance.pk in self._bug_cache:
+            """
+            key for instance must be created to not trigger this mechanism on
+            another object initialization follows
+            """
+            self._bug_cache[instance.pk] = None
+            try:
+                self._bug_cache[instance.pk] = Bug.objects.get(pk=instance.pk)
+            except Bug.DoesNotExist:
+                del self._bug_cache[instance.pk]
+    
+    def bug_post_save_handler(self, sender, instance, created, **kwargs):
+        """
+        type = models.PositiveIntegerField(_('bug history entry type'),
+            choices=(
+                (0,_('bug created'),),
+                (1,_('field changed'),),
+                (2,_('relationship added'),),
+                (3,_('relationship changed'),),
+                (4,_('relationship removed'),),
+            ))
+        """
+        if created:
+            bugHistory = BugHistory(bug=instance, type=0, user=self._user)
+            bugHistory.save()
+            del bugHistory
+        else:
+            """
+            @todo: handle TextFieldS changes
+            @todo: handle relationship changes
+            """
+            for log_field in ['project_id', 'reporter_id', 'handler_id',
+                'duplicate_id', 'priority', 'severity', 'reproducibility',
+                'status', 'resolution', 'projection', 'category_id',
+                'scope_id', 'summary', 'sponsorship_total', 'sticky',]:
+                get_log_field_display = 'get_%s_display' % log_field
+                attribute_name = get_log_field_display if \
+                    get_log_field_display in dir(instance) else log_field
+                old_value = self._bug_cache[instance.pk].__getattribute__(
+                    attribute_name)
+                new_value = instance.__getattribute__(attribute_name)
+                if '__call__' in dir(new_value):
+                    old_value, new_value = old_value(), new_value()
+                if new_value != old_value:
+                    bugHistory = BugHistory(bug=instance, type=1,
+                        field_name=log_field, old_value=old_value,
+                        new_value=new_value, user=self._user)
+                    bugHistory.save()
+                    del bugHistory
+        self._bug_cache[instance.pk] = instance
+    
+    def __del__(self):
+        post_init.disconnect(self.bug_post_init_handler, Bug)
+        post_save.disconnect(self.bug_post_save_handler, Bug)
