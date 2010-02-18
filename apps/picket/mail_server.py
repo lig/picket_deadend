@@ -87,7 +87,8 @@ class PicketServer(SMTPServer):
             message = email.message_from_string(data)
 
             """ try to find bug """
-            subject_parsed = subject_regex.search(message['subject'])
+            subject_parsed = subject_regex.search(message['subject']) \
+                if 'subject' in message else ''
             if subject_parsed:
                 bug_id = subject_parsed.group('bug_id')
                 if bug_id:
