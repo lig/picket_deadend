@@ -125,6 +125,7 @@ class PicketServer(SMTPServer):
             """ go away silently if there is nothing to do """
             result = OK
         
+        """ disconnect history handler if it exists"""
         if 'bugHistoryHandler' in locals():
             del bugHistoryHandler
         
