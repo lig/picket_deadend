@@ -24,9 +24,13 @@ from smtpd import SMTPServer
 from django.contrib.auth.models import User
 
 from models import Category, Bug, Bugnote
+from signals import BugHistoryHandler
 
 """ typical subject is: '(re|fw): [site.name #bug.id] bug.summary' """
 subject_regex = re.compile(r'\[.* #(?P<bug_id>\d+)\] .*$')
+
+OK = None
+
 
 class PicketServer(SMTPServer):
 
@@ -82,7 +86,10 @@ class PicketServer(SMTPServer):
                 username = mailfrom.split('@', 1)[0] + \
                     str(User.objects.all().order_by('-id')[0].id + 1)
                 user = User.objects.create_user(username, mailfrom)
-
+            
+            """ connect history handler """
+            bugHistoryHandler = BugHistoryHandler(user)
+            
             """ make message object """
             message = email.message_from_string(data)
 
@@ -102,18 +109,23 @@ class PicketServer(SMTPServer):
                         try:
                             Bugnote.from_message(bug, user, message).save()
                         except Exception, e:
-                            return '451 %s' % e
+                            result = '451 %s' % e
                         else:
-                            return
-
+                            result = OK
+            
             """ bug wasn't found thus we creating new one """
             try:
                 Bug.from_message(categories[0], user, message).save()
             except Exception, e:
-                return '451 %s' % e
+                result = '451 %s' % e
             else:
-                return
-
+                result = OK
+        
         else:
             """ go away silently if there is nothing to do """
-            return
+            result = OK
+        
+        if 'bugHistoryHandler' in locals():
+            del bugHistoryHandler
+        
+        return result
