@@ -218,8 +218,15 @@ This MUST be implemented in case of integration:
 INTEGRATION_ENABLED = False
 INTEGRATION_PROJECT_VIEW = False
 
+
 """ SMTP server settings """
+
+""" host and port to listen for incoming mail """ 
 SMTP_LISTEN_TO = ('localhost', 2500)
+
+""" name for group that all "email" users will belong to """ 
+SMTP_USERS_GROUP = 'email_user'
+
 
 """ settings inherited from Mantis """
 USE_JAVASCRIPT = True
