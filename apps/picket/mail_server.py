@@ -21,9 +21,10 @@ import email
 import re
 from smtpd import SMTPServer
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 from models import Category, Bug, Bugnote
+from settings import SMTP_USERS_GROUP
 from signals import BugHistoryHandler
 
 """ typical subject is: '(re|fw): [site.name #bug.id] bug.summary' """
@@ -86,6 +87,7 @@ class PicketServer(SMTPServer):
                 username = mailfrom.split('@', 1)[0] + \
                     str(User.objects.all().order_by('-id')[0].id + 1)
                 user = User.objects.create_user(username, mailfrom)
+                user.groups.add(Group.objects.get(name=SMTP_USERS_GROUP))
             
             """ connect history handler """
             bugHistoryHandler = BugHistoryHandler(user)
