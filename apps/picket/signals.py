@@ -220,7 +220,7 @@ class BugHistoryHandler(object):
                 old_value = self._bug_cache[instance.pk].__getattribute__(
                     attribute_name)
                 new_value = instance.__getattribute__(attribute_name)
-                if '__call__' in dir(new_value):
+                if callable(new_value):
                     old_value, new_value = old_value(), new_value()
                 if new_value != old_value:
                     bugHistory = BugHistory(bug=instance, type=1,
