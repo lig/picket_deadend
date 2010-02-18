@@ -17,4 +17,18 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import signals
+from django.contrib.auth.models import Group
+from django.db.models.signals import post_syncdb
+
+from ..settings import SMTP_USERS_GROUP
+
+
+def email_user_group_create(app, **kwargs):
+    
+    if app.__name__ == 'apps.picket.models':
+        group, created = Group.objects.get_or_create(name=SMTP_USERS_GROUP)
+        
+        if created:
+            print('Group "%s" for "email" Picket users created.' % group.name)
+
+post_syncdb.connect(email_user_group_create)
