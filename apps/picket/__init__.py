@@ -30,17 +30,17 @@ COPYING['URL'] = 'http://picket.nophp.ru/'
 """
 Picket version. Possibly with branch name
 """
-COPYING['PICKET_VERSION'] = '0.1-master'
+COPYING['PICKET_VERSION'] = '0.3-master'
 
 """
 List of Picket authors in order of their code appearence
 """ 
-COPYING['AUTHORS'] = ['Serge Matveenko',]
+COPYING['AUTHORS'] = ['Serge Matveenko', 'TrashNRoll']
 
 """
 List of years of project development
 """
-COPYING['YEARS'] = [2008, 2009,]
+COPYING['YEARS'] = [2008, 2009, 2010,]
 
 """
 GPL warning text as of 2008-10-10
