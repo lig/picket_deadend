@@ -18,18 +18,27 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 ----
 
 This is short installation instructions for Picket
-(http://sourceforge.net/projects/picket).
+(http://sourceforge.net/projects/picket),
+(http://github.com/lig/picket),
+(http://www.ohloh.net/p/picket),
+(http://picket.nophp.ru/).
 
-1. Install Python 2.x (http://python.org/).
+1. Install Python 2.x
+(http://python.org/).
 
-2. Install Django 1.1 (http://www.djangoproject.com/).
+2. Install Django 1.1.x
+(http://www.djangoproject.com/).
 
-3. Install Python markdown2 library (optional)
+3. Install Python markdown2 library
 (http://code.google.com/p/python-markdown2/).
 
 4. Checkout latest version of Picket from Git repository located here:
 
 http://sourceforge.net/scm/?type=git&group_id=210642
+
+and here:
+
+http://github.com/lig/picket
 
 or download latest Picket version here:
 
@@ -40,7 +49,9 @@ http://picket.nophp.ru/pages/download/
 6. Copy file "settings/local_sample.py" to "settings/local.py" and edit it to
 provide db connection information (sqlite3 good for quick testing).
 
-7. Create empty file "apps/picket/settings/local.py" 
+7. Create empty file "apps/picket/settings/local.py". Feel free to set
+preferred Picket settings in this file. See "apps/picket/settings/dist.py" for
+available settings.
 
 8. Run in terminal to make database structure:
 $ ./manage.py syncdb
@@ -57,9 +68,13 @@ You are done!
 
 Mail server installation steps.
 
-1. Make steps from 1 to 7 of the main Picket installation instructions.
+1. Install Python chardet library
+(http://chardet.feedparser.org/).
 
-2.  Run in terminal to start picket mail server:
+2. Make steps from 1 to 7 of the main Picket installation instructions. Look
+for various SMTP settings in "apps/picket/settings/dist.py".
+
+3.  Run in terminal to start picket mail server:
 $ ./manage.py runsmtpd
 
 You are done!
