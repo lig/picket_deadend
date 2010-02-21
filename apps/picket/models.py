@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 import custom
 from mail_utils import markdown_from_part, text_from_part, decode
 from settings import *
+from templatetags.markup import markdown
 
 class IntegrationError(Exception):
     pass
@@ -289,7 +290,16 @@ class Bug(models.Model):
                 return unicode(self.handler)
         else:
             return None
-
+    
+    def get_description_display(self):
+        return markdown(self.description)
+    
+    def get_steps_to_reproduce_display(self):
+        return markdown(self.steps_to_reproduce)
+    
+    def get_additional_information_display(self):
+        return markdown(self.additional_information)
+    
     def is_resolved(self):
         return BUG_RESOLVED_STATUS_THRESHOLD <= self.status
 

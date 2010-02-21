@@ -215,7 +215,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Description' %}
     </td>
     <td colspan="5">
-        {{ bug.description|markdown }}
+        {{ bug.get_description_display }}
     </td>
 </tr>
 
@@ -225,7 +225,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Steps to reproduce' %}
     </td>
     <td colspan="5">
-        {{ bug.steps_to_reproduce|markdown }}
+        {{ bug.get_steps_to_reproduce_display }}
     </td>
 </tr>
 
@@ -235,6 +235,6 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% trans 'Additional information' %}
     </td>
     <td colspan="5">
-        {{ bug.additional_information|markdown }}
+        {{ bug.get_additional_information_display }}
     </td>
 </tr>

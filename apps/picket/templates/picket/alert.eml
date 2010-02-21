@@ -43,10 +43,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% trans 'Summary' %}: {{ bug.summary }}
 
 {% trans 'Description' %}:
-{{ bug.description }}
+{{ bug.get_description_display }}
 
 {% trans 'Steps to reproduce' %}:
-{{ bug.steps_to_reproduce }}
+{{ bug.get_steps_to_reproduce_display }}
 
 {% trans 'Additional information' %}:
-{{ bug.additional_information }}
+{{ bug.get_additional_information_display }}
