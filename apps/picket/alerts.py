@@ -40,7 +40,7 @@ def send_alerts(bug, recipients, message=None):
         
         for recipient in recipients:
             
-            if email_users_group in recipient.groups:
+            if email_users_group in recipient.groups.all():
                 """ Send special alert to email user """
                 recipient.email_user(subject=alert_subject,
                     message=email_only_alert_message, from_email=from_email)
