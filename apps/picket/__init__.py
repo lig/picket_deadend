@@ -30,7 +30,7 @@ COPYING['URL'] = 'http://picket.nophp.ru/'
 """
 Picket version. Possibly with branch name
 """
-COPYING['PICKET_VERSION'] = '0.2.1'
+COPYING['PICKET_VERSION'] = '0.2.2'
 
 """
 List of Picket authors in order of their code appearence
