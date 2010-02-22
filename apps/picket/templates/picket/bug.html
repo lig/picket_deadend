@@ -115,7 +115,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 	    {% if bug.is_resolved %}
 	    <!-- REOPEN button -->
 	    <td class="center">
-            <form method="post" action="{% url picket-bug-update-status bug_id=bug.id %}">
+            <form method="post" action="{% url picket-bug-update-handler-status bug_id=bug.id %}">
                 <input type="hidden" name="status" value="{{ config.BUG_REOPEN_STATUS }}" />
                 <input type="submit" class="button" value="{% trans 'Reopen' %}" />
             </form>
