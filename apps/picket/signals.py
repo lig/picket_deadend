@@ -86,7 +86,8 @@ def bugmonitor_update_from_bughistory(*args, **kwargs):
 
     if history_entry.type == 0:
         bug.add_monitor(bug.reporter)
-        bug.add_monitor(bug.handler)
+        if bug.handler:
+            bug.add_monitor(bug.handler)
     elif history_entry.field_name == 'handler_id' and bug.handler:
         bug.add_monitor(bug.handler)
 
