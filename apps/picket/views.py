@@ -328,6 +328,7 @@ def remind(request, bug):
     return direct_to_template(request, 'picket/reminder.html',
         {'bug': bug, 'reminder_form': reminderForm,})
 
+@login_required
 @permited_bug_required(required_rights='r')
 def annotate(request, bug):
     """
