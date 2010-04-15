@@ -18,7 +18,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, post_delete, post_init
+from django.db.models.signals import pre_save, post_save, post_delete, post_init
 from django.utils.translation import ugettext_lazy as _
 
 from alerts import send_alerts
@@ -157,18 +157,15 @@ post_save.connect(bug_notify_bugnote, Bugnote)
 
 def bug_assign_to_category_handler(*args, **kwargs):
     """
-    @author: lig
+    @author: TrashNRoll, lig
     """
     bug = kwargs.pop('instance')
-    created = kwargs.pop('created')
-    
-    if created and bug.category.handler:
-        if not bug.handler:
-            bug.handler = bug.category.handler
-        else:
-            bug.add_monitor(bug.category.handler)
+    created = not bug.pk
 
-post_save.connect(bug_assign_to_category_handler, Bug)
+    if created and bug.category.handler and not bug.handler:
+        bug.handler = bug.category.handler
+
+pre_save.connect(bug_assign_to_category_handler, Bug)
 
 
 class BugHistoryHandler(object):
