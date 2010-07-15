@@ -25,6 +25,8 @@ from alerts import send_alerts
 from models import BugRelationship, BugHistory, Bugnote, Bug
 from settings import BUGRELATIONSHIP_TYPE_REVERSE_MAP
 
+from utils import get_attr_display
+
 
 def bugrelationship_reverse_update(*args, **kwargs):
     """
@@ -124,8 +126,8 @@ def bug_notify_change(*args, **kwargs):
 field %(field_name)s was %(old_value)s changed to %(new_value)s''' %
             {'bug_id': bug.get_id_display(),
                 'field_name': history_entry.field_name,
-                'old_value': history_entry.old_value,
-                'new_value': history_entry.new_value,})
+                'old_value': history_entry.get_old_value_display(),
+                'new_value': history_entry.get_new_value_display(),})
     else:
         """ bug changed somehow """
         message = _('''Bug #%(bug_id)s is changed''' %
@@ -212,14 +214,10 @@ class BugHistoryHandler(object):
                 'duplicate_id', 'priority', 'severity', 'reproducibility',
                 'status', 'resolution', 'projection', 'category_id',
                 'scope_id', 'summary', 'sponsorship_total', 'sticky',]:
-                get_log_field_display = 'get_%s_display' % log_field
-                attribute_name = get_log_field_display if \
-                    get_log_field_display in dir(instance) else log_field
-                old_value = self._bug_cache[instance.pk].__getattribute__(
-                    attribute_name)
-                new_value = instance.__getattribute__(attribute_name)
-                if callable(new_value):
-                    old_value, new_value = old_value(), new_value()
+
+                old_value = getattr(self._bug_cache[instance.pk], log_field)
+                new_value = getattr(instance, log_field)
+
                 if new_value != old_value:
                     bugHistory = BugHistory(bug=instance, type=1,
                         field_name=log_field, old_value=old_value,

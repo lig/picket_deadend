@@ -310,7 +310,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {{ bug_history_item.field_name }} {{ bug_history_item.get_type_display }}
     </td>
     <td class="small-caption">
-        {{ bug_history_item.old_value }} => {{ bug_history_item.new_value }}
+        {{ bug_history_item.get_old_value_display }} => {{ bug_history_item.get_new_value_display }}
     </td>
 </tr>
 {% endfor %}
