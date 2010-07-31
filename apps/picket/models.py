@@ -32,6 +32,8 @@ from mail_utils import markdown_from_part, text_from_part, decode
 from settings import *
 from templatetags.markup import markdown
 
+from utils import get_attr_display
+
 class IntegrationError(Exception):
     pass
 
@@ -248,13 +250,22 @@ class Bug(models.Model):
         super(Bug, self).save(*args, **kwargs)
 
     def is_permited(self, user, required_rights='r'):
-        def check_permissions():
+        
+        if user.is_superuser:
+            return True
+        elif self.scope.anonymous_access and required_rights == 'r':
+            return True
+        elif user.is_anonymous():
+            return False
+        else:
+            """
+            @todo: refactor permissions handling
+            @todo: test this block for correct permissions checking
+            """
             permission = ScopeGroup.objects.get(
                 scope=self.project.scope, group__in=user.groups.all())
-            return all(
+            return self in Bug.objects.permited(user) and all(
                 (right in permission.rights for right in required_rights))
-        return (user.is_superuser or self.scope.anonymous_access or
-            self in Bug.objects.permited(user) and check_permissions())
 
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
@@ -290,6 +301,15 @@ class Bug(models.Model):
                 return unicode(self.handler)
         else:
             return None
+
+    def get_category_id_display(self):
+        return self.category
+
+    def get_project_id_display(self):
+        return self.project
+
+    def get_duplicate_id_display(self):
+        return self.duplicate
     
     def get_description_display(self):
         return markdown(self.description)
@@ -434,6 +454,17 @@ class BugHistory(models.Model):
         verbose_name = _('bug history entry')
         verbose_name_plural = _('bug history entries')
         ordering = ['date_modified',]
+
+    def get_old_value_display(self):
+        b = Bug()
+        setattr(b, self.field_name, self.old_value)
+        return get_attr_display(b, self.field_name)
+
+    def get_new_value_display(self):
+        b = Bug()
+        setattr(b, self.field_name, self.new_value)
+        return get_attr_display(b, self.field_name)
+
 
 class BugMonitor(models.Model):
     objects = BugMonitorManager()
