@@ -1,5 +1,5 @@
 """
-Copyright 2009 Serge Matveenko
+Copyright 2009-2010 Serge Matveenko
 
 This file is part of Picket.
 
@@ -18,12 +18,18 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
+
 
 def markdown_from_part(part):
+    
     if part.get_content_subtype() == 'html':
-        return '\n\r%s\n\r' % part.get_payload(decode=True)
+        result = '%s' % part.get_payload(decode=True)
     else:
-        return '\n\r<pre>%s</pre>\n\r' % part.get_payload(decode=True)
+        result = '<pre>%s</pre>' % part.get_payload(decode=True)
+    
+    return mark_safe(result)
+
 
 def text_from_part(part):
     if part.get_content_subtype() == 'html':

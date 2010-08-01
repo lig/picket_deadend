@@ -33,7 +33,7 @@ def markdown(value, arg=''):
     except ImportError:
         if settings.DEBUG:
             print("Error in {% markdown %} filter: The Python markdown2 library isn't installed.")
-        return u'<pre>%s</pre>' % force_unicode(value)
+        result = u'<pre>%s</pre>' % force_unicode(value)
     else:
         extensions = [e for e in arg.split(",") if e]
         if len(extensions) > 0 and extensions[0] == "safe":
@@ -42,8 +42,10 @@ def markdown(value, arg=''):
         else:
             safe_mode = False
 
-        return mark_safe(markdown2.markdown(force_unicode(value),
+        result = mark_safe(markdown2.markdown(force_unicode(value),
             extras=extensions, safe_mode=safe_mode))
+    
+    return mark_safe(result)
 
 markdown.is_safe = True
 
