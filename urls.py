@@ -40,7 +40,7 @@ urlpatterns = patterns('',
     (r'^users/', include('util.users.urls')),
 
     ## django admin
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
     
     ## testing
     #(r'^i/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PROJECT_ROOT, 'i'),}),

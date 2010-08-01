@@ -27,8 +27,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__),
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = os.path.join(PROJECT_ROOT, 'local.db')             # Or path to database file if using sqlite3.
+DATABASE_ENGINE = ''           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = ''             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -115,8 +115,3 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTH_PROFILE_MODULE = 'users.profile'
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.file'
-
-DATE_FORMAT = 'j.m.Y'
-TIME_FORMAT = 'G:i'
