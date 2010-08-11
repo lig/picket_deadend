@@ -25,20 +25,18 @@ from models import (Bug, Bugnote, BugFile, BugRelationship, Scope, Category,
     PicketUser)
 
 
-class BugForm(forms.ModelForm):
+class BugForm(forms.Form):
     
-    def __init__(self, *args, **kwargs):
-        project_id = kwargs.pop('project_id', None)
-        super(BugForm, self).__init__(*args, **kwargs)
-        if project_id is not None:
-            self.fields['category'].queryset = Category.objects.filter(
-                project=project_id)
-    
-    class Meta():
-        model = Bug
-        fields = ['category', 'reproducibility', 'severity', 'priority',
-            'summary', 'description', 'steps_to_reproduce',
-            'additional_information', 'scope',]
+    project = forms.IntegerField()
+    reporter = forms.CharField()
+    handler = forms.CharField()
+    priority = forms.ChoiceField(choices=map(lambda x: (x, x,), ('high', 'normal', 'low',)))
+    status = forms.ChoiceField(choices=map(lambda x: (x, x,), ('new', 'assigned', 'resolved',)))
+    category = forms.CharField()
+    date_submitted = forms.DateTimeField()
+    last_updated = forms.DateTimeField()
+    summary = forms.CharField()
+    description = forms.CharField(widget=forms.Textarea)
 
 
 class BugUpdateForm(forms.ModelForm):

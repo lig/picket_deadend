@@ -102,72 +102,29 @@ def reset_bug_filter(request):
 
 @permited_project_required(required_rights='w')
 def filebug(request, clone=False, clone_id=None):
-    """
-    @todo: handle relationship with parent in case of cloning
-    """
-    view_name = not clone and 'picket-filebug' or 'picket-filebug-clone'
-    
-    if clone:
-        cloningBug = get_object_or_404(Bug, id=clone_id)
-    else:
-        cloningBug = None
+    from documents import Bug
     
     if not 'project_id' in request.session:
-        if clone:
-            request.session['project_id'] = cloningBug.project_id
-        else:
-            return HttpResponseRedirect(
-                reverse('picket-choose-project-gonext',
-                    kwargs={'view_name': view_name,}))
-    
-    scopes = Scope.objects.get_permited(request.user)
+        return HttpResponseRedirect(
+            reverse('picket-choose-project-gonext',
+                kwargs={'view_name': 'picket-filebug',}))
     
     if request.method == 'POST':
         bugForm = BugForm(request.POST)
-        bugFileForm = BugFileForm(request.POST, request.FILES,
-            prefix='bugfile')
-        
-        if clone:
-            bugRelationshipForm = BugRelationshipForm(request.POST)
-        else:
-            bugRelationshipForm = BugRelationshipForm()
         
         if bugForm.is_valid():
-            bug = bugForm.save(commit=False)
-            bug.reporter = request.user
-            bug.save()
+            bug = Bug(bugForm.cleaned_data)
+            print(bug)
+            bug.reporter = request.user.username
+            bug.m.save()
             request.user.message_set.create(message=_('bug filed'))
-            if bugFileForm.is_valid():
-                bugFile = bugFileForm.save(commit=False)
-                bugFile.bug = bug
-                bugFile.save()
-                request.user.message_set.create(
-                    message=_('file for bug uploaded'))
-            if bugRelationshipForm.is_valid():
-                bugRelationship = bugRelationshipForm.save(commit=False)
-                bugRelationship.source_bug = bug
-                bugRelationship.save()
-                request.user.message_set.create(
-                    message=_('relationship added'))
             return HttpResponseRedirect(bug.get_absolute_url())
     else:
-        if clone:
-            bugForm = BugForm(instance=cloningBug,
-                project_id=request.session['project_id'])
-            bugRelationshipForm = BugRelationshipForm(
-                initial={'bugrelationship_type':
-                    BUGRELATIONSHIP_TYPE_DEFAULT,})
-        else:
-            bugForm = BugForm(project_id=request.session['project_id'])
-            bugRelationshipForm = None
-            
-        bugFileForm = BugFileForm(prefix='bugfile')
-        
-    
+            bugForm = BugForm()
+
     return direct_to_template(request, 'picket/bug_form.html',
-        {'bug_form': bugForm, 'bugfile_form': bugFileForm, 'scopes': scopes,
-            'is_clone': clone, 'cloning_bug': cloningBug,
-            'bug_relationship_form': bugRelationshipForm,})
+        {'bug_form': bugForm, 'is_clone': clone,})
+
 
 @permited_bug_required(required_rights='r')
 def bug(request, bug):
