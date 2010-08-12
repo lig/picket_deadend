@@ -39,6 +39,12 @@ class BugForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea)
 
 
+class AttachmentForm(forms.ModelForm):
+    
+    title = forms.CharField()
+    file = forms.FileField()
+
+
 class BugUpdateForm(forms.ModelForm):
     class Meta():
         model = Bug
@@ -74,12 +80,6 @@ class BugRelationshipForm(forms.ModelForm):
     class Meta():
         model = BugRelationship
         fields = ['relationship_type', 'destination_bug',]
-
-
-class BugFileForm(forms.ModelForm):
-    class Meta():
-        model = BugFile
-        fields = ['title', 'file',]
 
 
 class BugnoteForm(forms.ModelForm):

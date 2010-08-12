@@ -33,7 +33,7 @@ urlpatterns = patterns('apps.picket.views',
     ## reports
     (r'^filebug/$', 'filebug', {},
         'picket-filebug',),
-    (r'^clonebug/(?P<clone_id>\d+)/$', 'filebug', {'clone': True,},
+    (r'^clonebug/(?P<clone_id>\w+)/$', 'filebug', {'clone': True,},
         'picket-filebug-clone',),
     
     ## project
@@ -51,42 +51,42 @@ urlpatterns = patterns('apps.picket.views',
         'picket-bugs-filter-reset',),
     
     ## bug view
-    (r'^bug/(?P<bug_id>\d+)/$', 'bug', {},
+    (r'^bug/(?P<bug_id>\w+)/$', 'bug', {},
         'picket-bug',),
     
     ## bug update
-    (r'^bug/(?P<bug_id>\d+)/update/$', 'update', {},
+    (r'^bug/(?P<bug_id>\w+)/update/$', 'update', {},
         'picket-bug-update',),
     
     ## bug fields updates
-    (r'^bug/(?P<bug_id>\d+)/update_handler_status/$', 'update_field',
+    (r'^bug/(?P<bug_id>\w+)/update_handler_status/$', 'update_field',
         {'form_class': 'AssignStatusForm',},
         'picket-bug-update-handler-status',),
-    (r'^bug/(?P<bug_id>\d+)/move/$', 'update_field',
+    (r'^bug/(?P<bug_id>\w+)/move/$', 'update_field',
         {'form_class': 'BugMoveForm',},
         'picket-bug-move',),
     
     ## various bug operations
-    (r'^bug/(?P<bug_id>\d+)/remind/$', 'remind', {},
+    (r'^bug/(?P<bug_id>\w+)/remind/$', 'remind', {},
         'picket-bug-reminder',),
-    (r'^bug/(?P<bug_id>\d+)/monitor/$', 'update_monitor', {'mute': False,},
+    (r'^bug/(?P<bug_id>\w+)/monitor/$', 'update_monitor', {'mute': False,},
         'picket-bug-monitor',),
-    (r'^bug/(?P<bug_id>\d+)/mute/$', 'update_monitor', {'mute': True,},
+    (r'^bug/(?P<bug_id>\w+)/mute/$', 'update_monitor', {'mute': True,},
         'picket-bug-mute',),
-    (r'^bug/(?P<bug_id>\d+)/delete/$', 'delete', {},
+    (r'^bug/(?P<bug_id>\w+)/delete/$', 'delete', {},
         'picket-bug-delete',),
-    (r'^bug/(?P<bug_id>\d+)/annotate/$', 'annotate', {},
+    (r'^bug/(?P<bug_id>\w+)/annotate/$', 'annotate', {},
         'picket-annotate',),
     
     ## relationships operations
-    (r'^bug/(?P<bug_id>\d+)/add_rel/$', 'add_relationship', {},
+    (r'^bug/(?P<bug_id>\w+)/add_rel/$', 'add_relationship', {},
         'picket-bug-relationship-add'),
     (r'^relationship/(?P<bug_relationship_id>\d+)/delete/$',
         'delete_relationship', {},
         'picket-bug-relationship-delete'),
     
     ## file upload
-    (r'^bug/(?P<bug_id>\d+)/upload/$', 'bug_file_upload', {},
+    (r'^bug/(?P<bug_id>\w+)/upload/$', 'bug_file_upload', {},
         'picket-bugfile-upload'),
     
     ## active project selections

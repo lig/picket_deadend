@@ -21,10 +21,25 @@ class Bug(Document):
     description = Field(schema.String)
     attachments = Field(schema.Array(schema.ObjectId))
     
+    @property
+    def id(self):
+        return str(self._id)
+    
     class __mongometa__:
         session = session
         name = 'bug'
 
     @permalink
     def get_absolute_url(self):
-        return ('picket_bug', (self._id,))
+        return ('picket-bug', (str(self._id),))
+
+
+class Attachment(Document):
+    
+    _id = Field(schema.ObjectId)
+    title = Field(schema.String)
+    file = Field(schema.Binary)
+
+    class __mongometa__:
+        session = session
+        name = 'attachment'

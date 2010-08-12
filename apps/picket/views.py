@@ -23,6 +23,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 import cPickle
 from copy import copy
 
+from pymongo.bson import ObjectId
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -35,9 +37,10 @@ from django.views.generic.simple import direct_to_template
 import custom
 from alerts import send_alerts
 from decorators import bug_relationship_to_bug
+from documents import Bug as BugDocument
 from filters import BugFilter
-from forms import (BugForm, BugUpdateForm, BugnoteForm, BugFileForm,
-                   AssignStatusForm, BugRelationshipForm, ReminderForm)
+from forms import (BugForm, BugUpdateForm, BugnoteForm, AssignStatusForm,
+    BugRelationshipForm, ReminderForm)
 from models import (Bug, Project, Category, Scope, BugRelationship, BugHistory,
                     BugMonitor, Bugnote)
 from permissions import permited_project_required, permited_bug_required
@@ -102,7 +105,6 @@ def reset_bug_filter(request):
 
 @permited_project_required(required_rights='w')
 def filebug(request, clone=False, clone_id=None):
-    from documents import Bug as BugDocument
     
     if not 'project_id' in request.session:
         return HttpResponseRedirect(
@@ -117,7 +119,7 @@ def filebug(request, clone=False, clone_id=None):
             bug.reporter = request.user.username
             bug.m.save()
             request.user.message_set.create(message=_('bug filed'))
-            #return HttpResponseRedirect(bug.get_absolute_url())
+            return HttpResponseRedirect(bug.get_absolute_url())
     else:
             bugForm = BugForm()
 
@@ -125,36 +127,31 @@ def filebug(request, clone=False, clone_id=None):
         {'bug_form': bugForm, 'is_clone': clone,})
 
 
-@permited_bug_required(required_rights='r')
-def bug(request, bug):
+#@permited_bug_required(required_rights='r')
+def bug(request, bug_id):
     """
     View bug by its id
     """
     
-    bugnoteForm = BugnoteForm()
-    assignStatusForm = AssignStatusForm(instance=bug)
+#    bugnoteForm = BugnoteForm()
+#    assignStatusForm = AssignStatusForm(instance=bug)
     
-    bugFileForm = BugFileForm()
+#    bugFileForm = BugFileForm()
     
-    bugmonitor_users = User.objects.filter(bugmonitor__bug=bug,
-        bugmonitor__mute=False)
-    is_bugmonitor_user = request.user in bugmonitor_users
+#    bugmonitor_users = User.objects.filter(bugmonitor__bug=bug,
+#        bugmonitor__mute=False)
+#    is_bugmonitor_user = request.user in bugmonitor_users
     
-    bugRelationshipForm = BugRelationshipForm()
-    bugRelationships = BugRelationship.objects.select_related().filter(
-        source_bug=bug)
+#    bugRelationshipForm = BugRelationshipForm()
+#    bugRelationships = BugRelationship.objects.select_related().filter(
+#        source_bug=bug)
     
-    bugHistoryItems = BugHistory.objects.filter(bug=bug)
-    
-    return direct_to_template(request, 'picket/bug.html',
-        {'bug': bug, 'bugnote_form': bugnoteForm,
-            'assign_status_form': assignStatusForm,
-            'bugmonitor_users': bugmonitor_users,
-            'is_bugmonitor_user': is_bugmonitor_user,
-            'bug_relationship_form': bugRelationshipForm,
-            'bug_relationships': bugRelationships,
-            'bug_file_form': bugFileForm,
-            'bug_history_items': bugHistoryItems,})
+#    bugHistoryItems = BugHistory.objects.filter(bug=bug)
+
+    bug = BugDocument.m.get(_id=ObjectId(bug_id))
+
+    return direct_to_template(request, 'picket/bug.html', {'bug': bug,})
+
 
 @permited_bug_required(required_rights='w')
 def update(request, bug):
