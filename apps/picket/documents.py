@@ -10,7 +10,7 @@ class Bug(Document):
 
     class __mongometa__:
         session = session
-        name = 'wiki_page'
+        name = 'bug'
 
     _id = Field(schema.ObjectId)
     project = Field(schema.Int)

@@ -102,7 +102,7 @@ def reset_bug_filter(request):
 
 @permited_project_required(required_rights='w')
 def filebug(request, clone=False, clone_id=None):
-    from documents import Bug
+    from documents import Bug as BugDocument
     
     if not 'project_id' in request.session:
         return HttpResponseRedirect(
@@ -113,12 +113,11 @@ def filebug(request, clone=False, clone_id=None):
         bugForm = BugForm(request.POST)
         
         if bugForm.is_valid():
-            bug = Bug(bugForm.cleaned_data)
-            print(bug)
+            bug = BugDocument(bugForm.cleaned_data)
             bug.reporter = request.user.username
             bug.m.save()
             request.user.message_set.create(message=_('bug filed'))
-            return HttpResponseRedirect(bug.get_absolute_url())
+            #return HttpResponseRedirect(bug.get_absolute_url())
     else:
             bugForm = BugForm()
 
