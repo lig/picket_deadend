@@ -1,9 +1,7 @@
 Django==1.2.1
-FormEncode==1.2.2
-Ming==0.2
 distribute==0.6.10
 django-filter==0.5.3
 markdown2==1.0.1.17
-mock==0.7.0b2
+mongoengine==0.3
 pymongo==1.8
 wsgiref==0.1.2
