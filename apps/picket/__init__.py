@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from distutils import version as v
+
+
 """
 dictionary for storing copyrights and other project stuff
 """
@@ -30,7 +33,7 @@ COPYING['URL'] = 'http://picket.nophp.ru/'
 """
 Picket version. Possibly with branch name
 """
-COPYING['PICKET_VERSION'] = '0.3-master'
+COPYING['PICKET_VERSION'] = v.LooseVersion('0.3-master')
 
 """
 List of Picket authors in order of their code appearence
@@ -58,3 +61,5 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>."""
+
+version = COPYING['PICKET_VERSION']
