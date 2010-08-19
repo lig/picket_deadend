@@ -234,26 +234,18 @@ class Bug(Document):
         raise NotImplementedError()
 
 
-class Bugnote(models.Model):
-    bug = models.ForeignKey(Bug, verbose_name=_('bugnote bug'))
-    reporter = models.ForeignKey(User, verbose_name=_('bugnote user'))
-    text = models.TextField(_('bugnote text'))
-    scope = models.ForeignKey(Scope,
-        verbose_name=_('bugnote scope'), null=True, blank=True)
-    date_submitted = models.DateTimeField(_('bugnote date submitted'),
-        auto_now_add=True, editable=False)
-    last_modified = models.DateTimeField(_('bugnote last modified'),
-        auto_now=True, editable=False)
-    note_type = models.IntegerField(_('bugnote type'),
-        null=True, blank=True)
-    note_attr = models.CharField(_('bugnote attr'),
-        max_length=750, blank=True)
+class Bugnote(Document):
+    
+    bug = ReferenceField(Bug, required=True)
+    reporter = ReferenceField(User, required=True)
+    text = StringField(required=True)
+    scope = ReferenceField(Scope)
+    """ @todo: autoupdate dates """
+    date_submitted = DateTimeField()
+    last_modified = DateTimeField()
 
     def save(self, *args, **kwargs):
-        if self.scope is None:
-            self.scope = self.bug.scope
-        self.bug.num_bugnotes = self.bug.bugnote_set.all().count()
-        self.bug.save()
+        """ @todo: autoupdate Bug num_bugnotes property """
         super(Bugnote, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -287,8 +279,3 @@ class Bugnote(models.Model):
         bugnote.save()
 
         return bugnote
-
-    class Meta():
-        verbose_name = _('bugnote')
-        verbose_name_plural = _('bugnotes')
-        ordering = ['date_submitted',]
