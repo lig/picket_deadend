@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from mongoengine import *
 from mongoengine.django.auth import User
+from mongoengine.fields import BaseField
 
 from django.db.models import permalink
 
@@ -75,6 +76,18 @@ class Project(Document):
     @permalink
     def get_absolute_url(self):
         return ('picket-project', [str(self.id)])
+
+
+class BugHistory(Document):
+
+    user = ReferenceField(User)
+    bug = ReferenceField(Bug)
+    date = DateTimeField()
+    field_name = StringField()
+    old_value = BaseField()
+    new_value = BaseField()
+    """ @todo: possible history entry type values setting """ 
+    type = StringField()
 
 
 class Bug(Document):
@@ -331,45 +344,6 @@ class ProjectFile(models.Model):
         verbose_name = _('project file')
         verbose_name_plural = _('project files')
         ordering = ['date_added',]
-
-class BugHistory(models.Model):
-    objects = models.Manager()
-
-    user = models.ForeignKey(User,
-        verbose_name=_('bug history entry user'))
-    bug = models.ForeignKey(Bug, verbose_name=_('bug'))
-    date_modified = models.DateTimeField(_('bug history entry date'),
-        auto_now=True)
-    field_name = models.CharField(_('bug history entry field'),
-        max_length=96, blank=True)
-    old_value = models.CharField(
-        _('bug history entry old field value'),
-        max_length=255, blank=True, null=True)
-    new_value = models.CharField(
-        _('bug history entry new field value'),
-        max_length=255, blank=True, null=True)
-    type = models.PositiveIntegerField(_('bug history entry type'),
-        choices=(
-            (0,_('bug created'),),
-            (1,_('field changed'),),
-            (2,_('relationship added'),),
-            (3,_('relationship changed'),),
-            (4,_('relationship removed'),),
-        ))
-    class Meta():
-        verbose_name = _('bug history entry')
-        verbose_name_plural = _('bug history entries')
-        ordering = ['date_modified',]
-
-    def get_old_value_display(self):
-        b = Bug()
-        setattr(b, self.field_name, self.old_value)
-        return get_attr_display(b, self.field_name)
-
-    def get_new_value_display(self):
-        b = Bug()
-        setattr(b, self.field_name, self.new_value)
-        return get_attr_display(b, self.field_name)
 
 
 class BugMonitor(models.Model):
