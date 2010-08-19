@@ -54,6 +54,13 @@ class Category(Document):
         return ('picket-category', [str(self.id)])
     
 
+class Attachment(EmbeddedDocument):
+    
+    title = StringField()
+    """ @todo: use FileField from mongoengine 0.4 when it will be released """
+    file = BinaryField(required=True)
+
+
 class Project(Document):
 
     name = StringField(required=True, unique=True)
@@ -89,13 +96,6 @@ class BugHistory(EmbeddedDocument):
     new_value = BaseField()
     """ @todo: possible history entry type values setting """ 
     type = StringField()
-
-
-class Attachment(EmbeddedDocument):
-    
-    title = StringField()
-    """ @todo: use FileField from mongoengine 0.4 when it will be released """
-    file = BinaryField(required=True)
 
 
 class Bug(Document):
