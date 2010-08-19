@@ -52,11 +52,6 @@ class Category(Document):
     @permalink
     def get_absolute_url(self):
         return ('picket-category', [str(self.id)])
-
-    class Meta():
-        verbose_name = _('category')
-        verbose_name_plural = _('categories')
-        unique_together = (('project', 'name'),)
     
 
 class Project(Document):
