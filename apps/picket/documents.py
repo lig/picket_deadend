@@ -96,7 +96,6 @@ class Bug(Document):
     project = ReferenceField(Project, required=True)
     reporter = ReferenceField(User)
     handler = ReferenceField(User)
-    duplicate = ReferenceField(User)
     """ @todo: possible priority values setting """ 
     priority = StringField()
     """ @todo: possible severity values setting """ 
@@ -125,7 +124,9 @@ class Bug(Document):
     """ @todo: add reporters, handlers and commentators as monitorers
         automatically """
     monitorers = ListField(ReferenceField(User))
-    relationship = ListField(ReferenceField(BugRelationship))
+    related_bugs = ListField(ReferenceField('self'))
+    child_bugs = ListField(ReferenceField('self'))
+    duplicates = ListField(ReferenceField('self'))
     num_bugnotes = IntField(default=0)
 
     def save(self, *args, **kwargs):
@@ -296,25 +297,6 @@ class ProjectFile(models.Model):
         verbose_name_plural = _('project files')
         ordering = ['date_added',]
 
-
-class BugRelationship(models.Model):
-    objects = models.Manager()
-
-    source_bug = models.ForeignKey(Bug,
-        verbose_name=_('bug relationship source'),
-        related_name='source')
-    destination_bug = models.ForeignKey(Bug,
-        verbose_name=_('bug relationship destination'),
-        related_name='destination')
-    relationship_type = models.IntegerField(_('bug relationship type'),
-        choices=BUGRELATIONSHIP_TYPE_CHOICES,
-        default=BUGRELATIONSHIP_TYPE_DEFAULT, blank=True)
-    is_reverse = models.BooleanField(_('is it reverse bug relationship'),
-        default=False, editable=False)
-
-    class Meta():
-        verbose_name = _('bug relationship entry')
-        verbose_name_plural = _('bug relationship entries')
 
 class Bugnote(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bugnote bug'))
