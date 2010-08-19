@@ -23,6 +23,17 @@ from mongoengine.django.auth import User
 from django.db.models import permalink
 
 
+class Scope(Document):
+
+    name = StringField(required=True, unique=True)
+    read_access = ListField(ReferenceField(Group))
+    write_access = ListField(ReferenceField(Group))
+    anonymous_access = BooleanField(default=False)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
 class Category(Document):
 
     name = StringField(required=True, unique=True)
@@ -259,26 +270,6 @@ class ScopeGroup(models.Model):
         max_length=max(len(right[0]) for right in RIGHTS))
     scope = models.ForeignKey('Scope', verbose_name=_('scope'))
     group = models.ForeignKey(Group, verbose_name=_('group'))
-
-class Scope(models.Model):
-    objects = ScopeManager()
-
-    name = models.CharField(_('scope name'),
-        unique=True, max_length=255)
-    groups = models.ManyToManyField(Group,
-        verbose_name=_('scope groups'),
-        help_text=_('groups allowed to view items in this scope'),
-        through=ScopeGroup)
-
-    anonymous_access = models.BooleanField(_('anonymous users allowed to view \
-        items in this scope'))
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta():
-        verbose_name = _('scope')
-        verbose_name_plural = _('scopes')
 
 
 class BugFile(models.Model):
