@@ -1,5 +1,5 @@
 """
-Copyright 2009 Serge Matveenko
+Copyright 2009-2010 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,15 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django import forms
-from django.contrib.auth.models import User
-from django.db.models import Q
+""" @todo: filters rework"""
 
-import django_filters as fltr
 
-from models import Bug, Project, Category, Scope
-from settings import *
-
+"""
 class FilterableQ(Q):
     def filter(self, **kwargs):
         return Q(self, Q(**kwargs))
@@ -88,3 +83,4 @@ class BugFilter(fltr.FilterSet):
             'reproducibility', 'status', 'resolution', 'projection',
             'category', 'date_submitted', 'last_updated', 'eta', 'scope',
             'sponsorship_total', 'sticky',]
+"""

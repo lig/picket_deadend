@@ -17,22 +17,21 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.auth.models import Group
-from django.contrib.sites.models import Site
+from django.conf import settings
 from django.template.loader import render_to_string
 
-from .settings import EMAIL_SEND_ALERTS, SMTP_USERS_GROUP
+from documents import Group
 
-email_users_group = Group.objects.get(name=SMTP_USERS_GROUP)
+email_users_group = Group.objects.get(name=settings.SMTP_USERS_GROUP)
 
 
 def send_alerts(bug, recipients, message=None):
     
-    if EMAIL_SEND_ALERTS:
+    if settings.EMAIL_SEND_ALERTS:
         
-        site = Site.objects.get_current()
         from_email = bug.category.mail_addr or None
-        alert_subject = '[%s #%s] %s' % (site.name, bug.id, bug.summary)
+        alert_subject = '[%s #%s] %s' % (bug.project.name, bug.id,
+            bug.summary)
         email_only_alert_message = render_to_string(
             'picket/alert_email_only.eml', {'bug': bug, 'message': message})
         alert_message = render_to_string(
