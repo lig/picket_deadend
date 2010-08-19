@@ -122,7 +122,9 @@ class Bug(Document):
     sponsorship_total = IntField()
     sticky = BooleanField(default=False)
     history = ListField(ReferenceField(BugHistory))
-    monitor = ListField(ReferenceField(BugMonitor))
+    """ @todo: add reporters, handlers and commentators as monitorers
+        automatically """
+    monitorers = ListField(ReferenceField(User))
     relationship = ListField(ReferenceField(BugRelationship))
     num_bugnotes = IntField(default=0)
 
@@ -345,18 +347,6 @@ class ProjectFile(models.Model):
         verbose_name_plural = _('project files')
         ordering = ['date_added',]
 
-
-class BugMonitor(models.Model):
-    objects = BugMonitorManager()
-
-    user = models.ForeignKey(User, verbose_name=_('bug monitor user'))
-    bug = models.ForeignKey(Bug, verbose_name=_('bug'))
-    mute = models.BooleanField(_('bug monitor mute'), default=False)
-
-    class Meta():
-        verbose_name = _('bug monitor entry')
-        verbose_name_plural = _('bug monitor entries')
-        unique_together = ('user', 'bug',)
 
 class BugRelationship(models.Model):
     objects = models.Manager()
