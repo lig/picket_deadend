@@ -124,7 +124,7 @@ class Bug(Document):
     scope = ReferenceField(Scope, required=True)
     summary = StringField(max_length=255, required=True)
     description = StringField(required=True)
-    steps_to_reproduce = ListField(StringField)
+    steps_to_reproduce = ListField(StringField())
     additional_information = StringField()
     sponsorship_total = IntField()
     sticky = BooleanField(default=False)
