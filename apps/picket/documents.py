@@ -85,6 +85,17 @@ class Project(Document):
         return ('picket-project', [str(self.id)])
 
 
+class BugHistory(EmbeddedDocument):
+
+    user = ReferenceField(User)
+    date = DateTimeField()
+    field_name = StringField()
+    old_value = BaseField()
+    new_value = BaseField()
+    """ @todo: possible history entry type values setting """ 
+    type = StringField()
+
+
 class Attachment(EmbeddedDocument):
     
     title = StringField()
@@ -122,7 +133,7 @@ class Bug(Document):
     additional_information = StringField()
     sponsorship_total = IntField()
     sticky = BooleanField(default=False)
-    history = ListField(ReferenceField(BugHistory))
+    history = ListField(EmbeddedDocumentField(BugHistory))
     """ @todo: add reporters, handlers and commentators as monitorers
         automatically """
     monitorers = ListField(ReferenceField(User))
@@ -221,18 +232,6 @@ class Bug(Document):
     def from_message(category, reporter, message):
         """ @todo: from_message """
         raise NotImplementedError()
-
-
-class BugHistory(Document):
-
-    user = ReferenceField(User)
-    bug = ReferenceField(Bug)
-    date = DateTimeField()
-    field_name = StringField()
-    old_value = BaseField()
-    new_value = BaseField()
-    """ @todo: possible history entry type values setting """ 
-    type = StringField()
 
 
 class Bugnote(models.Model):
