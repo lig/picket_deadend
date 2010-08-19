@@ -71,6 +71,7 @@ class Project(Document):
     parent = ReferenceField('self')
     categories = ListField(ReferenceField(Category))
     inherit_categories = BooleanField(default=True)
+    attachments = ListField(EmbeddedDocumentField(Attachment))
 
     def is_permited(self, user, required_rights='r'):
         """ @todo: implement permission handling via mongoengine """
@@ -82,6 +83,13 @@ class Project(Document):
     @permalink
     def get_absolute_url(self):
         return ('picket-project', [str(self.id)])
+
+
+class Attachment(EmbeddedDocument):
+    
+    title = StringField()
+    """ @todo: use FileField from mongoengine 0.4 when it will be released """
+    file = BinaryField(required=True)
 
 
 class Bug(Document):
@@ -122,6 +130,7 @@ class Bug(Document):
     child_bugs = ListField(ReferenceField('self'))
     duplicates = ListField(ReferenceField('self'))
     num_bugnotes = IntField(default=0)
+    attachments = ListField(EmbeddedDocumentField(Attachment))
 
     def save(self, *args, **kwargs):
         """ @todo: bug number generation """
@@ -224,67 +233,6 @@ class BugHistory(Document):
     new_value = BaseField()
     """ @todo: possible history entry type values setting """ 
     type = StringField()
-
-
-class BugFile(models.Model):
-    bug = models.ForeignKey(Bug, verbose_name=_('bug'))
-    title = models.CharField(_('bug file title'), max_length=750)
-    file = models.FileField(_('bug file'), upload_to='bugs/%Y/%m/%d-%H')
-    date_added = models.DateTimeField(_('bug file date added'),
-        auto_now_add=True, editable=False)
-
-    def __unicode__(self):
-        return u'%s' % self.title
-
-    def get_file_icon(self):
-        """ returns path of the file icon by file extension """
-
-        fileicons_path = os.path.join(settings.MEDIA_ROOT, 'images',
-            'fileicons')
-        fileicons_url = os.path.join(settings.MEDIA_URL, 'images', 'fileicons')
-
-        ext = os.path.splitext(self.file.path)[1][1:]
-        icon_name = '%s.gif' % ext
-        if len(ext) == 0:
-            icon_name = 'generic.gif'
-        elif not os.path.exists(os.path.join(fileicons_path, icon_name)):
-            icon_name = 'unknown.gif'
-        return os.path.join(fileicons_url, icon_name)
-
-    @staticmethod
-    def from_message_part(bug, part):
-        filename = part.get_filename()
-
-        bugFile = BugFile(bug=bug, title=filename)
-
-        file = File(NamedTemporaryFile())
-        file.write(part.get_payload(decode=True))
-
-        bugFile.file.save(filename, file, save=False)
-
-        return bugFile
-
-    class Meta():
-        verbose_name = _('bug file')
-        verbose_name_plural = _('bug files')
-        ordering = ['date_added',]
-
-class ProjectFile(models.Model):
-    project = models.ForeignKey(Project, verbose_name=_('project'))
-    title = models.CharField(_('project file title'), max_length=750)
-    file = models.FileField(_('project file'),
-        upload_to='projects/%Y/%m/%d-%H')
-    date_added = models.DateTimeField(_('project file date added'),
-        auto_now_add=True, editable=False)
-    description = models.TextField(_('project file description'), blank=True)
-
-    def __unicode__(self):
-        return u'%s' % self.title
-
-    class Meta():
-        verbose_name = _('project file')
-        verbose_name_plural = _('project files')
-        ordering = ['date_added',]
 
 
 class Bugnote(models.Model):
