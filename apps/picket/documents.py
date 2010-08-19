@@ -18,13 +18,32 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from mongoengine import *
+from mongoengine.django.auth import User
 
 from django.db.models import permalink
 
 
+class Category(Document):
+
+    name = StringField(required=True, unique=True)
+    handler = ReferenceField(User)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    @permalink
+    def get_absolute_url(self):
+        return ('picket-category', [str(self.id)])
+
+    class Meta():
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+        unique_together = (('project', 'name'),)
+    
+
 class Project(Document):
 
-    name = StringField(required=True)
+    name = StringField(required=True, unique=True)
     """ @todo: possible project status values setting """ 
     status = StringField()
     enabled = BooleanField(default=True)
@@ -32,6 +51,8 @@ class Project(Document):
     url = URLField()
     description = StringField()
     parent = ReferenceField('self')
+    categories = ListField(ReferenceField(Category))
+    inherit_categories = BooleanField(default=True)
 
     def is_permited(self, user, required_rights='r'):
         """ @todo: implement permission handling via mongoengine """
@@ -40,13 +61,13 @@ class Project(Document):
     def __unicode__(self):
         return u'%s' % self.name
 
-    @models.permalink
+    @permalink
     def get_absolute_url(self):
         return ('picket-project', [str(self.id)])
 
 
 class Bug(Document):
-    
+
     number = IntField(required=True, unique=True)
     project = ReferenceField(Project, required=True)
     reporter = ReferenceField(User)
@@ -99,7 +120,7 @@ class Bug(Document):
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.summary)
 
-    @models.permalink
+    @permalink
     def get_absolute_url(self):
         return ('picket-bug', [str(self.number)])
 
@@ -258,29 +279,6 @@ class Scope(models.Model):
     class Meta():
         verbose_name = _('scope')
         verbose_name_plural = _('scopes')
-
-
-class Category(models.Model):
-    objects = models.Manager()
-
-    project = models.ForeignKey(Project,
-        verbose_name=_('category project'))
-    name = models.CharField(_('category name'), max_length=192)
-    handler = models.ForeignKey(User,
-        verbose_name=_('category handler'), blank=True, null=True)
-    mail_addr = models.EmailField(_('category email'), blank=True, null=True)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('picket-category', [str(self.project_id), str(self.id)])
-
-    class Meta():
-        verbose_name = _('category')
-        verbose_name_plural = _('categories')
-        unique_together = (('project', 'name'),)
 
 
 class BugFile(models.Model):
