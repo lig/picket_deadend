@@ -24,6 +24,12 @@ from mongoengine.fields import BaseField
 from django.db.models import permalink
 
 
+class Group(Document):
+
+    name = StringField(required=True, unique=True)
+    users = ListField(ReferenceField(User))
+
+
 class Scope(Document):
 
     name = StringField(required=True, unique=True)
