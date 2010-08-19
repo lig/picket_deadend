@@ -84,18 +84,6 @@ class Project(Document):
         return ('picket-project', [str(self.id)])
 
 
-class BugHistory(Document):
-
-    user = ReferenceField(User)
-    bug = ReferenceField(Bug)
-    date = DateTimeField()
-    field_name = StringField()
-    old_value = BaseField()
-    new_value = BaseField()
-    """ @todo: possible history entry type values setting """ 
-    type = StringField()
-
-
 class Bug(Document):
 
     number = IntField(required=True, unique=True)
@@ -224,6 +212,18 @@ class Bug(Document):
     def from_message(category, reporter, message):
         """ @todo: from_message """
         raise NotImplementedError()
+
+
+class BugHistory(Document):
+
+    user = ReferenceField(User)
+    bug = ReferenceField(Bug)
+    date = DateTimeField()
+    field_name = StringField()
+    old_value = BaseField()
+    new_value = BaseField()
+    """ @todo: possible history entry type values setting """ 
+    type = StringField()
 
 
 class PicketUser(User):
