@@ -226,23 +226,6 @@ class BugHistory(Document):
     type = StringField()
 
 
-class PicketUser(User):
-    objects = PicketUserManager()
-    
-    class Meta:
-        proxy = True
-        ordering = ["username"]
-
-
-class ScopeGroup(models.Model):
-    objects = models.Manager()
-
-    rights = models.CharField(_('rights'), choices=RIGHTS,
-        max_length=max(len(right[0]) for right in RIGHTS))
-    scope = models.ForeignKey('Scope', verbose_name=_('scope'))
-    group = models.ForeignKey(Group, verbose_name=_('group'))
-
-
 class BugFile(models.Model):
     bug = models.ForeignKey(Bug, verbose_name=_('bug'))
     title = models.CharField(_('bug file title'), max_length=750)
