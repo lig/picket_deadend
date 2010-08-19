@@ -35,10 +35,6 @@ urlpatterns = patterns('',
     ## picket itself
     (r'^picket/', include('apps.picket.urls')),
 
-    ## picket util
-    (r'^accounts/', include('util.accounts.urls')),
-    (r'^users/', include('util.users.urls')),
-
     ## django admin
     (r'^admin/', include(admin.site.urls)),
     
