@@ -22,6 +22,29 @@ from mongoengine import *
 from django.db.models import permalink
 
 
+class Project(Document):
+
+    name = StringField(required=True)
+    """ @todo: possible project status values setting """ 
+    status = StringField()
+    enabled = BooleanField(default=True)
+    scope = ReferenceField(Scope, required=True)
+    url = URLField()
+    description = StringField()
+    parent = ReferenceField('self')
+
+    def is_permited(self, user, required_rights='r'):
+        """ @todo: implement permission handling via mongoengine """
+        return True
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('picket-project', [str(self.id)])
+
+
 class Bug(Document):
     
     number = IntField(required=True, unique=True)
@@ -70,20 +93,7 @@ class Bug(Document):
         super(Bug, self).save(*args, **kwargs)
 
     def is_permited(self, user, required_rights='r'):
-        """ @todo: implement permission handling via mongoengine
-        
-        if user.is_superuser:
-            return True
-        elif self.scope.anonymous_access and required_rights == 'r':
-            return True
-        elif user.is_anonymous():
-            return False
-        else:
-            permission = ScopeGroup.objects.get(
-                scope=self.project.scope, group__in=user.groups.all())
-            return self in Bug.objects.permited(user) and all(
-                (right in permission.rights for right in required_rights))
-        """
+        """ @todo: implement permission handling via mongoengine """
         return True
 
     def __unicode__(self):
@@ -249,46 +259,6 @@ class Scope(models.Model):
         verbose_name = _('scope')
         verbose_name_plural = _('scopes')
 
-class Project(models.Model):
-    objects = ProjectManager()
-
-    name = models.CharField(_('project name'),
-        unique=True, max_length=255)
-    status = models.PositiveIntegerField(_('project status'),
-        choices=PROJECT_STATUS_CHOICES,
-        default=PROJECT_STATUS_CHOICES_DEFAULT)
-    enabled = models.BooleanField(_('project enabled'), default=True)
-    scope = models.ForeignKey(Scope,
-        verbose_name=_('project scope'))
-    url = models.URLField(_('project url'), verify_exists=False, blank=True)
-    description = models.TextField(_('project description'),
-        blank=True)
-    parent = models.ForeignKey('Project',
-        verbose_name=_('project parent'), blank=True, null=True)
-
-    def is_permited(self, user, required_rights='r'):
-        def check_permissions():
-            permission = ScopeGroup.objects.get(
-                scope=self.scope, group__in=user.groups.all())
-            return all(
-                (right in permission.rights for right in required_rights))
-        return (user.is_superuser or self.scope.anonymous_access or
-            self in Project.objects.get_permited(user) and check_permissions())
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        if INTEGRATION_ENABLED and INTEGRATION_PROJECT_VIEW:
-            return reverse(INTEGRATION_PROJECT_VIEW,
-                kwargs={'mantis_project': self.pk})
-        else:
-            return ('picket-project', [str(self.id)])
-
-    class Meta():
-        verbose_name = _('project')
-        verbose_name_plural = _('projects')
 
 class Category(models.Model):
     objects = models.Manager()
