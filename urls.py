@@ -17,14 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.conf                import settings
-from django.conf.urls.defaults  import *
-from django.contrib             import admin
-from django.core.urlresolvers   import reverse
-from django.http                import HttpResponseRedirect
+from django.conf import settings
+from django.conf.urls.defaults import *
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
-## django admin
-admin.autodiscover()
 
 urlpatterns = patterns('',
     
@@ -35,9 +32,6 @@ urlpatterns = patterns('',
     ## picket itself
     (r'^picket/', include('apps.picket.urls')),
 
-    ## django admin
-    (r'^admin/', include(admin.site.urls)),
-    
     ## testing
     #(r'^i/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PROJECT_ROOT, 'i'),}),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
