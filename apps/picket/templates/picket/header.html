@@ -1,5 +1,6 @@
-"""
-Copyright 2008-2010 Serge Matveenko, TrashNRoll
+{% load i18n %}
+{% comment %}
+Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
 
@@ -15,11 +16,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
+{% endcomment %}
 
-from .decorators import render_to
-
-
-@render_to('picket/index.html')
-def index(request):
-    return {}
+<h1>Picket Bugtracker</h1>

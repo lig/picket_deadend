@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.conf.urls.defaults  import *
+from django.conf.urls.defaults import *
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns('%s.views' % __package__,
+    (r'^$', 'index', {}, 'picket-index'),
 )

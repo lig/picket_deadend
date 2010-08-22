@@ -1,5 +1,5 @@
 """
-Copyright 2008 Serge Matveenko
+Copyright 2008-2010 Serge Matveenko
 
 This file is part of Picket.
 

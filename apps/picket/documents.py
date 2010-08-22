@@ -23,6 +23,8 @@ from mongoengine.fields import BaseField
 
 from django.db.models import permalink
 
+from .mail_utils import text_from_part
+    
 
 class Group(Document):
 
@@ -263,7 +265,8 @@ class Bugnote(Document):
                     bugnote.text += text_from_part(part)
                 elif part['Content-Disposition'] and \
                   part['Content-Disposition'].startswith('attachment;'):
-                    BugFile.from_message_part(bug, part).save()
+                    """ @todo: attachment saving """
+                    #BugFile.from_message_part(bug, part).save()
 
         """ cleanup quotes from reply and save bugnote """
         bugnote_lines = []
@@ -274,3 +277,8 @@ class Bugnote(Document):
         bugnote.save()
 
         return bugnote
+
+
+class UserInfo(User):
+    
+    current_project = ReferenceField(Project)
