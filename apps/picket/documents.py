@@ -77,6 +77,10 @@ class Project(Document):
     inherit_categories = BooleanField(default=True)
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
+    @queryset_manager
+    def get_enabled(cls, qs):
+        return qs(enabled=True)
+
     def is_permited(self, user, required_rights='r'):
         """ @todo: implement permission handling via mongoengine """
         return True

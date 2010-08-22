@@ -37,4 +37,7 @@ def picket(request):
         current_project = (Project.objects.get(id=session_project_id) if
             session_project_id else None) 
     
-    return {'copying': COPYING, 'current_project': current_project}
+    projects = Project.get_enabled
+    
+    return {'copying': COPYING, 'current_project': current_project,
+        'projects': projects}
