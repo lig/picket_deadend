@@ -78,7 +78,11 @@ class Project(Document):
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
     @queryset_manager
-    def get_enabled(cls, qs):
+    def sorted(self, qs):
+        return qs().order_by(self.name)
+
+    @queryset_manager
+    def get_enabled(self, qs):
         return qs(enabled=True)
 
     def is_permited(self, user, required_rights='r'):

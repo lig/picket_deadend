@@ -1,5 +1,4 @@
-{% load i18n %}
-{% comment %}
+"""
 Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
@@ -16,20 +15,23 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-{% endcomment %}
+"""
 
-{% block content %}
+from ..decorators import render_to
+from ..documents import Project
 
-{% include 'picket/header.html' %}
 
-{% if projects %}
-{% block picket %}
-{% endblock picket %}
-{% else %}
-<p class="error">{% trans 'There is no project exists!' %}</p>
-<p><a href="{% url picket-admin-projects %}">{% trans 'Configure at least one project.' %}</a></p>
-{% endif %}
+@render_to('picket/admin/index.html')
+def index(request):
+    return {}
 
-{% include 'picket/footer.html' %}
 
-{% endblock content %}
+@render_to('picket/admin/projects.html')
+def projects(request):
+    
+    projects = Project.sorted()
+    
+    if not projects:
+        projects = True
+        
+    return {}

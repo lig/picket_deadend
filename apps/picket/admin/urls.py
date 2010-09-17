@@ -1,5 +1,4 @@
-{% load i18n %}
-{% comment %}
+"""
 Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
@@ -16,20 +15,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-{% endcomment %}
+"""
 
-{% block content %}
+from django.conf.urls.defaults import *
 
-{% include 'picket/header.html' %}
 
-{% if projects %}
-{% block picket %}
-{% endblock picket %}
-{% else %}
-<p class="error">{% trans 'There is no project exists!' %}</p>
-<p><a href="{% url picket-admin-projects %}">{% trans 'Configure at least one project.' %}</a></p>
-{% endif %}
-
-{% include 'picket/footer.html' %}
-
-{% endblock content %}
+urlpatterns = patterns('%s.views' % __package__,
+    (r'^$', 'index', {}, 'picket-admin-index'),
+    (r'^projects/$', 'projects', {}, 'picket-admin-projects'),
+)

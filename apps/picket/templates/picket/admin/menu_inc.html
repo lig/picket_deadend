@@ -18,18 +18,9 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-{% block content %}
-
-{% include 'picket/header.html' %}
-
-{% if projects %}
-{% block picket %}
-{% endblock picket %}
-{% else %}
-<p class="error">{% trans 'There is no project exists!' %}</p>
-<p><a href="{% url picket-admin-projects %}">{% trans 'Configure at least one project.' %}</a></p>
-{% endif %}
-
-{% include 'picket/footer.html' %}
-
-{% endblock content %}
+<div class="admin-menu">
+    <ul>
+        <li><a href="{% url picket-admin-index %}">{% trans 'Dashboard' %}</a></li>
+        <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li>
+    </ul>
+</div>
