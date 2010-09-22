@@ -1,4 +1,5 @@
-"""
+{% extends 'picket/admin/base.html' %}{% load i18n %}
+{% comment %}
 Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
@@ -15,13 +16,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-from django.conf.urls.defaults import *
+{% endcomment %}
 
 
-urlpatterns = patterns('%s.views' % __package__,
-    (r'^$', 'index', {}, 'picket-admin-index'),
-    (r'^projects/$', 'projects', {}, 'picket-admin-projects'),
-    (r'^projects/new$', 'new_project', {}, 'picket-admin-project-new'),
-)
+{% block picket-admin %}
+
+<form method="post">
+{{ project_form.as_p }}
+<p><input type="submit" /></p>
+</form>
+
+{% endblock picket-admin %}

@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..decorators import render_to
 from ..documents import Project
+from ..forms import ProjectForm
 
 
 @render_to('picket/admin/index.html')
@@ -31,7 +32,28 @@ def projects(request):
     
     projects = Project.sorted()
     
-    if not projects:
-        projects = True
-        
-    return {}
+    return {'projects': projects}
+
+
+@render_to('picket/admin/new_project.html')
+def new_project(request):
+    
+    if request.method == 'POST':
+        projectForm = ProjectForm(request.POST)
+        if projectForm.is_valid():
+            project = Project(
+                status=projectForm.cleaned_data['status'],
+                name=projectForm.cleaned_data['name'],
+                # @todo: handle project parent
+                enabled=projectForm.cleaned_data['enabled'],
+                # @todo: handle project scope
+                # @todo: handle project categories
+                description=projectForm.cleaned_data['description']
+            )
+            if projectForm.cleaned_data['url']:
+                project.url = projectForm.cleaned_data['url']
+            project.save()
+    else:
+        projectForm = ProjectForm()
+    
+    return {'projects': True, 'project_form': projectForm}

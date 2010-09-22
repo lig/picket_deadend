@@ -39,6 +39,10 @@ class Scope(Document):
     write_access = ListField(ReferenceField(Group))
     anonymous_access = BooleanField(default=False)
 
+    @queryset_manager
+    def sorted(self, qs):
+        return qs().order_by('name')
+
     def __unicode__(self):
         return u'%s' % self.name
 
@@ -47,6 +51,10 @@ class Category(Document):
 
     name = StringField(required=True, unique=True)
     handler = ReferenceField(User)
+
+    @queryset_manager
+    def sorted(self, qs):
+        return qs().order_by('name')
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -69,17 +77,17 @@ class Project(Document):
     """ @todo: possible project status values setting """ 
     status = StringField()
     enabled = BooleanField(default=True)
-    scope = ReferenceField(Scope, required=True)
+    """ @todo: set required=True on scope after scope admin is ready """
+    scope = ReferenceField(Scope)
     url = URLField()
     description = StringField()
     parent = ReferenceField('self')
     categories = ListField(ReferenceField(Category))
-    inherit_categories = BooleanField(default=True)
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
     @queryset_manager
     def sorted(self, qs):
-        return qs().order_by(self.name)
+        return qs().order_by('name')
 
     @queryset_manager
     def get_enabled(self, qs):
