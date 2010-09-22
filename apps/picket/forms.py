@@ -23,15 +23,20 @@ from mongoengine import URLField
 from documents import Scope, Project, Category
 
 
+def choices(queryset):
+    
+    return map(lambda item: (item.id, item.name,), queryset)
+
+
 class ProjectForm(forms.Form):
     name = forms.CharField()
     status = forms.CharField(required=False)
     enabled = forms.BooleanField(required=False, initial=True)
     """ @todo: remove required=False from scope after scopes admin will be ready """
-    scope = forms.ChoiceField(required=False, choices=Scope.sorted())
+    scope = forms.ChoiceField(required=False, choices=Scope.sorted)
     url = forms.RegexField(required=False, regex=URLField.URL_REGEX)
     description = forms.CharField(required=False)
-    parent = forms.ChoiceField(required=False, choices=Project.sorted())
+    parent = forms.ChoiceField(required=False, choices=choices(Project.sorted))
     categories = forms.MultipleChoiceField(required=False,
-        choices=Category.sorted())
+        choices=Category.sorted)
     """ @todo: attachments handling """

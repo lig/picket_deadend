@@ -26,6 +26,13 @@ from django.db.models import permalink
 from .mail_utils import text_from_part
     
 
+def sorted(doc_cls, queryset):
+    return queryset.order_by('name')
+
+def to_choices(doc_cls, queryset):
+    return tuple(map(lambda item: (item.id, item.name,), queryset))
+
+    
 class Group(Document):
 
     name = StringField(required=True, unique=True)
@@ -39,9 +46,8 @@ class Scope(Document):
     write_access = ListField(ReferenceField(Group))
     anonymous_access = BooleanField(default=False)
 
-    @queryset_manager
-    def sorted(self, qs):
-        return qs().order_by('name')
+    sorted = queryset_manager(sorted)
+    to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -52,9 +58,8 @@ class Category(Document):
     name = StringField(required=True, unique=True)
     handler = ReferenceField(User)
 
-    @queryset_manager
-    def sorted(self, qs):
-        return qs().order_by('name')
+    sorted = queryset_manager(sorted)
+    to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -85,9 +90,8 @@ class Project(Document):
     categories = ListField(ReferenceField(Category))
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
-    @queryset_manager
-    def sorted(self, qs):
-        return qs().order_by('name')
+    sorted = queryset_manager(sorted)
+    to_choices = queryset_manager(to_choices)
 
     @queryset_manager
     def get_enabled(self, qs):

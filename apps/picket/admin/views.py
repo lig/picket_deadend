@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.utils.translation import ugettext_lazy as _
+
 from ..decorators import render_to
 from ..documents import Project
 from ..forms import ProjectForm
@@ -30,7 +34,7 @@ def index(request):
 @render_to('picket/admin/projects.html')
 def projects(request):
     
-    projects = Project.sorted()
+    projects = Project.sorted
     
     return {'projects': projects}
 
@@ -53,7 +57,9 @@ def new_project(request):
             if projectForm.cleaned_data['url']:
                 project.url = projectForm.cleaned_data['url']
             project.save()
+            messages.success(request, _('Project created.'))
+            return redirect('picket-admin-projects')
     else:
         projectForm = ProjectForm()
-    
+    print(Project.sorted)
     return {'projects': True, 'project_form': projectForm}

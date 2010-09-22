@@ -80,6 +80,7 @@ MIDDLEWARE_CLASSES = (
     ## django
     'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -97,8 +98,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.admin',
+    'django.contrib.messages',
     ## picket
     'apps.picket',
 )
@@ -109,6 +109,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n', 
     'django.core.context_processors.media',
+    'django.contrib.messages.context_processors.messages',
     ## picket
     'apps.picket.context_processors.picket',
 )
