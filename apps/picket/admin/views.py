@@ -34,7 +34,7 @@ def index(request):
 @render_to('picket/admin/projects.html')
 def projects(request):
     
-    projects = Project.sorted
+    projects = Project.sort
     
     return {'projects': projects}
 

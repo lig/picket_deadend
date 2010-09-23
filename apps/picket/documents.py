@@ -26,7 +26,7 @@ from django.db.models import permalink
 from .mail_utils import text_from_part
     
 
-def sorted(doc_cls, queryset):
+def sort(doc_cls, queryset):
     return queryset.order_by('name')
 
 def to_choices(doc_cls, queryset):
@@ -46,7 +46,7 @@ class Scope(Document):
     write_access = ListField(ReferenceField(Group))
     anonymous_access = BooleanField(default=False)
 
-    sorted = queryset_manager(sorted)
+    sort = queryset_manager(sort)
     to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
@@ -58,7 +58,7 @@ class Category(Document):
     name = StringField(required=True, unique=True)
     handler = ReferenceField(User)
 
-    sorted = queryset_manager(sorted)
+    sort = queryset_manager(sort)
     to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
@@ -90,7 +90,7 @@ class Project(Document):
     categories = ListField(ReferenceField(Category))
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
-    sorted = queryset_manager(sorted)
+    sort = queryset_manager(sort)
     to_choices = queryset_manager(to_choices)
 
     @queryset_manager

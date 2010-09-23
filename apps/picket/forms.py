@@ -33,10 +33,10 @@ class ProjectForm(forms.Form):
     status = forms.CharField(required=False)
     enabled = forms.BooleanField(required=False, initial=True)
     """ @todo: remove required=False from scope after scopes admin will be ready """
-    scope = forms.ChoiceField(required=False, choices=Scope.sorted)
+    scope = forms.ChoiceField(required=False, choices=Scope.sort)
     url = forms.RegexField(required=False, regex=URLField.URL_REGEX)
     description = forms.CharField(required=False)
-    parent = forms.ChoiceField(required=False, choices=choices(Project.sorted))
+    parent = forms.ChoiceField(required=False, choices=choices(Project.sort))
     categories = forms.MultipleChoiceField(required=False,
-        choices=Category.sorted)
+        choices=Category.sort)
     """ @todo: attachments handling """
