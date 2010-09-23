@@ -25,12 +25,16 @@ from ..decorators import render_to
 from ..documents import Project, Scope
 from ..forms import ProjectForm, ScopeForm
 
+from decorators import superuser_required
 
+
+@superuser_required
 @render_to('picket/admin/index.html')
 def index(request):
     return {}
 
 
+@superuser_required
 @render_to('picket/admin/projects.html')
 def projects(request):
     
@@ -39,6 +43,7 @@ def projects(request):
     return {'projects': projects}
 
 
+@superuser_required
 @render_to('picket/admin/new_project.html')
 def new_project(request):
     
@@ -65,6 +70,7 @@ def new_project(request):
     return {'projects': True, 'project_form': projectForm}
 
 
+@superuser_required
 @render_to('picket/admin/project.html')
 def project(request, project_id):
     
@@ -73,6 +79,7 @@ def project(request, project_id):
     return {'project': project}
 
 
+@superuser_required
 @render_to('picket/admin/edit_project.html')
 def edit_project(request, project_id):
     """
@@ -83,6 +90,7 @@ def edit_project(request, project_id):
     return {'project': project}
 
 
+@superuser_required
 @render_to('picket/admin/delete_project.html')
 def delete_project(request, project_id):
     """
@@ -93,6 +101,7 @@ def delete_project(request, project_id):
     return {'project': project}
 
 
+@superuser_required
 @render_to('picket/admin/scopes.html')
 def scopes(request):
     
@@ -101,6 +110,7 @@ def scopes(request):
     return {'scopes': scopes}
 
 
+@superuser_required
 @render_to('picket/admin/new_scope.html')
 def new_scope(request):
     
@@ -122,6 +132,7 @@ def new_scope(request):
     return {'scope_form': scopeForm}
 
 
+@superuser_required
 @render_to('picket/admin/scope.html')
 def scope(request, scope_id):
     
@@ -130,6 +141,7 @@ def scope(request, scope_id):
     return {'scope': scope}
 
 
+@superuser_required
 @render_to('picket/admin/edit_scope.html')
 def edit_scope(request, scope_id):
     """
@@ -140,6 +152,7 @@ def edit_scope(request, scope_id):
     return {'scope': scope}
 
 
+@superuser_required
 @render_to('picket/admin/delete_scope.html')
 def delete_scope(request, scope_id):
     """
