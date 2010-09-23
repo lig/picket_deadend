@@ -40,5 +40,5 @@ class ProjectForm(forms.Form):
     description = forms.CharField(required=False)
     parent = forms.ChoiceField(required=False, choices=choices(Project.sort))
     categories = forms.MultipleChoiceField(required=False,
-        choices=Category.sort)
+        choices=choices(Category.sort))
     """ @todo: attachments handling """
