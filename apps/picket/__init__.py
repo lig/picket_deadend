@@ -33,7 +33,7 @@ COPYING['URL'] = 'http://picket.nophp.ru/'
 """
 Picket version. Possibly with branch name
 """
-COPYING['VERSION'] = v.LooseVersion('0.3a-mongo')
+COPYING['VERSION'] = v.LooseVersion('0.3-master')
 
 """
 List of Picket authors in order of their code appearence
