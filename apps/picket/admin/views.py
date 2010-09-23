@@ -63,3 +63,27 @@ def new_project(request):
         projectForm = ProjectForm()
 
     return {'projects': True, 'project_form': projectForm}
+
+
+@render_to('picket/admin/project.html')
+def project(request, project_id):
+    
+    project = Project.get_enabled.get(id=project_id)
+    
+    return {'project': project}
+
+
+@render_to('picket/admin/edit_project.html')
+def edit_project(request, project_id):
+    
+    project = Project.get_enabled.get(id=project_id)
+    
+    return {'project': project}
+
+
+@render_to('picket/admin/delete_project.html')
+def delete_project(request, project_id):
+    
+    project = Project.get_enabled.get(id=project_id)
+    
+    return {'project': project}

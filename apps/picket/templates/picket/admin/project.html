@@ -21,12 +21,16 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picket-admin %}
 
-<p><a href="{% url picket-admin-project-new %}">{% trans 'New Project' %}</a></p>
+<p><a href="{% url picket-admin-project-edit project.id %}">{% trans 'Edit Project' %}</a> <a href="{% url picket-admin-project-delete project.id %}" onclick="return confirm('{% blocktrans with project.name as project_name %}Are you sure you want to delete Project &quot;{{ project_name }}&quot;?{% endblocktrans %}');">{% trans 'Delete Project' %}</a></p>
 
-{% if projects|length %}
-{% for project in projects %}
-<p><a href="{% url picket-admin-project project.id %}">{{ project }}</a></p>
-{% endfor %}
-{% endif %}
+<p>{{ project.name }}</p>
+<p>{{ project.status }}</p>
+<p>{{ project.scope }}</p>
+<p>{{ project.url }}</p>
+<p>{{ project.description }}</p>
+<p>{{ project.parent }}</p>
+<p>{{ project.categories }}</p>
+<p>{{ project.attachments }}</p>
+
 
 {% endblock picket-admin %}
