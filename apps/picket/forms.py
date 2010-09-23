@@ -24,8 +24,10 @@ from documents import Scope, Project, Category
 
 
 def choices(queryset):
-    
-    return map(lambda item: (item.id, item.name,), queryset)
+    """
+    @todo: DocumentChoiceField, DocumentMultipleChoiceField
+    """
+    return [(None, '',)] + map(lambda item: (item.id, item.name,), queryset)
 
 
 class ProjectForm(forms.Form):
@@ -33,7 +35,7 @@ class ProjectForm(forms.Form):
     status = forms.CharField(required=False)
     enabled = forms.BooleanField(required=False, initial=True)
     """ @todo: remove required=False from scope after scopes admin will be ready """
-    scope = forms.ChoiceField(required=False, choices=Scope.sort)
+    scope = forms.ChoiceField(required=False, choices=choices(Scope.sort))
     url = forms.RegexField(required=False, regex=URLField.URL_REGEX)
     description = forms.CharField(required=False)
     parent = forms.ChoiceField(required=False, choices=choices(Project.sort))

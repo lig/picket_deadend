@@ -29,9 +29,6 @@ from .mail_utils import text_from_part
 def sort(doc_cls, queryset):
     return queryset.order_by('name')
 
-def to_choices(doc_cls, queryset):
-    return tuple(map(lambda item: (item.id, item.name,), queryset))
-
     
 class Group(Document):
 
@@ -47,7 +44,6 @@ class Scope(Document):
     anonymous_access = BooleanField(default=False)
 
     sort = queryset_manager(sort)
-    to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -59,7 +55,6 @@ class Category(Document):
     handler = ReferenceField(User)
 
     sort = queryset_manager(sort)
-    to_choices = queryset_manager(to_choices)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -91,7 +86,6 @@ class Project(Document):
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
     sort = queryset_manager(sort)
-    to_choices = queryset_manager(to_choices)
 
     @queryset_manager
     def get_enabled(self, qs):
