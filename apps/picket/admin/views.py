@@ -61,5 +61,5 @@ def new_project(request):
             return redirect('picket-admin-projects')
     else:
         projectForm = ProjectForm()
-    print(Project.sorted)
+
     return {'projects': True, 'project_form': projectForm}
