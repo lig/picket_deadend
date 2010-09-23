@@ -35,6 +35,8 @@ class Group(Document):
     name = StringField(required=True, unique=True)
     users = ListField(ReferenceField(User))
 
+    sort = queryset_manager(sort)
+
 
 class Scope(Document):
 
@@ -77,8 +79,7 @@ class Project(Document):
     """ @todo: possible project status values setting """ 
     status = StringField()
     enabled = BooleanField(default=True)
-    """ @todo: set required=True on scope after scope admin is ready """
-    scope = ReferenceField(Scope)
+    scope = ReferenceField(Scope, required=True)
     url = URLField()
     description = StringField()
     parent = ReferenceField('self')

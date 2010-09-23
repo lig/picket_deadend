@@ -21,7 +21,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picket-admin %}
 
-<p><a href="{% url picket-admin-project-new %}">{% trans 'New Project' %}</a></p>
-<p><a href="{% url picket-admin-scope-new %}">{% trans 'New Scope' %}</a></p>
+<p><a href="{% url picket-admin-scope-edit scope.id %}">{% trans 'Edit Scope' %}</a> <a href="{% url picket-admin-scope-delete scope.id %}" onclick="return confirm('{% blocktrans with scope.name as scope_name %}Are you sure you want to delete Scope &quot;{{ scope_name }}&quot;?{% endblocktrans %}');">{% trans 'Delete Scope' %}</a></p>
+
+<p>{{ scope.name }}</p>
+<p>{{ scope.read_access }}</p>
+<p>{{ scope.write_access }}</p>
+<p>{{ scope.anonymous_access }}</p>
 
 {% endblock picket-admin %}

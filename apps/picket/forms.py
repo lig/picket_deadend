@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from mongoengine import URLField
 
-from documents import Scope, Project, Category
+from documents import Scope, Project, Category, Group
 
 
 def choices(queryset):
@@ -34,11 +34,19 @@ class ProjectForm(forms.Form):
     name = forms.CharField()
     status = forms.CharField(required=False)
     enabled = forms.BooleanField(required=False, initial=True)
-    """ @todo: remove required=False from scope after scopes admin will be ready """
-    scope = forms.ChoiceField(required=False, choices=choices(Scope.sort))
+    scope = forms.ChoiceField(choices=choices(Scope.sort))
     url = forms.RegexField(required=False, regex=URLField.URL_REGEX)
     description = forms.CharField(required=False)
     parent = forms.ChoiceField(required=False, choices=choices(Project.sort))
     categories = forms.MultipleChoiceField(required=False,
         choices=choices(Category.sort))
     """ @todo: attachments handling """
+
+
+class ScopeForm(forms.Form):
+    name = forms.CharField()
+    read_access = forms.MultipleChoiceField(required=False,
+        choices=choices(Group.sort))
+    write_access = forms.MultipleChoiceField(required=False,
+        choices=choices(Group.sort))
+    anonymous_access = forms.BooleanField(required=False, initial=False)

@@ -22,8 +22,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from ..decorators import render_to
-from ..documents import Project
-from ..forms import ProjectForm
+from ..documents import Project, Scope
+from ..forms import ProjectForm, ScopeForm
 
 
 @render_to('picket/admin/index.html')
@@ -75,7 +75,9 @@ def project(request, project_id):
 
 @render_to('picket/admin/edit_project.html')
 def edit_project(request, project_id):
-    
+    """
+    @todo: edit project page
+    """
     project = Project.get_enabled.get(id=project_id)
     
     return {'project': project}
@@ -83,7 +85,66 @@ def edit_project(request, project_id):
 
 @render_to('picket/admin/delete_project.html')
 def delete_project(request, project_id):
-    
+    """
+    @todo: delete project page
+    """
     project = Project.get_enabled.get(id=project_id)
     
     return {'project': project}
+
+
+@render_to('picket/admin/scopes.html')
+def scopes(request):
+    
+    scopes = Scope.sort
+    
+    return {'scopes': scopes}
+
+
+@render_to('picket/admin/new_scope.html')
+def new_scope(request):
+    
+    if request.method == 'POST':
+        scopeForm = ScopeForm(request.POST)
+        if scopeForm.is_valid():
+            scope = Scope(
+                name=scopeForm.cleaned_data['name'],
+                # @todo: handle scope read_access
+                # @todo: handle scope write_access
+                anonymous_access=scopeForm.cleaned_data['anonymous_access'],
+            )
+            scope.save()
+            messages.success(request, _('Scope created.'))
+            return redirect('picket-admin-scopes')
+    else:
+        scopeForm = ScopeForm()
+
+    return {'scope_form': scopeForm}
+
+
+@render_to('picket/admin/scope.html')
+def scope(request, scope_id):
+    
+    scope = Scope.objects.get(id=scope_id)
+    
+    return {'scope': scope}
+
+
+@render_to('picket/admin/edit_scope.html')
+def edit_scope(request, scope_id):
+    """
+    @todo: edit scope page
+    """
+    scope = Scope.objects.get(id=scope_id)
+    
+    return {'scope': scope}
+
+
+@render_to('picket/admin/delete_scope.html')
+def delete_scope(request, scope_id):
+    """
+    @todo: delete scope page
+    """
+    scope = Scope.get_enabled.get(id=scope_id)
+    
+    return {'scope': scope}
