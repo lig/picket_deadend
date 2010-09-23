@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<div id="picket-footer">
-    <p class="copyright">Picket {{ copying.VERSION }}<br />
-    &copy; {{ copying.YEARS|first }}&mdash;{{ copying.YEARS|last }} {{ copying.AUTHORS|join:', ' }}</p>
-</div>
-<div class="endline">&nbsp;</div>
+<ul>
+    <li><a href="% url picket-bugs-new %">{% trans 'New bug' %}</a></li> |
+    <li><a href="% url picket-index %">{% trans 'Home' %}</a></li> |
+    <li><a href="% url picket-workspace %">{% trans 'Workspace' %}</a></li> |
+    <li><a href="% url picket-bugs %">{% trans 'Bug list' %}</a></li> |
+    <li><a href="% url picket-help %">{% trans 'Help' %}</a></li>
+</ul>

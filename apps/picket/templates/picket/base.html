@@ -1,4 +1,4 @@
-{% load i18n %}
+{% extends 'base.html' %}{% load i18n %}
 {% comment %}
 Copyright 2010 Serge Matveenko
 
@@ -22,6 +22,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% include 'picket/header.html' %}
 
+<div class="picket-content">
 {% if projects %}
 {% block picket %}
 {% endblock picket %}
@@ -29,6 +30,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <p class="error">{% trans 'There is no project exists!' %}</p>
 <p><a href="{% url picket-admin-project-new %}">{% trans 'Configure at least one project.' %}</a></p>
 {% endif %}
+</div>
+<div class="endline">&nbsp;</div>
 
 {% include 'picket/footer.html' %}
 

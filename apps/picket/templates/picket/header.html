@@ -18,4 +18,29 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<h1>Picket Bugtracker</h1>
+<div class="header">
+  <div class="header-left">
+    <div>
+      <h1 class="picket-title">Picket Bugtracker</h1>
+      <div class="picket-search">
+        <form class="search-form">
+	        <input class="search" type="text" name="search" value="{% trans 'Search bugs' %}" onfocus="this.value='';" /><br />
+	        <label><input type="radio" name="search_area" value="current" />{% trans 'Current project' %}</label>
+	        <label><input type="radio" name="search_area" value="all" />{% trans 'All projects' %}</label>
+	        <input type="submit" />
+        </form>
+      </div>
+      <div class="clear">&nbsp;</div>
+    </div>
+    <div>
+      <div class="picket-menu">{% include 'picket/menu_inc.html' %}</div>
+      <div class="current-project"><select><option selected="selected">Current project</option><option>Other project</option></select></div>
+      <div class="clear">&nbsp;</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="userbox">{% include 'picket/userbox_inc.html' %}</div>
+  </div>
+  <div class="clear">&nbsp;</div>
+</div>
+<div class="endline">&nbsp;</div>

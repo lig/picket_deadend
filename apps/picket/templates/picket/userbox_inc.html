@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<div id="picket-footer">
-    <p class="copyright">Picket {{ copying.VERSION }}<br />
-    &copy; {{ copying.YEARS|first }}&mdash;{{ copying.YEARS|last }} {{ copying.AUTHORS|join:', ' }}</p>
-</div>
-<div class="endline">&nbsp;</div>
+{% if user.is_authenticated %}
++
+{% else %}
+-
+{% endif %}
