@@ -17,27 +17,25 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from mongoengine.queryset import DoesNotExist
-
 from . import COPYING
-from .documents import UserInfo, Project
+from .documents import Project
 
 
 def picket(request):
-    
-    if request.user.is_authenticated():
-        try:
-            user_info = UserInfo.objects.get(id=request.user.id)
-        except DoesNotExist:
-            user_info = UserInfo()
-            user_info.save()
-        current_project = user_info.current_project
+
+    # set or get current project
+    if 'set_project' in request.GET:
+        current_project = Project.get_enabled.with_id(
+            request.GET['set_project'])
+        # current_project could be None after lookup
+        request.session['current_project'] = (current_project and
+            current_project.id)
     else:
-        session_project_id = request.session.get('current_project')
-        current_project = (Project.objects.get(id=session_project_id) if
-            session_project_id else None) 
-    
+        current_project = Project.get_enabled.with_id(
+            request.session.get('current_project'))
+
+    # get projects
     projects = Project.get_enabled
-    
+
     return {'copying': COPYING, 'current_project': current_project,
         'projects': projects}
