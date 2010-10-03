@@ -40,6 +40,6 @@ urlpatterns = patterns('%s.views' % __package__,
     (r'^scopes/(?P<scope_id>\w+)$', 'scope', {}, 'picket-admin-scope'),
     (r'^scopes/(?P<scope_id>\w+)/edit$', 'edit_scope', {},
         'picket-admin-scope-edit'),
-    (r'^scopes/(?P<scopes_id>\w+)/delete$', 'delete_scope', {},
+    (r'^scopes/(?P<scope_id>\w+)/delete$', 'delete_scope', {},
         'picket-admin-scope-delete'),
 )
