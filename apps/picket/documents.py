@@ -90,7 +90,7 @@ class Project(Document):
 
     @queryset_manager
     def get_enabled(self, qs):
-        return qs(enabled=True)
+        return self.sort.filter(enabled=True)
 
     def is_permited(self, user, required_rights='r'):
         """ @todo: implement permission handling via mongoengine """
