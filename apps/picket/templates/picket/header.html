@@ -37,9 +37,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
       <div class="current-project">
         <form method="get" action="">
 	        <select name="set_project" onchange="this.form.submit()">
-	        {% for project in projects %}
+            <option>{% trans 'All projects' %}</option>
+	          {% for project in projects %}
 	          <option value="{{ project.id }}"{% if project == current_project %} selected="selected"{% endif %}>{{ project.name }}</option>
-	        {% endfor %}
+	          {% endfor %}
 	        </select>
         </form>
       </div>
