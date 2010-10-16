@@ -17,10 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from mongoengine import ValidationError
+from django.contrib.auth import login
+from mongoengine.base import ValidationError
 
 from . import COPYING
 from .documents import Project
+from .forms import AuthForm
 
 
 def picket(request):
@@ -38,12 +40,21 @@ def picket(request):
     else:
         try:
             current_project = Project.get_enabled.with_id(
-                request.session['current_project'])
+                request.session.get('current_project'))
         except ValidationError:
             current_project = None
 
     # get projects
     projects = Project.get_enabled
 
+    # authentication
+    if not request.user.is_authenticated():
+        if request.method == 'POST' and request.POST.get('i_am_auth_form'):
+            auth_form = AuthForm(data=request.POST)
+            if auth_form.is_valid():
+                login(request, auth_form.get_user())
+        else:
+            auth_form = AuthForm()
+
     return {'copying': COPYING, 'current_project': current_project,
-        'projects': projects}
+        'projects': projects, 'auth_form': auth_form}

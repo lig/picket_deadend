@@ -18,6 +18,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from mongoengine import URLField
 
 from documents import Scope, Project, Category, Group
@@ -50,3 +51,7 @@ class ScopeForm(forms.Form):
     write_access = forms.MultipleChoiceField(required=False,
         choices=choices(Group.sort))
     anonymous_access = forms.BooleanField(required=False, initial=False)
+
+
+class AuthForm(AuthenticationForm):
+    i_am_auth_form = forms.BooleanField(initial=True, widget=forms.HiddenInput)

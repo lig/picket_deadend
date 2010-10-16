@@ -21,5 +21,9 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% if user.is_authenticated %}
 +
 {% else %}
--
+<form action="" method="post">
+{{ auth_form.errors }}
+{{ auth_form.as_p }}
+<p><input type="submit" /></p>
+</form>
 {% endif %}
