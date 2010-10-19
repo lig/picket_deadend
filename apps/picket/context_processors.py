@@ -55,6 +55,8 @@ def picket(request):
                 login(request, auth_form.get_user())
         else:
             auth_form = AuthForm()
+    else:
+        auth_form = None
 
     return {'copying': COPYING, 'current_project': current_project,
         'projects': projects, 'auth_form': auth_form}
