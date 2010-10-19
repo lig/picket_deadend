@@ -55,7 +55,7 @@ def new_project(request):
                 name=projectForm.cleaned_data['name'],
                 # @todo: handle project parent
                 enabled=projectForm.cleaned_data['enabled'],
-                # @todo: handle project scope
+                scope=Scope.objects.with_id(projectForm.cleaned_data['scope']),
                 # @todo: handle project categories
                 description=projectForm.cleaned_data['description']
             )
