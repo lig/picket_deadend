@@ -67,7 +67,7 @@ def new_project(request):
     else:
         projectForm = ProjectForm()
 
-    return {'projects': True, 'project_form': projectForm}
+    return {'project_form': projectForm}
 
 
 @superuser_required

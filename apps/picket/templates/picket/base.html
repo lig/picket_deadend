@@ -23,13 +23,14 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% include 'picket/header.html' %}
 
 <div class="picket-content">
-{% if projects %}
-{% block picket %}
-{% endblock picket %}
-{% else %}
+{% if not projects %}
+<div class="no-projects-alert">
 <p class="error">{% trans 'There is no project exists!' %}</p>
 <p><a href="{% url picket-admin-project-new %}">{% trans 'Configure at least one project.' %}</a></p>
+</div>
 {% endif %}
+{% block picket %}
+{% endblock picket %}
 </div>
 <div class="endline">&nbsp;</div>
 
