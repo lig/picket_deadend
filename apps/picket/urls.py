@@ -23,4 +23,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('%s.views' % __package__,
     (r'^admin/', include('%s.admin.urls' % __package__)),
     (r'^$', 'index', {}, 'picket-index'),
+    (r'^new/$', 'new_bug', {}, 'picket-bugs-new'),
 )

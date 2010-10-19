@@ -23,3 +23,8 @@ from .decorators import render_to
 @render_to('picket/index.html')
 def index(request):
     return {}
+
+
+@render_to('picket/new_bug.html')
+def new_bug(request):
+    return {}

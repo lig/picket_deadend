@@ -85,6 +85,9 @@ class Project(Document):
     parent = ReferenceField('self')
     categories = ListField(ReferenceField(Category))
     attachments = ListField(EmbeddedDocumentField(Attachment))
+    severity_values = ListField(StringField(),
+        default=('Good advice', 'Annoying thing', 'Just a bug', 'Big crash',
+            'Armageddon',))
 
     sort = queryset_manager(sort)
 

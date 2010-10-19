@@ -22,6 +22,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from mongoengine import URLField
 
 from documents import Scope, Project, Category, Group
+from django.forms.widgets import Select
 
 
 def choices(queryset):
@@ -55,3 +56,18 @@ class ScopeForm(forms.Form):
 
 class AuthForm(AuthenticationForm):
     i_am_auth_form = forms.BooleanField(initial=True, widget=forms.HiddenInput)
+
+
+class NewBugForm(forms.Form):
+    severity = forms.CharField(widget=Select)
+    reporter_email = forms.EmailField()
+    summary = forms.CharField(max_length=255)
+    description = forms.CharField(widget=forms.Textarea)
+    """ @todo: attachments handling """
+    
+    def __init__(self, project=None, *args, **kwargs):
+        """
+        @todo: set severity choices from provided project or from all of them
+        """
+        self.project = project
+        super(NewBugForm, self).__init__(*args, **kwargs)
