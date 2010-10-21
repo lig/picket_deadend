@@ -25,8 +25,16 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <title>{% block title %}{% blocktrans %}Picket Bugtracker{% endblocktrans %}{% endblock %}</title>
 
 {% block css %}
-<link rel="stylesheet" href="/media/css/picket.css" type="text/css" />
-{% endblock %}
+<link rel="stylesheet" href="{{ MEDIA_URL }}css/picket.css" type="text/css" />
+<link rel="stylesheet" href="{{ MEDIA_URL }}ui/picket-theme/jquery-ui-1.8.5.custom.css" type="text/css" />
+<link rel="stylesheet" href="{{ MEDIA_URL }}ui/ui.slider.extras.css" type="text/css" />
+{% endblock css %}
+
+{% block js %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.5.custom.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/selectToUISlider.jQuery.js"></script>
+{% endblock js %}
 
 {% comment %}
 <script type="text/javascript" src="/i/picket.js"></script> 

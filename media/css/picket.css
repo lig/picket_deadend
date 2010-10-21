@@ -67,3 +67,15 @@ input.search {
 	border-radius: 10pt;
 	padding: 5pt;
 }
+
+#picket-content .ui-slider-horizontal {
+	width: 800pt;
+	margin: 0 auto 0 auto;
+}
+
+#picket-content .ui-slider-handle {
+	width: 0.15em;
+	margin-left: -0.1em;
+	margin-top: -0.3em;
+	height: 1.8em;
+}
