@@ -32,13 +32,14 @@ def new_bug(request):
 
     if request.method == 'POST':
         newBugForm = NewBugForm(request.POST,
-            project=request.session['current_project'])
+            project_id=request.session.get('current_project'))
         if newBugForm.is_valid():
             bug = Bug(*newBugForm.cleaned_data)
             if request.user.is_authenticated():
                 bug.reporter = request.user
             bug.save()
     else:
-        newBugForm = NewBugForm(project=request.session['current_project'])
+        newBugForm = NewBugForm(
+            project_id=request.session.get('current_project'))
 
     return {'new_bug_form': newBugForm}

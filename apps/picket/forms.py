@@ -67,12 +67,14 @@ class NewBugForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea)
     """ @todo: attachments handling """
     
-    def __init__(self, project=None, *args, **kwargs):
+    def __init__(self, project_id=None, *args, **kwargs):
         """
         @todo: set severity choices from all project if it is not provided
         """
         super(NewBugForm, self).__init__(*args, **kwargs)
-        severity_values = Project.objects.with_id(project).severity_values
+        project = (Project.objects.with_id(project_id) if project_id else
+            Project.get_enabled[0])
+        severity_values = project.severity_values
         self.fields['severity'].widget.choices = choices_from_list(
             severity_values)
         self.fields['severity'].initial = severity_values[
