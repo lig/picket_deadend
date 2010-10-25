@@ -1,5 +1,6 @@
-"""
-Copyright 2008-2010 Serge Matveenko
+{% extends 'picket/base.html' %}{% load i18n %}
+{% comment %}
+Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
 
@@ -15,14 +16,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-from django.conf.urls.defaults import *
+{% endcomment %}
 
 
-urlpatterns = patterns('%s.views' % __package__,
-    (r'^admin/', include('%s.admin.urls' % __package__)),
-    (r'^$', 'index', {}, 'picket-index'),
-    (r'^new/$', 'new_bug', {}, 'picket-bugs-new'),
-    (r'^(?P<bug_id>\d+)/$', 'bug', {}, 'picket-bug'),
-)
+{% block picket %}
+
+
+
+{% endblock picket %}

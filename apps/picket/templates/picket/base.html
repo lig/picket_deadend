@@ -18,16 +18,20 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
+{% block messages %}
+{% if messages %}{% for message in messages %}
+<div class="ui-state-highlight">{{ message }}</div>
+{% endfor %}{% endif %}
+{% endblock %}
+
 {% block content %}
 
 {% include 'picket/header.html' %}
 
 <div id="picket-content" class="picket-content">
 {% if not projects %}
-<div class="no-projects-alert">
-<p class="error">{% trans 'There is no project exists!' %}</p>
-<p><a href="{% url picket-admin-project-new %}">{% trans 'Configure at least one project.' %}</a></p>
-</div>
+<div class="ui-state-error">{% trans 'There is no project exists!' %}<br />
+<a href="{% url picket-admin-project-new %}">{% trans 'Configure at least one project.' %}</a></div>
 {% endif %}
 {% block picket %}
 {% endblock picket %}

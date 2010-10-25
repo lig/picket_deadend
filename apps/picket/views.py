@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.utils.translation import ugettext_lazy as _
+
 from .decorators import render_to
 from .documents import Bug, Project
 from .forms import NewBugForm
@@ -42,8 +46,14 @@ def new_bug(request):
             bug.project = current_project_id and Project.objects.with_id(
                 current_project_id)
             bug.save()
-            """ @todo: bug creation notice and successful redirect """
+            messages.success(request, _('Bug submitted.'))
+            return redirect(bug.get_absolute_url())
     else:
         newBugForm = NewBugForm(project_id=current_project_id)
 
     return {'new_bug_form': newBugForm}
+
+
+@render_to('picket/bug.html')
+def bug(request, bug_id):
+    return {}
