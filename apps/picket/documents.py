@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from datetime import datetime
+
 from mongoengine import *
 from mongoengine.django.auth import User
 from mongoengine.fields import BaseField
@@ -139,7 +141,7 @@ class Bug(Document):
     resolution = StringField()
     """ @todo: possible projection values setting """ 
     projection = StringField()
-    category = ReferenceField(Category, required=True)
+    category = ReferenceField(Category)
     date_submitted = DateTimeField(required=True)
     last_updated = DateTimeField(required=True)
     """ @todo: possible ETA values setting """ 
@@ -155,21 +157,32 @@ class Bug(Document):
     """ @todo: add reporters, handlers and commentators as monitorers
         automatically """
     monitorers = ListField(ReferenceField(User))
-    related_bugs = ListField(ReferenceField('self'))
-    child_bugs = ListField(ReferenceField('self'))
-    duplicates = ListField(ReferenceField('self'))
+    related_bugs = ListField(ReferenceField('Bug'))
+    child_bugs = ListField(ReferenceField('Bug'))
+    duplicates = ListField(ReferenceField('Bug'))
     num_bugnotes = IntField(default=0)
     attachments = ListField(EmbeddedDocumentField(Attachment))
 
     def save(self, *args, **kwargs):
+
+        now = datetime.now()
+
         """ @todo: bug number generation """
         if self.number is None:
             from random import randint
             self.number = randint(1, 1000000000)
+
         if self.project is None:
-            self.project = self.category.project
+            self.project = Project.get_enabled[0]
+
         if self.scope is None:
             self.scope = self.project.scope
+
+        if self.date_submitted is None:
+            self.date_submitted = now
+
+        self.last_updated = now
+
         super(Bug, self).save(*args, **kwargs)
 
     def is_permited(self, user, required_rights='r'):

@@ -27,7 +27,7 @@ h1 {
   margin-top: -5pt;
 }
 
-input {
+input, textarea {
 	border: 1px solid;
 	border-radius: 5pt;
 }
@@ -70,7 +70,7 @@ input.search {
 
 #picket-content .ui-slider-horizontal {
 	width: 800pt;
-	margin: 0 auto 0 auto;
+	margin: 0 auto 60pt auto;
 	border-radius: 0;
 }
 #picket-content .ui-slider-label {
@@ -89,3 +89,15 @@ input.search {
   height: 1.6em;
 }
 */
+
+.new_bug_form p {
+  width: 600pt;
+  margin: 40pt auto 0 auto;
+}
+.new_bug_form input, .new_bug_form textarea {
+  width: 100%;
+  font-size: 16pt;
+}
+.new_bug_form input.submit {
+  width: auto;
+}

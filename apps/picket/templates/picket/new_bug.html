@@ -23,7 +23,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <p>&nbsp;</p>
 
-<form action="" method="post">
+<form action="" method="post" class="new_bug_form">
+
 {{ new_bug_form.severity }}
 <script type="text/javascript">
 $(function() {
@@ -37,7 +38,20 @@ $(function() {
     }).hide();
 });
 </script>
-<p><input type="submit" /></p>
+
+{% if not request.user.is_authenticated %}
+<p>{{ new_bug_form.reporter_email.label_tag }}<br />
+{{ new_bug_form.reporter_email }}</p>
+{% endif %}
+
+<p>{{ new_bug_form.summary.label_tag }}<br />
+{{ new_bug_form.summary }}</p>
+
+<p>{{ new_bug_form.description.label_tag }}<br />
+{{ new_bug_form.description }}</p>
+
+<p><input type="submit" class="submit" /></p>
+
 </form>
 
 <p>&nbsp;</p>
