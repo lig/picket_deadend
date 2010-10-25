@@ -70,7 +70,7 @@ input.search {
 
 #picket-content .ui-slider-horizontal {
 	width: 800pt;
-	margin: 0 auto 60pt auto;
+	margin: 60pt auto;
 	border-radius: 0;
 }
 #picket-content .ui-slider-label {
@@ -92,7 +92,7 @@ input.search {
 
 .new_bug_form p {
   width: 600pt;
-  margin: 40pt auto 0 auto;
+  margin: 40pt auto;
 }
 .new_bug_form input, .new_bug_form textarea {
   width: 100%;
