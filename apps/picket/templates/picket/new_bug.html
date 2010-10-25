@@ -25,11 +25,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <form action="" method="post">
 {{ new_bug_form.severity }}
-{{ new_bug_form.severity.choices }}
 <script type="text/javascript">
 $(function() {
     $('#id_severity').selectToUISlider({
-        labels: 5,
+        labels: {{ new_bug_form.fields.severity.widget.choices|length }},
         tooltip: false,
         labelSrc: 'text',
         sliderOptions: {
