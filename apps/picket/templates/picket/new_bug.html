@@ -23,26 +23,23 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <p>&nbsp;</p>
 
+<form action="" method="post">
+{{ new_bug_form.severity }}
+{{ new_bug_form.severity.choices }}
 <script type="text/javascript">
 $(function() {
-    $('#severity').selectToUISlider({
+    $('#id_severity').selectToUISlider({
         labels: 5,
         tooltip: false,
-        //labelSrc: 'text',
+        labelSrc: 'text',
         sliderOptions: {
             animate: true,
         }
     }).hide();
 });
 </script>
-
-<select name="severity" id="severity">
-	<option value="Good advice">Good advice</option>
-	<option value="Annoying thing">Annoying thing</option>
-	<option value="Just a bug" selected="selected">Just a bug</option>
-	<option value="Big crash">Big crash</option>
-	<option value="Armageddon">Armageddon</option>
-</select>
+<p><input type="submit" /></p>
+</form>
 
 <p>&nbsp;</p>
 

@@ -21,8 +21,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from mongoengine import URLField
 
-from documents import Scope, Project, Category, Group
-from django.forms.widgets import Select
+from .documents import Scope, Project, Category, Group
 
 
 def choices(queryset):
@@ -30,6 +29,9 @@ def choices(queryset):
     @todo: DocumentChoiceField, DocumentMultipleChoiceField
     """
     return [(None, '',)] + map(lambda item: (item.id, item.name,), queryset)
+
+def choices_from_list(lst):
+    return zip(*[lst]*2)
 
 
 class ProjectForm(forms.Form):
@@ -59,7 +61,7 @@ class AuthForm(AuthenticationForm):
 
 
 class NewBugForm(forms.Form):
-    severity = forms.CharField(widget=Select)
+    severity = forms.CharField(widget=forms.Select)
     reporter_email = forms.EmailField()
     summary = forms.CharField(max_length=255)
     description = forms.CharField(widget=forms.Textarea)
@@ -67,7 +69,11 @@ class NewBugForm(forms.Form):
     
     def __init__(self, project=None, *args, **kwargs):
         """
-        @todo: set severity choices from provided project or from all of them
+        @todo: set severity choices from all project if it is not provided
         """
-        self.project = project
         super(NewBugForm, self).__init__(*args, **kwargs)
+        severity_values = Project.objects.with_id(project).severity_values
+        self.fields['severity'].widget.choices = choices_from_list(
+            severity_values)
+        self.fields['severity'].initial = severity_values[
+            len(severity_values) / 2]

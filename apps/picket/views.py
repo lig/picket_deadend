@@ -18,6 +18,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .decorators import render_to
+from .documents import Bug
+from .forms import NewBugForm
 
 
 @render_to('picket/index.html')
@@ -27,4 +29,16 @@ def index(request):
 
 @render_to('picket/new_bug.html')
 def new_bug(request):
-    return {}
+
+    if request.method == 'POST':
+        newBugForm = NewBugForm(request.POST,
+            project=request.session['current_project'])
+        if newBugForm.is_valid():
+            bug = Bug(*newBugForm.cleaned_data)
+            if request.user.is_authenticated():
+                bug.reporter = request.user
+            bug.save()
+    else:
+        newBugForm = NewBugForm(project=request.session['current_project'])
+
+    return {'new_bug_form': newBugForm}

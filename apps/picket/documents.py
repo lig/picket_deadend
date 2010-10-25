@@ -21,6 +21,7 @@ from mongoengine import *
 from mongoengine.django.auth import User
 from mongoengine.fields import BaseField
 
+from django.core.validators import email_re
 from django.db.models import permalink
 
 from .mail_utils import text_from_part
@@ -123,6 +124,8 @@ class Bug(Document):
     number = IntField(required=True, unique=True)
     project = ReferenceField(Project, required=True)
     reporter = ReferenceField(User)
+    """ @todo: design anonymous reporting """
+    reporter_email = StringField(regex=email_re)
     handler = ReferenceField(User)
     """ @todo: possible priority values setting """ 
     priority = StringField()
