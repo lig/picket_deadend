@@ -62,7 +62,6 @@ class AuthForm(AuthenticationForm):
 
 class NewBugForm(forms.Form):
     severity = forms.CharField(widget=forms.Select)
-    reporter_email = forms.EmailField()
     summary = forms.CharField(max_length=255)
     description = forms.CharField(widget=forms.Textarea)
     """ @todo: attachments handling """
@@ -79,3 +78,8 @@ class NewBugForm(forms.Form):
             severity_values)
         self.fields['severity'].initial = severity_values[
             len(severity_values) / 2]
+
+
+class AnonymousNewBugForm(NewBugForm):
+
+    reporter_email = forms.EmailField()

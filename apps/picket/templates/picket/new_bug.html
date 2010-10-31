@@ -37,7 +37,7 @@ $(function() {
 });
 </script>
 
-{% if not request.user.is_authenticated %}
+{% if not user.is_authenticated %}
 <p>{{ new_bug_form.reporter_email.label_tag }}<br />
 {{ new_bug_form.reporter_email }}</p>
 {% endif %}
