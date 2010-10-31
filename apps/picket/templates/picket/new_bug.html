@@ -48,7 +48,7 @@ $(function() {
 <p>{{ new_bug_form.description.label_tag }}<br />
 {{ new_bug_form.description }}</p>
 
-<p><input type="submit" class="submit" /></p>
+<p><span class="inline_inputs"><input type="submit" class="submit" /> {% if user.is_authenticated %}{{ new_bug_form.return_to_form }} {{ new_bug_form.return_to_form.label_tag }}{% endif %}</span></p>
 
 </form>
 

@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from .decorators import render_to
 from .documents import Bug, Project
-from .forms import NewBugForm, AnonymousNewBugForm
+from .forms import AuthenticatedNewBugForm, AnonymousNewBugForm
 
 
 @render_to('picket/index.html')
@@ -34,8 +34,8 @@ def index(request):
 @render_to('picket/new_bug.html')
 def new_bug(request):
 
-    NewBugFormClass = (NewBugForm if request.user.is_authenticated()
-        else AnonymousNewBugForm)
+    NewBugFormClass = (AuthenticatedNewBugForm if
+        request.user.is_authenticated() else AnonymousNewBugForm)
 
     current_project_id = request.session.get('current_project')
 
@@ -50,7 +50,9 @@ def new_bug(request):
                 current_project_id)
             bug.save()
             messages.success(request, _('Bug submitted.'))
-            return redirect(bug.get_absolute_url())
+            return redirect('picket-bugs-new' if
+                newBugForm.cleaned_data['return_to_form'] else
+                bug.get_absolute_url())
     else:
         newBugForm = NewBugFormClass(project_id=current_project_id)
 

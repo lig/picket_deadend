@@ -101,3 +101,8 @@ input.search {
 .new_bug_form input.submit {
   width: auto;
 }
+
+.inline_inputs input {
+  display: inline;
+  width: auto;
+}

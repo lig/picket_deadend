@@ -19,6 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import ugettext_lazy as _
 from mongoengine import URLField
 
 from .documents import Scope, Project, Category, Group
@@ -78,6 +79,13 @@ class NewBugForm(forms.Form):
             severity_values)
         self.fields['severity'].initial = severity_values[
             len(severity_values) / 2]
+
+
+class AuthenticatedNewBugForm(NewBugForm):
+
+    return_to_form = forms.BooleanField(initial=False, required=False,
+        widget=forms.CheckboxInput,
+        label=_('Return to this form after submitting'))
 
 
 class AnonymousNewBugForm(NewBugForm):
