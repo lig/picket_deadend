@@ -18,8 +18,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
+from mongoengine.queryset import DoesNotExist
 
 from .decorators import render_to
 from .documents import Bug, Project
@@ -60,5 +62,12 @@ def new_bug(request):
 
 
 @render_to('picket/bug.html')
-def bug(request, bug_id):
-    return {}
+def bug(request, bug_number):
+    bug_number = int(bug_number)
+
+    try:
+        bug = Bug.objects.get(number=bug_number)
+    except DoesNotExist:
+        raise Http404
+    
+    return {'bug': bug}
