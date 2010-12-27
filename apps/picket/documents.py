@@ -30,7 +30,7 @@ class Stage(Document):
     name = StringField()
     department = ReferenceField(Department)
     order = IntField()
-    first = ListField(GenericReferenceField()) # Status, Stage
+    first = GenericReferenceField() # Status, Stage
 
 
 class Milestone(EmbeddedDocument):
