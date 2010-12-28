@@ -24,9 +24,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <p><a href="{% url picket-admin-project-new %}">{% trans 'New Project' %}</a></p>
 
 {% if projects|length %}
+<ul>
 {% for project in projects %}
-<p><a href="{% url picket-admin-project project.id %}">{{ project }}</a></p>
+<li><a href="{% url picket-admin-project project.id %}">{{ project }}</a></li>
 {% endfor %}
+</ul>
 {% endif %}
 
 {% endblock picket-admin %}

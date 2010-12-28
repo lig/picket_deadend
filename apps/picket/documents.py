@@ -1,28 +1,32 @@
+from django.db.models import permalink
 from mongoengine import *
-
-
-class Employee(Document):
-    
-    user = ReferenceField('User')
+from mongoengine.django.auth import User
 
 
 class Project(Document):
     
-    name = StringField()
-    manager = ReferenceField(Employee)
+    name = StringField(max_length=255)
+    manager = ReferenceField(User)
+    
+    def __unicode__(self):
+        return self.name
+    
+    @permalink
+    def get_absolute_url(self):
+        return 'picket-admin-project', (self.id,)
 
 
 class Department(Document):
     
     name = StringField()
-    head = ReferenceField(Employee)
+    head = ReferenceField(User)
 
 
 class Group(Document):
     
     department = ReferenceField(Department)
     project = ReferenceField(Project)
-    employees = ListField(ReferenceField(Employee))    
+    employees = ListField(ReferenceField(User))    
 
 
 class Stage(Document):
@@ -60,7 +64,7 @@ class Status(Document):
 class Comment(EmbeddedDocument):
     
     submitted = DateTimeField()
-    author = ReferenceField(Employee)
+    author = ReferenceField(User)
     text = StringField()
 
     
@@ -68,7 +72,7 @@ class Issue(Document):
     
     subject = StringField()
     submitted = DateTimeField()
-    author = ReferenceField(Employee)
+    author = ReferenceField(User)
     text = StringField()
     project = ReferenceField(Project)
     status = ReferenceField(Status)

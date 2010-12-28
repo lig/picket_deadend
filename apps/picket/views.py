@@ -24,8 +24,8 @@ from django.utils.translation import ugettext_lazy as _
 from mongoengine.queryset import DoesNotExist
 
 from .decorators import render_to
-from .documents import Bug, Project
-from .forms import AuthenticatedNewBugForm, AnonymousNewBugForm
+from .documents import Project
+from .forms import IssueForm
 
 
 @render_to('picket/index.html')

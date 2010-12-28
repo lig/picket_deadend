@@ -27,19 +27,6 @@ urlpatterns = patterns('%s.views' % __package__,
 
     # Projects
     (r'^projects/$', 'projects', {}, 'picket-admin-projects'),
-    (r'^projects/new$', 'new_project', {}, 'picket-admin-project-new'),
+    (r'^projects/new/$', 'project', {}, 'picket-admin-project-new'),
     (r'^projects/(?P<project_id>\w+)$', 'project', {}, 'picket-admin-project'),
-    (r'^projects/(?P<project_id>\w+)/edit$', 'edit_project', {},
-        'picket-admin-project-edit'),
-    (r'^projects/(?P<project_id>\w+)/delete$', 'delete_project', {},
-        'picket-admin-project-delete'),
-
-    # Scopes
-    (r'^scopes/$', 'scopes', {}, 'picket-admin-scopes'),
-    (r'^scopes/new$', 'new_scope', {}, 'picket-admin-scope-new'),
-    (r'^scopes/(?P<scope_id>\w+)$', 'scope', {}, 'picket-admin-scope'),
-    (r'^scopes/(?P<scope_id>\w+)/edit$', 'edit_scope', {},
-        'picket-admin-scope-edit'),
-    (r'^scopes/(?P<scope_id>\w+)/delete$', 'delete_scope', {},
-        'picket-admin-scope-delete'),
 )

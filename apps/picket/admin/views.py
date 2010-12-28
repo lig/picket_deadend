@@ -22,8 +22,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from ..decorators import render_to
-from ..documents import Project, Scope
-from ..forms import ProjectForm, ScopeForm
+from ..documents import Project
+from ..forms import ProjectForm
 
 from decorators import superuser_required
 
@@ -38,126 +38,31 @@ def index(request):
 @render_to('picket/admin/projects.html')
 def projects(request):
     
-    projects = Project.sort
+    projects = Project.objects()
     
     return {'projects': projects}
 
 
 @superuser_required
-@render_to('picket/admin/new_project.html')
-def new_project(request):
-    
-    if request.method == 'POST':
-        projectForm = ProjectForm(request.POST)
-        if projectForm.is_valid():
-            project = Project(
-                status=projectForm.cleaned_data['status'],
-                name=projectForm.cleaned_data['name'],
-                # @todo: handle project parent
-                enabled=projectForm.cleaned_data['enabled'],
-                scope=Scope.objects.with_id(projectForm.cleaned_data['scope']),
-                # @todo: handle project categories
-                description=projectForm.cleaned_data['description']
-            )
-            if projectForm.cleaned_data['url']:
-                project.url = projectForm.cleaned_data['url']
-            project.save()
-            messages.success(request, _('Project created.'))
-            return redirect('picket-admin-projects')
-    else:
-        projectForm = ProjectForm()
-
-    return {'project_form': projectForm}
-
-
-@superuser_required
 @render_to('picket/admin/project.html')
-def project(request, project_id):
+def project(request, project_id=None):
     
-    project = Project.get_enabled.get(id=project_id)
-    
-    return {'project': project}
-
-
-@superuser_required
-@render_to('picket/admin/edit_project.html')
-def edit_project(request, project_id):
-    """
-    @todo: edit project page
-    """
-    project = Project.get_enabled.get(id=project_id)
-    
-    return {'project': project}
-
-
-@superuser_required
-@render_to('picket/admin/delete_project.html')
-def delete_project(request, project_id):
-    """
-    @todo: delete project page
-    """
-    project = Project.get_enabled.get(id=project_id)
-    
-    return {'project': project}
-
-
-@superuser_required
-@render_to('picket/admin/scopes.html')
-def scopes(request):
-    
-    scopes = Scope.sort
-    
-    return {'scopes': scopes}
-
-
-@superuser_required
-@render_to('picket/admin/new_scope.html')
-def new_scope(request):
+    project = project_id and Project.objects(id=project_id).first()
     
     if request.method == 'POST':
-        scopeForm = ScopeForm(request.POST)
-        if scopeForm.is_valid():
-            scope = Scope(
-                name=scopeForm.cleaned_data['name'],
-                # @todo: handle scope read_access
-                # @todo: handle scope write_access
-                anonymous_access=scopeForm.cleaned_data['anonymous_access'],
-            )
-            scope.save()
-            messages.success(request, _('Scope created.'))
-            return redirect('picket-admin-scopes')
+        project_form = ProjectForm(request.POST, instance=project)
+        
+        if project_form.is_valid():
+            project = project_form.save()
+            
+            if project_id:
+                messages.success(request, _('Project updated'))
+            else:
+                messages.success(request, _('Project created'))
+            
+            return redirect(project.get_absolute_url())
+        
     else:
-        scopeForm = ScopeForm()
-
-    return {'scope_form': scopeForm}
-
-
-@superuser_required
-@render_to('picket/admin/scope.html')
-def scope(request, scope_id):
+        project_form = ProjectForm(instance=project)
     
-    scope = Scope.objects.get(id=scope_id)
-    
-    return {'scope': scope}
-
-
-@superuser_required
-@render_to('picket/admin/edit_scope.html')
-def edit_scope(request, scope_id):
-    """
-    @todo: edit scope page
-    """
-    scope = Scope.objects.get(id=scope_id)
-    
-    return {'scope': scope}
-
-
-@superuser_required
-@render_to('picket/admin/delete_scope.html')
-def delete_scope(request, scope_id):
-    """
-    @todo: delete scope page
-    """
-    scope = Scope.get_enabled.get(id=scope_id)
-    
-    return {'scope': scope}
+    return {'project': project, 'project_form': project_form}

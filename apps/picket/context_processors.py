@@ -30,7 +30,7 @@ def picket(request):
     # set or get current project
     if 'set_project' in request.GET:
         try:
-            current_project = Project.get_enabled.with_id(
+            current_project = Project.objects.with_id(
                 request.GET['set_project'])
             # current_project could be None after lookup
             request.session['current_project'] = (current_project and
@@ -39,13 +39,13 @@ def picket(request):
             current_project = None
     else:
         try:
-            current_project = Project.get_enabled.with_id(
+            current_project = Project.objects.with_id(
                 request.session.get('current_project'))
         except ValidationError:
             current_project = None
 
     # get projects
-    projects = Project.get_enabled
+    projects = Project.objects()
 
     # authentication
     if not request.user.is_authenticated():
