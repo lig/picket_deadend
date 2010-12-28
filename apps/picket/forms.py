@@ -21,7 +21,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from mongoforms.forms import MongoForm
 
-from documents import Project, Issue
+from documents import Project, Department, Issue
 
 
 class AuthForm(AuthenticationForm):
@@ -33,6 +33,13 @@ class ProjectForm(MongoForm):
     class Meta:
         document = Project
         fields = ('name', 'manager',)
+
+
+class DepartmentForm(MongoForm):
+    
+    class Meta:
+        document = Department
+        fields = ('name', 'head',)
 
 
 class IssueForm(MongoForm):

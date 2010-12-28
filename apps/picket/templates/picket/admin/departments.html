@@ -1,4 +1,5 @@
-"""
+{% extends 'picket/admin/base.html' %}{% load i18n %}
+{% comment %}
 Copyright 2010 Serge Matveenko
 
 This file is part of Picket.
@@ -15,23 +16,19 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
-"""
-
-from django.conf.urls.defaults import *
+{% endcomment %}
 
 
-urlpatterns = patterns('%s.views' % __package__,
+{% block picket-admin %}
 
-    # Dashboard
-    (r'^$', 'index', {}, 'picket-admin-index'),
+<p><a href="{% url picket-admin-department-new %}">{% trans 'New Department' %}</a></p>
 
-    # Projects
-    (r'^projects/$', 'projects', {}, 'picket-admin-projects'),
-    (r'^projects/new/$', 'project', {}, 'picket-admin-project-new'),
-    (r'^projects/(?P<project_id>\w+)$', 'project', {}, 'picket-admin-project'),
-    
-    # Departments
-    (r'^departments/$', 'departments', {}, 'picket-admin-departments'),
-    (r'^departments/new/$', 'department', {}, 'picket-admin-department-new'),
-    (r'^departments/(?P<department_id>\w+)$', 'department', {}, 'picket-admin-department'),
-)
+{% if departments|length %}
+<ul>
+{% for department in departments %}
+<li><a href="{% url picket-admin-department department.id %}">{{ department }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock picket-admin %}

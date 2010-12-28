@@ -18,8 +18,15 @@ class Project(Document):
 
 class Department(Document):
     
-    name = StringField()
+    name = StringField(max_length=255)
     head = ReferenceField(User)
+    
+    def __unicode__(self):
+        return self.name
+    
+    @permalink
+    def get_absolute_url(self):
+        return 'picket-admin-department', (self.id,)
 
 
 class Group(Document):

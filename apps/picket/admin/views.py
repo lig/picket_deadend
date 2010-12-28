@@ -22,8 +22,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from ..decorators import render_to
-from ..documents import Project
-from ..forms import ProjectForm
+from ..documents import Project, Department
+from ..forms import ProjectForm, DepartmentForm
 
 from decorators import superuser_required
 
@@ -66,3 +66,37 @@ def project(request, project_id=None):
         project_form = ProjectForm(instance=project)
     
     return {'project': project, 'project_form': project_form}
+
+
+@superuser_required
+@render_to('picket/admin/departments.html')
+def departments(request):
+    
+    departments = Department.objects()
+    
+    return {'departments': departments}
+
+
+@superuser_required
+@render_to('picket/admin/department.html')
+def department(request, department_id=None):
+    
+    department = department_id and Department.objects(id=department_id).first()
+    
+    if request.method == 'POST':
+        department_form = DepartmentForm(request.POST, instance=department)
+        
+        if department_form.is_valid():
+            department = department_form.save()
+            
+            if department_id:
+                messages.success(request, _('Department updated'))
+            else:
+                messages.success(request, _('Department created'))
+            
+            return redirect(department.get_absolute_url())
+        
+    else:
+        department_form = DepartmentForm(instance=department)
+    
+    return {'department': department, 'department_form': department_form}
