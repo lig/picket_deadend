@@ -64,3 +64,11 @@ def issue(request, issue_number):
     if not issue: raise Http404
     
     return {'issue': issue}
+
+
+@render_to('picket/issues.html')
+def issues(request):
+
+    issues = Issue.objects()
+    
+    return {'issues': issues}

@@ -21,6 +21,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picket %}
 
-<p>{{ issue }}</p>
+<p>{% for issue in issues %}
+<a href="{% url picket-issue issue.id %}">{{ issue }}</a><br />
+{% endfor %}</p>
 
 {% endblock picket %}

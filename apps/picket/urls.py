@@ -25,4 +25,5 @@ urlpatterns = patterns('%s.views' % __package__,
     (r'^$', 'index', {}, 'picket-index'),
     (r'^new/$', 'new_issue', {}, 'picket-issue-new'),
     (r'^(?P<issue_number>\d+)/$', 'issue', {}, 'picket-issue'),
+    (r'^issues/$', 'issues', {}, 'picket-issues'),
 )

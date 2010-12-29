@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import permalink
 from mongoengine import *
 from mongoengine.django.auth import User
@@ -79,6 +81,10 @@ class Comment(EmbeddedDocument):
     
 class Issue(Document):
     
+    meta = {
+        'ordering': ('-submitted',),
+    }
+    
     number = IntField(primary_key=True)
     subject = StringField(max_length=1024)
     submitted = DateTimeField()
@@ -100,7 +106,7 @@ class Issue(Document):
     def save(self):
         #@todo: status and other logic handling
         
-        if not self.number:
-            self.number = get_next_pk('issue')
+        self.number = self.number or get_next_pk('issue')
+        self.submitted = self.submitted or datetime.utcnow()
         
         super(Issue, self).save()
