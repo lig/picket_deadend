@@ -2,6 +2,8 @@ from django.db.models import permalink
 from mongoengine import *
 from mongoengine.django.auth import User
 
+from sequences import get_next_pk
+
 
 class Project(Document):
     
@@ -77,7 +79,8 @@ class Comment(EmbeddedDocument):
     
 class Issue(Document):
     
-    subject = StringField()
+    number = IntField(primary_key=True)
+    subject = StringField(max_length=1024)
     submitted = DateTimeField()
     author = ReferenceField(User)
     text = StringField()
@@ -86,3 +89,18 @@ class Issue(Document):
     handler = GenericReferenceField() # Employee, Group, Department
     comments = SortedListField(EmbeddedDocumentField(Comment),
         ordering='submitted')
+    
+    def __unicode__(self):
+        return '[%s] %s' % (self.number, self.subject)
+
+    @permalink
+    def get_absolute_url(self):
+        return 'picket-issue', (self.number,)
+    
+    def save(self):
+        #@todo: status and other logic handling
+        
+        if not self.number:
+            self.number = get_next_pk('issue')
+        
+        super(Issue, self).save()

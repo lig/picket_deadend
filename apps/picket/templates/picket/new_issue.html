@@ -23,30 +23,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 <form action="" method="post" class="new_bug_form">
 
-{{ new_bug_form.severity }}
-<script type="text/javascript">
-$(function() {
-    $('#id_severity').selectToUISlider({
-        labels: {{ new_bug_form.fields.severity.widget.choices|length }},
-        tooltip: false,
-        labelSrc: 'text',
-        sliderOptions: {
-            animate: true,
-        }
-    }).hide();
-});
-</script>
+<p>{% trans 'Summary' %}<br />
+{{ issue_form.subject }}</p>
 
-{% if not user.is_authenticated %}
-<p>{{ new_bug_form.reporter_email.label_tag }}<br />
-{{ new_bug_form.reporter_email }}</p>
-{% endif %}
-
-<p>{{ new_bug_form.summary.label_tag }}<br />
-{{ new_bug_form.summary }}</p>
-
-<p>{{ new_bug_form.description.label_tag }}<br />
-{{ new_bug_form.description }}</p>
+<p>{% trans 'Description' %}<br />
+{{ issue_form.text }}</p>
 
 <p><span class="inline_inputs"><input type="submit" class="submit" /> {% if user.is_authenticated %}{{ new_bug_form.return_to_form }} {{ new_bug_form.return_to_form.label_tag }}{% endif %}</span></p>
 

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import mongoengine
+from mongoengine import connect
 
 from dist import *
 
@@ -31,7 +31,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-mongoengine.connect('picket')
+DB = connect('picket')
 
 SECRET_KEY = ''
 

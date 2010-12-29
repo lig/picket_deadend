@@ -21,11 +21,10 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-from mongoengine.queryset import DoesNotExist
 
 from .decorators import render_to
 from .documents import Project
-from .forms import IssueForm
+from .forms import IssueForm, Issue
 
 
 @render_to('picket/index.html')
@@ -33,41 +32,35 @@ def index(request):
     return {}
 
 
-@render_to('picket/new_bug.html')
-def new_bug(request):
-
-    NewBugFormClass = (AuthenticatedNewBugForm if
-        request.user.is_authenticated() else AnonymousNewBugForm)
+@render_to('picket/new_issue.html')
+def new_issue(request):
 
     current_project_id = request.session.get('current_project')
 
     if request.method == 'POST':
-        newBugForm = NewBugFormClass(data=request.POST,
-            project_id=current_project_id)
-        if newBugForm.is_valid():
-            bug = Bug(**newBugForm.cleaned_data)
+        issue_form = IssueForm(data=request.POST)
+        
+        if issue_form.is_valid():
+            issue = issue_form.save(commit=False)
+            
             if request.user.is_authenticated():
-                bug.reporter = request.user
-            bug.project = current_project_id and Project.objects.with_id(
+                issue.reporter = request.user
+            
+            issue.project = current_project_id and Project.objects.with_id(
                 current_project_id)
-            bug.save()
-            messages.success(request, _('Bug submitted.'))
-            return redirect('picket-bugs-new' if
-                newBugForm.cleaned_data['return_to_form'] else
-                bug.get_absolute_url())
+            issue.save()
+            messages.success(request, _('Bug submitted'))
+            return redirect(issue.get_absolute_url())
     else:
-        newBugForm = NewBugFormClass(project_id=current_project_id)
+        issue_form = IssueForm()
 
-    return {'new_bug_form': newBugForm}
+    return {'issue_form': issue_form}
 
 
-@render_to('picket/bug.html')
-def bug(request, bug_number):
-    bug_number = int(bug_number)
+@render_to('picket/issue.html')
+def issue(request, issue_number):
 
-    try:
-        bug = Bug.objects.get(number=bug_number)
-    except DoesNotExist:
-        raise Http404
+    issue = Issue.objects.with_id(int(issue_number))
+    if not issue: raise Http404
     
-    return {'bug': bug}
+    return {'issue': issue}

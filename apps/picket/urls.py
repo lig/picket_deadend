@@ -23,6 +23,6 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('%s.views' % __package__,
     (r'^admin/', include('%s.admin.urls' % __package__)),
     (r'^$', 'index', {}, 'picket-index'),
-    (r'^new/$', 'new_bug', {}, 'picket-bugs-new'),
-    (r'^(?P<bug_number>\d+)/$', 'bug', {}, 'picket-bug'),
+    (r'^new/$', 'new_issue', {}, 'picket-issue-new'),
+    (r'^(?P<issue_number>\d+)/$', 'issue', {}, 'picket-issue'),
 )
