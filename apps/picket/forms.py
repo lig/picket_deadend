@@ -43,7 +43,13 @@ class DepartmentForm(MongoForm):
 
 
 class IssueForm(MongoForm):
-        
+    
+    return_to_form = forms.BooleanField(required=False)
+    
+    def __init__(self, return_to_form=False, *args, **kwargs):
+        super(IssueForm, self).__init__(*args, **kwargs)
+        self.fields['return_to_form'].initial = return_to_form
+    
     class Meta:
         document = Issue
         fields = ('subject', 'text',)

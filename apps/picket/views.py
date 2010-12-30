@@ -41,6 +41,8 @@ def new_issue(request):
         issue_form = IssueForm(data=request.POST)
         
         if issue_form.is_valid():
+            request.session['return_to_form'] = issue_form.cleaned_data[
+                'return_to_form']
             issue = issue_form.save(commit=False)
             
             if request.user.is_authenticated():
@@ -50,9 +52,11 @@ def new_issue(request):
                 current_project_id)
             issue.save()
             messages.success(request, _('Bug submitted'))
-            return redirect(issue.get_absolute_url())
+            return redirect(issue_form.cleaned_data['return_to_form'] and
+                'picket-issue-new' or issue.get_absolute_url())
     else:
-        issue_form = IssueForm()
+        issue_form = IssueForm(
+            return_to_form=request.session.get('return_to_form'))
 
     return {'issue_form': issue_form}
 
