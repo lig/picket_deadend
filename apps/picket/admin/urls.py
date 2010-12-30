@@ -34,4 +34,9 @@ urlpatterns = patterns('%s.views' % __package__,
     (r'^departments/$', 'departments', {}, 'picket-admin-departments'),
     (r'^departments/new/$', 'department', {}, 'picket-admin-department-new'),
     (r'^departments/(?P<department_id>\w+)$', 'department', {}, 'picket-admin-department'),
+    
+    # Employees
+    (r'^employees/$', 'employees', {}, 'picket-admin-employees'),
+    (r'^employees/new/$', 'employee', {}, 'picket-admin-employee-new'),
+    (r'^employees/(?P<employee_id>\w+)$', 'employee', {}, 'picket-admin-employee'),
 )

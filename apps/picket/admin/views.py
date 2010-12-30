@@ -22,8 +22,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from ..decorators import render_to
-from ..documents import Project, Department
-from ..forms import ProjectForm, DepartmentForm
+from ..documents import Project, Department, Employee
+from ..forms import ProjectForm, DepartmentForm, EmployeeForm
 
 from decorators import superuser_required
 
@@ -100,3 +100,38 @@ def department(request, department_id=None):
         department_form = DepartmentForm(instance=department)
     
     return {'department': department, 'department_form': department_form}
+
+
+@superuser_required
+@render_to('picket/admin/employees.html')
+def employees(request):
+    
+    employees = Employee.objects()
+    
+    return {'employees': employees}
+
+
+@superuser_required
+@render_to('picket/admin/employee.html')
+def employee(request, employee_id=None):
+    #@todo: employee from user
+    
+    employee = employee_id and Employee.objects(id=employee_id).first()
+    
+    if request.method == 'POST':
+        employee_form = EmployeeForm(request.POST, instance=employee)
+        
+        if employee_form.is_valid():
+            employee = employee_form.save()
+            
+            if employee_id:
+                messages.success(request, _('Employee updated'))
+            else:
+                messages.success(request, _('Employee created'))
+            
+            return redirect(employee.get_absolute_url())
+        
+    else:
+        employee_form = EmployeeForm(instance=employee)
+    
+    return {'employee': employee, 'employee_form': employee_form}

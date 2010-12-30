@@ -34,3 +34,12 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     {% endfor %}
 </ul>
 {% endif %}
+
+{% if my_projects %}
+<ul>
+    <li>{% trans 'Projects' %}:</li>
+    {% for project in my_projects %}
+    <li><a href="{{ project.get_absolute_url }}">{{ project }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}

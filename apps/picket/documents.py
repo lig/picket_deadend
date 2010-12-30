@@ -26,6 +26,19 @@ from mongoengine.django.auth import User
 from sequences import get_next_pk
 
 
+class Employee(User):
+    
+    def __unicode__(self):
+        if self.first_name or self.last_name:
+            return u' '.join((self.first_name, self.last_name,))
+        else:
+            return self.username
+    
+    @permalink
+    def get_absolute_url(self):
+        return 'picket-admin-employee', (self.pk,)
+
+
 class Project(Document):
     
     name = StringField(max_length=255)

@@ -43,12 +43,13 @@ def picket(request):
     # get projects
     projects = Project.objects()
     
-    # get headed departments
+    # get headed departments and managed projects
     if request.user.is_authenticated():
         my_departments = Department.objects(head=request.user)
+        my_projects = Project.objects(manager=request.user)
     else:
-        my_departments = None
+        my_departments, my_projects = None, None
     
     return {'copying': COPYING, 'auth_form': auth_form,
         'current_project': current_project, 'projects': projects,
-        'my_departments': my_departments}
+        'my_departments': my_departments, 'my_projects': my_projects}

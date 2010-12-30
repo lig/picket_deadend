@@ -21,7 +21,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from mongoforms.forms import MongoForm
 
-from documents import Project, Department, Issue
+from documents import Project, Department, Issue, Employee
 
 
 class AuthForm(AuthenticationForm):
@@ -53,3 +53,9 @@ class IssueForm(MongoForm):
     class Meta:
         document = Issue
         fields = ('subject', 'text',)
+
+
+class EmployeeForm(MongoForm):
+    #@todo: correct EmployeeForm
+    class Meta:
+        document = Employee

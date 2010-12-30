@@ -1,4 +1,4 @@
-{% load i18n %}
+{% extends 'picket/admin/base.html' %}{% load i18n %}
 {% comment %}
 Copyright 2010 Serge Matveenko
 
@@ -18,11 +18,17 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<div class="admin-menu">
-    <ul>
-        <li><a href="{% url picket-admin-index %}">{% trans 'Dashboard' %}</a></li>
-        <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li>
-        <li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li>
-        <li><a href="{% url picket-admin-employees %}">{% trans 'Employees' %}</a></li>
-    </ul>
-</div>
+
+{% block picket-admin %}
+
+<p><a href="{% url picket-admin-employee-new %}">{% trans 'New Employee' %}</a></p>
+
+{% if employees|length %}
+<ul>
+{% for employee in employees %}
+<li><a href="{% url picket-admin-employee employee.pk %}">{{ employee }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock picket-admin %}
