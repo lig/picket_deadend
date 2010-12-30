@@ -84,6 +84,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'apps.picket.middleware.PicketMiddleware',
 )
 
 ROOT_URLCONF = 'urls'

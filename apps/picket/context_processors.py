@@ -27,22 +27,9 @@ from .forms import AuthForm
 
 def picket(request):
 
-    # set or get current project
-    if 'set_project' in request.GET:
-        try:
-            current_project = Project.objects.with_id(
-                request.GET['set_project'])
-            # current_project could be None after lookup
-            request.session['current_project'] = (current_project and
-                current_project.id)
-        except ValidationError:
-            current_project = None
-    else:
-        try:
-            current_project = Project.objects.with_id(
-                request.session.get('current_project'))
-        except ValidationError:
-            current_project = None
+    # get current project
+    current_project = Project.objects.with_id(
+        request.session.get('current_project'))
 
     # get projects
     projects = Project.objects()
