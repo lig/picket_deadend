@@ -21,7 +21,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picket %}
 
-<form action="" method="post" class="new_bug_form">
+<form action="" method="post" class="issue_form">
 
 <p>{% trans 'Summary' %}<br />
 {{ issue_form.subject }}</p>
@@ -29,7 +29,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <p>{% trans 'Description' %}<br />
 {{ issue_form.text }}</p>
 
-<p><span class="inline_inputs"><input type="submit" class="submit" /> {% if user.is_authenticated %}{{ new_bug_form.return_to_form }} {{ new_bug_form.return_to_form.label_tag }}{% endif %}</span></p>
+<p><span class="inline_inputs"><input type="submit" class="submit" /> {{ issue_form.return_to_form }} {% trans 'return to this form after adding issue' %}</span></p>
 
 </form>
 

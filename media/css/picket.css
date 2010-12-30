@@ -90,15 +90,15 @@ input.search {
 }
 */
 
-.new_bug_form p {
+.issue_form p {
   width: 600pt;
   margin: 40pt auto;
 }
-.new_bug_form input, .new_bug_form textarea {
+.issue_form input, .issue_form textarea {
   width: 100%;
   font-size: 16pt;
 }
-.new_bug_form input.submit {
+.issue_form input.submit {
   width: auto;
 }
 
