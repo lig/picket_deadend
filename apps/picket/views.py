@@ -72,8 +72,11 @@ def issue(request, issue_number):
 
 @render_to('picket/issues.html')
 def issues(request):
-
-    issues = Issue.objects(project=Project.objects.with_id(
-        request.session.get('current_project')))
+    
+    issues = Issue.objects()
+    
+    project = request.project
+    if project:
+        issues = issues.filter(project=project)
     
     return {'issues': issues}

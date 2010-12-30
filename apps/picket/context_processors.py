@@ -28,8 +28,7 @@ from .forms import AuthForm
 def picket(request):
 
     # get current project
-    current_project = Project.objects.with_id(
-        request.session.get('current_project'))
+    current_project = request.project
 
     # get projects
     projects = Project.objects()

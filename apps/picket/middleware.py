@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from mongoengine import ValidationError
+
 from documents import Project
 
 
@@ -26,8 +28,12 @@ class PicketMiddleware(object):
         
         # set project
         if 'set_project' in request.GET:
-            current_project = Project.objects.with_id(
-                request.GET['set_project'])
-            # current_project could be None after lookup
-            request.session['current_project'] = (current_project and
-                current_project.id)
+            request.session['current_project'] = request.GET['set_project']
+        
+        # attach project object to request
+        current_project_id = request.session.get('current_project')
+        # current_project_id could be None for all projects
+        current_project = (current_project_id and
+            Project.objects.with_id(current_project_id))
+        # current_project could be None after lookup
+        request.project = current_project
