@@ -18,20 +18,13 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib.auth import login
-from mongoengine.base import ValidationError
 
 from . import COPYING
-from .documents import Project
+from .documents import Project, Department
 from .forms import AuthForm
 
 
 def picket(request):
-
-    # get current project
-    current_project = request.project
-
-    # get projects
-    projects = Project.objects()
 
     # authentication
     if not request.user.is_authenticated():
@@ -43,6 +36,19 @@ def picket(request):
             auth_form = AuthForm()
     else:
         auth_form = None
+    
+    # get current project
+    current_project = request.project
 
-    return {'copying': COPYING, 'current_project': current_project,
-        'projects': projects, 'auth_form': auth_form}
+    # get projects
+    projects = Project.objects()
+    
+    # get headed departments
+    if request.user.is_authenticated():
+        my_departments = Department.objects(head=request.user)
+    else:
+        my_departments = None
+    
+    return {'copying': COPYING, 'auth_form': auth_form,
+        'current_project': current_project, 'projects': projects,
+        'my_departments': my_departments}
