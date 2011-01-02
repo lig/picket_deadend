@@ -18,12 +18,14 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from ..decorators import render_to
 from ..documents import Project, Department, Employee
-from ..forms import ProjectForm, DepartmentForm, EmployeeForm
+from ..forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
+    EmployeeChangeForm)
 
 from decorators import superuser_required
 
@@ -113,25 +115,39 @@ def employees(request):
 
 @superuser_required
 @render_to('picket/admin/employee.html')
-def employee(request, employee_id=None):
+def new_employee(request, employee_id=None):
     #@todo: employee from user
     
-    employee = employee_id and Employee.objects(id=employee_id).first()
-    
     if request.method == 'POST':
-        employee_form = EmployeeForm(request.POST, instance=employee)
+        employee_form = EmployeeCreationForm(request.POST)
         
         if employee_form.is_valid():
             employee = employee_form.save()
-            
-            if employee_id:
-                messages.success(request, _('Employee updated'))
-            else:
-                messages.success(request, _('Employee created'))
-            
+            messages.success(request, _('Employee created'))
             return redirect(employee.get_absolute_url())
         
     else:
-        employee_form = EmployeeForm(instance=employee)
+        employee_form = EmployeeCreationForm()
+    
+    return {'employee_form': employee_form}
+
+
+@superuser_required
+@render_to('picket/admin/employee.html')
+def employee(request, employee_id):
+    
+    employee = Employee.objects(id=employee_id).first()
+    if not employee: raise Http404
+    
+    if request.method == 'POST':
+        employee_form = EmployeeChangeForm(request.POST, instance=employee)
+        
+        if employee_form.is_valid():
+            employee = employee_form.save()
+            messages.success(request, _('Employee updated'))
+            return redirect(employee.get_absolute_url())
+        
+    else:
+        employee_form = EmployeeChangeForm(instance=employee)
     
     return {'employee': employee, 'employee_form': employee_form}

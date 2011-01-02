@@ -37,6 +37,6 @@ urlpatterns = patterns('%s.views' % __package__,
     
     # Employees
     (r'^employees/$', 'employees', {}, 'picket-admin-employees'),
-    (r'^employees/new/$', 'employee', {}, 'picket-admin-employee-new'),
+    (r'^employees/new/$', 'new_employee', {}, 'picket-admin-employee-new'),
     (r'^employees/(?P<employee_id>\w+)$', 'employee', {}, 'picket-admin-employee'),
 )
