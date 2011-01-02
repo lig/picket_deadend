@@ -1,4 +1,4 @@
-{% extends 'picket/base.html' %}{% load i18n %}
+{% load i18n %}
 {% comment %}
 Copyright 2010 Serge Matveenko
 
@@ -17,28 +17,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
-
-
-{% block picket %}
-
-{% if current_project %}
-
-<form action="" method="post" class="issue_form">
-
-<p>{% trans 'Summary' %}<br />
-{{ issue_form.subject }}</p>
-
-<p>{% trans 'Description' %}<br />
-{{ issue_form.text }}</p>
-
-<p><span class="inline_inputs"><input type="submit" class="submit" /> {{ issue_form.return_to_form }} {% trans 'return to this form after adding issue' %}</span></p>
-
+<form method="get" action="">
+    <select name="set_project" onchange="this.form.submit()">
+    <option value="">{% trans 'All projects' %}</option>
+      {% for project in projects %}
+      <option value="{{ project.id }}"{% if project == current_project %} selected="selected"{% endif %}>{{ project.name }}</option>
+      {% endfor %}
+    </select>
 </form>
-
-{% else %}
-
-<p>{% include 'picket/project_selector_inc.html' %}</p>
-
-{% endif %}
-
-{% endblock picket %}

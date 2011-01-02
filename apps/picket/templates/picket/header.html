@@ -34,16 +34,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <div>
       <div class="picket-menu">{% include 'picket/menu_inc.html' %}</div>
-      <div class="current-project">
-        <form method="get" action="">
-	        <select name="set_project" onchange="this.form.submit()">
-            <option value="">{% trans 'All projects' %}</option>
-	          {% for project in projects %}
-	          <option value="{{ project.id }}"{% if project == current_project %} selected="selected"{% endif %}>{{ project.name }}</option>
-	          {% endfor %}
-	        </select>
-        </form>
-      </div>
+      <div class="current-project">{% include 'picket/project_selector_inc.html' %}</div>
       <div class="clear">&nbsp;</div>
     </div>
   </div>
