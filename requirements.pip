@@ -3,6 +3,6 @@ distribute
 django-filter
 markdown2
 mongoengine
-pymongo<1.9
+pymongo
 wsgiref
 -e git://github.com/lig/django-mongoforms.git#egg=django_mongoforms
