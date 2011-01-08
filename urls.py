@@ -19,24 +19,27 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
 from django.conf.urls.defaults import *
+from django.contrib.auth.views import logout
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.contrib.auth.views import logout
+from django.views.static import serve
 
 
-urlpatterns = patterns('',
-    
-    ## main page:
+urlpatterns = patterns('',    
+    # main page:
     (r'^$', lambda req: HttpResponseRedirect(reverse('picket-index')), {},
         'index'),
     
-    ## picket itself
+    # picket itself
     (r'^picket/', include('apps.picket.urls')),
     
-    ## logout
+    # logout
     (r'^logout/$', logout, {'next_page': settings.LOGIN_URL}, 'auth-logout'),
-    
-    ## testing
-    #(r'^i/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.PROJECT_ROOT, 'i'),}),
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 )
+
+# static
+if settings.SERVE_STATIC:
+    urlpatterns += patterns('',
+        (r'^media/(?P<path>.*)$', serve,
+            {'document_root': settings.MEDIA_ROOT}),
+    )
