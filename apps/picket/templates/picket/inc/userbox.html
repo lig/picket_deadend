@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 {% if user.is_authenticated %}
-{# @todo: logout view #}
+<p><a href="{% url auth-logout %}" onclick="return confirm('{% trans 'Logout?' %}');">{% trans 'Logout' %}</a></p>
 {% else %}
 <form action="" method="post">
 {{ auth_form.errors }}
