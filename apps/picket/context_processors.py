@@ -44,11 +44,8 @@ def picket(request):
     projects = Project.objects()
     
     # get headed departments and managed projects
-    if request.user.is_authenticated():
-        my_departments = Department.objects(head=request.user)
-        my_projects = Project.objects(manager=request.user)
-    else:
-        my_departments, my_projects = None, None
+    my_departments = request.my_departments
+    my_projects = request.my_projects
     
     return {'copying': COPYING, 'auth_form': auth_form,
         'current_project': current_project, 'projects': projects,

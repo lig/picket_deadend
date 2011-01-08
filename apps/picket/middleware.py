@@ -37,3 +37,10 @@ class PicketMiddleware(object):
             Project.objects.with_id(current_project_id))
         # current_project could be None after lookup
         request.project = current_project
+
+        # get headed departments and managed projects
+        if request.user.is_authenticated():
+            request.my_departments = Department.objects(head=request.user)
+            request.my_projects = Project.objects(manager=request.user)
+        else:
+            request.my_departments, request.my_projects = None, None
