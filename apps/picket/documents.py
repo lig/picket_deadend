@@ -37,6 +37,10 @@ class Employee(User):
     @permalink
     def get_absolute_url(self):
         return 'picket-admin-employee', (self.pk,)
+    
+    @queryset_manager
+    def all(self, qs):
+        return User.objects
 
 
 class Project(Document):

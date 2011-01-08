@@ -21,6 +21,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
+from mongoengine.django.auth import User
 
 from ..decorators import render_to
 from ..documents import Project, Department, Employee
@@ -102,15 +103,14 @@ def department(request, department_id=None):
 @render_to('picket/admin/employees.html')
 def employees(request):
     
-    employees = Employee.objects()
+    employees = Employee.all()
     
     return {'employees': employees}
 
 
 @role_required('su')
 @render_to('picket/admin/employee.html')
-def new_employee(request, employee_id=None):
-    #@todo: employee from user
+def new_employee(request):
     
     if request.method == 'POST':
         employee_form = EmployeeCreationForm(request.POST)
@@ -130,15 +130,22 @@ def new_employee(request, employee_id=None):
 @render_to('picket/admin/employee.html')
 def employee(request, employee_id):
     
-    employee = Employee.objects(id=employee_id).first()
-    if not employee: raise Http404
+    employee = (Employee.objects(id=employee_id).first() or
+        User.objects(id=employee_id).first())
+    if not employee:
+        raise Http404
     
     if request.method == 'POST':
         employee_form = EmployeeChangeForm(request.POST, instance=employee)
         
         if employee_form.is_valid():
-            employee = employee_form.save()
+            new_employee = Employee(**employee_form.cleaned_data)
+            employee_data = employee.to_mongo()
+            employee_data.update(new_employee.to_mongo())
+            Employee.objects._collection.update({'_id': employee_data['_id']},
+                employee_data, safe=True)
             messages.success(request, _('Employee updated'))
+            employee = Employee.objects(id=employee_id).first()
             return redirect(employee.get_absolute_url())
         
     else:
