@@ -51,7 +51,7 @@ def new_issue(request):
             issue.project = current_project_id and Project.objects.with_id(
                 current_project_id)
             issue.save()
-            messages.success(request, _('Bug submitted'))
+            messages.success(request, _('Issue submitted'))
             return redirect(issue_form.cleaned_data['return_to_form'] and
                 'picket-issue-new' or issue.get_absolute_url())
     else:
