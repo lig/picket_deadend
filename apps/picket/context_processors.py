@@ -20,7 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib.auth import login
 
 from . import COPYING
-from .documents import Project, Department
+from .documents import Project
 from .forms import AuthForm
 
 

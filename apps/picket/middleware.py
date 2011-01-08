@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from mongoengine import ValidationError
 
-from documents import Project
+from documents import Project, Department
 
 
 class PicketMiddleware(object):
