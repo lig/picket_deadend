@@ -32,7 +32,16 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     <li>{% if department.grouper %}{{ department.grouper }}{% else %}{% trans 'Unemployed' %}{% endif %}
         <ul>
         {% for employee in department.list %}
-            <li><a href="{% url picket-admin-employee employee.pk %}">{{ employee }}</a></li>
+            <li>
+                <a href="{% url picket-admin-employee employee.pk %}">{{ employee }}</a>
+                <form style="display: inline;" class="inline_inputs" action="{# url picket-admin-employee-department #}">
+                    <select name="department">
+                    {% for department in departments %}
+                        <option value="{{ department.pk }}">{{ department }}</option>
+                    {% endfor %}
+                    </select>
+                </form>
+            </li>
         {% endfor %}
         </ul>
     </li>

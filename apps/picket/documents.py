@@ -30,7 +30,7 @@ class Employee(User):
     
     def __unicode__(self):
         if self.first_name or self.last_name:
-            return u' '.join((self.first_name, self.last_name,))
+            return u' '.join((self.first_name, self.last_name,)).strip()
         else:
             return self.username
     

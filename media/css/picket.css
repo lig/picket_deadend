@@ -6,7 +6,7 @@ body {
 	background-color: #ffffff; 
 	color: #000000; 
 }
-body, div, h1, ul, li {
+body, div, h1 {
 	padding: 0 0 0 0;
 	margin: 0 0 0 0;
 }
@@ -56,6 +56,10 @@ input.search {
 .picket-menu {
 	float: left;
 }
+.picket-menu ul, .picket-menu li {
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
 .picket-menu li {
 	display: inline;
 }
@@ -102,7 +106,7 @@ input.search {
   width: auto;
 }
 
-.inline_inputs input {
+.inline_inputs input, .inline_inputs select {
   display: inline;
   width: auto;
 }
