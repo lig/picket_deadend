@@ -30,4 +30,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% if my_projects %}
     <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li> |
 {% endif %}
+{% if user.is_superuser %}
+	<li><a href="{% url picket-admin-employees %}">{% trans 'Employees' %}</a></li> |
+{% endif %}
 </ul>

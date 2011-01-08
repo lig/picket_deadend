@@ -22,9 +22,6 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('%s.views' % __package__,
 
-    # Dashboard
-    (r'^$', 'index', {}, 'picket-admin-index'),
-
     # Projects
     (r'^projects/$', 'projects', {}, 'picket-admin-projects'),
     (r'^projects/new/$', 'project', {}, 'picket-admin-project-new'),

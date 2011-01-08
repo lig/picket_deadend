@@ -31,12 +31,6 @@ from decorators import superuser_required
 
 
 @superuser_required
-@render_to('picket/admin/index.html')
-def index(request):
-    return {}
-
-
-@superuser_required
 @render_to('picket/admin/projects.html')
 def projects(request):
     
