@@ -16,10 +16,10 @@ def role_required(role):
                     'head': bool(request.my_departments),
                 }.get(role, False)
             
-            if test:
+            if test():
                 return func(request, *args, **kwargs)
             else:
-                error(_('Permission denied'))
+                error(request, _('Permission denied'))
                 return redirect(settings.LOGIN_URL)
         
         return wrapper
