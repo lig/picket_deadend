@@ -27,10 +27,10 @@ from ..documents import Project, Department, Employee
 from ..forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
     EmployeeChangeForm)
 
-from decorators import superuser_required
+from decorators import role_required
 
 
-@superuser_required
+@role_required('manager')
 @render_to('picket/admin/projects.html')
 def projects(request):
     
@@ -39,7 +39,7 @@ def projects(request):
     return {'projects': projects}
 
 
-@superuser_required
+@role_required('manager')
 @render_to('picket/admin/project.html')
 def project(request, project_id=None):
     
@@ -64,7 +64,7 @@ def project(request, project_id=None):
     return {'project': project, 'project_form': project_form}
 
 
-@superuser_required
+@role_required('head')
 @render_to('picket/admin/departments.html')
 def departments(request):
     
@@ -73,7 +73,7 @@ def departments(request):
     return {'departments': departments}
 
 
-@superuser_required
+@role_required('head')
 @render_to('picket/admin/department.html')
 def department(request, department_id=None):
     
@@ -98,7 +98,7 @@ def department(request, department_id=None):
     return {'department': department, 'department_form': department_form}
 
 
-@superuser_required
+@role_required('su')
 @render_to('picket/admin/employees.html')
 def employees(request):
     
@@ -107,7 +107,7 @@ def employees(request):
     return {'employees': employees}
 
 
-@superuser_required
+@role_required('su')
 @render_to('picket/admin/employee.html')
 def new_employee(request, employee_id=None):
     #@todo: employee from user
@@ -126,7 +126,7 @@ def new_employee(request, employee_id=None):
     return {'employee_form': employee_form}
 
 
-@superuser_required
+@role_required('su')
 @render_to('picket/admin/employee.html')
 def employee(request, employee_id):
     
