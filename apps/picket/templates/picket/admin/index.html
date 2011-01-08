@@ -21,6 +21,10 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block picket-admin %}
 
-{#<p><a href="{% url picket-admin-project-new %}">{% trans 'New Project' %}</a></p>#}
+<ul>
+    <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li>
+    <li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li>
+    <li><a href="{% url picket-admin-employees %}">{% trans 'Employees' %}</a></li>
+</ul>
 
 {% endblock picket-admin %}

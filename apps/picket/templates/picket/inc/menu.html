@@ -18,28 +18,16 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-<ul>
+<ul>| 
     <li><a href="{% url picket-issue-new %}">{% trans 'New issue' %}</a></li> |
     <li><a href="{% url picket-index %}">{% trans 'Home' %}</a></li> |
     <li><a href="% url picket-workspace %">{% trans 'Workspace' %}</a></li> |
     <li><a href="{% url picket-issues %}">{% trans 'Issue list' %}</a></li> |
-    <li><a href="% url picket-help %">{% trans 'Help' %}</a></li>
-</ul>
-
+    <li><a href="% url picket-help %">{% trans 'Help' %}</a></li> |
 {% if my_departments %}
-<ul>
-    <li>{% trans 'Departments' %}:</li>
-    {% for department in my_departments %}
-    <li><a href="{{ department.get_absolute_url }}">{{ department }}</a></li>
-    {% endfor %}
-</ul>
+    <li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li> |
 {% endif %}
-
 {% if my_projects %}
-<ul>
-    <li>{% trans 'Projects' %}:</li>
-    {% for project in my_projects %}
-    <li><a href="{{ project.get_absolute_url }}">{{ project }}</a></li>
-    {% endfor %}
-</ul>
+    <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li> |
 {% endif %}
+</ul>

@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
 {% if user.is_authenticated %}
-{% if user.is_superuser %}<p><a href="{% url picket-admin-index %}">{% trans 'Admin' %}</a></p>{% endif %}
+{% if user.is_superuser %}<p><a href="{% url picket-admin-index %}">{% trans 'Admin Dashboard' %}</a></p>{% endif %}
 {% else %}
 <form action="" method="post">
 {{ auth_form.errors }}
