@@ -28,6 +28,8 @@ from sequences import get_next_pk
 
 class Employee(User):
     
+    department = ReferenceField('Department')
+    
     def __unicode__(self):
         if self.first_name or self.last_name:
             return u' '.join((self.first_name, self.last_name,)).strip()
@@ -45,7 +47,7 @@ class Employee(User):
 
 class Project(Document):
     
-    name = StringField(max_length=255)
+    name = StringField(max_length=255, required=True, unique=True)
     manager = ReferenceField(User)
     
     def __unicode__(self):
@@ -58,7 +60,7 @@ class Project(Document):
 
 class Department(Document):
     
-    name = StringField(max_length=255)
+    name = StringField(max_length=255, required=True, unique=True)
     head = ReferenceField(User)
     
     def __unicode__(self):
@@ -71,14 +73,14 @@ class Department(Document):
 
 class Group(Document):
     
-    department = ReferenceField(Department)
-    project = ReferenceField(Project)
-    employees = ListField(ReferenceField(User))    
+    department = ReferenceField(Department, required=True)
+    project = ReferenceField(Project, required=True)
+    employees = ListField(ReferenceField(User))
 
 
 class Stage(Document):
     
-    name = StringField()
+    name = StringField(required=True)
     department = ReferenceField(Department)
     order = IntField()
     first = GenericReferenceField() # Status, Stage
@@ -86,14 +88,14 @@ class Stage(Document):
 
 class Milestone(EmbeddedDocument):
     
-    stage = ReferenceField(Stage)
-    deadline = DateTimeField()
+    stage = ReferenceField(Stage, required=True)
+    deadline = DateTimeField(required=True)
 
 
 class Release(Document):
     
-    name = StringField()
-    project = ReferenceField(Project)
+    name = StringField(required=True)
+    project = ReferenceField(Project, required=True)
     deadline = DateTimeField()
     current_stage = ReferenceField(Stage)
     milestones = SortedListField(EmbeddedDocumentField(Milestone),
@@ -102,17 +104,17 @@ class Release(Document):
 
 class Status(Document):
     
-    name = StringField()
-    department = ReferenceField(Department)
+    name = StringField(required=True)
+    department = ReferenceField(Department, required=True)
     handler = GenericReferenceField() # Employee, Group, Department
     next = ListField(GenericReferenceField()) # Status, Stage
 
 
 class Comment(EmbeddedDocument):
     
-    submitted = DateTimeField()
+    submitted = DateTimeField(required=True)
     author = ReferenceField(User)
-    text = StringField()
+    text = StringField(required=True)
 
     
 class Issue(Document):
@@ -122,11 +124,11 @@ class Issue(Document):
     }
     
     number = IntField(primary_key=True)
-    subject = StringField(max_length=1024)
-    submitted = DateTimeField()
+    subject = StringField(max_length=1024, required=True)
+    submitted = DateTimeField(required=True)
     author = ReferenceField(User)
-    text = StringField()
-    project = ReferenceField(Project)
+    text = StringField(required=True)
+    project = ReferenceField(Project, required=True)
     status = ReferenceField(Status)
     handler = GenericReferenceField() # Employee, Group, Department
     comments = SortedListField(EmbeddedDocumentField(Comment),
