@@ -34,7 +34,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         {% for employee in department.list %}
             <li>
                 <a href="{% url picket-admin-employee employee.pk %}">{{ employee }}</a>
-                <form style="display: inline;" class="inline_inputs" action="{# url picket-admin-employee-department #}">
+                <form class="inline_form" action="{# url picket-admin-employee-department #}">
                     <select name="department">
                     {% for department in departments %}
                         <option value="{{ department.pk }}">{{ department }}</option>

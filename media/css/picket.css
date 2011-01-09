@@ -110,3 +110,6 @@ input.search {
   display: inline;
   width: auto;
 }
+.inline_form {
+	display: inline;
+}
