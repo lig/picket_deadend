@@ -25,10 +25,10 @@ from mongoengine.django.auth import User
 
 from ..decorators import render_to
 from ..documents import Project, Department, Employee
-from ..forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
-    EmployeeChangeForm)
 
 from decorators import role_required
+from forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
+    EmployeeChangeForm)
 
 
 @role_required('manager')
@@ -104,8 +104,9 @@ def department(request, department_id=None):
 def employees(request):
     
     employees = Employee.all()
+    departments = Department.objects()
     
-    return {'employees': employees}
+    return {'employees': employees, 'departments': departments}
 
 
 @role_required('su')
@@ -152,3 +153,4 @@ def employee(request, employee_id):
         employee_form = EmployeeChangeForm(instance=employee)
     
     return {'employee': employee, 'employee_form': employee_form}
+    
