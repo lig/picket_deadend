@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib import messages
-from django.http import Http404
+from django.contrib.messages import success, error
+from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from mongoengine.django.auth import User
@@ -53,9 +53,9 @@ def project(request, project_id=None):
             project = project_form.save()
             
             if project_id:
-                messages.success(request, _('Project updated'))
+                success(request, _('Project updated'))
             else:
-                messages.success(request, _('Project created'))
+                success(request, _('Project created'))
             
             return redirect(project.get_absolute_url())
         
@@ -87,9 +87,9 @@ def department(request, department_id=None):
             department = department_form.save()
             
             if department_id:
-                messages.success(request, _('Department updated'))
+                success(request, _('Department updated'))
             else:
-                messages.success(request, _('Department created'))
+                success(request, _('Department created'))
             
             return redirect(department.get_absolute_url())
         
@@ -103,8 +103,8 @@ def department(request, department_id=None):
 @render_to('picket/admin/employees.html')
 def employees(request):
     
-    employees = Employee.all()
-    departments = Department.objects()
+    employees = list(Employee.all()) # list to avoid circular dereference
+    departments = Department.objects
     
     return {'employees': employees, 'departments': departments}
 
@@ -118,7 +118,7 @@ def new_employee(request):
         
         if employee_form.is_valid():
             employee = employee_form.save()
-            messages.success(request, _('Employee created'))
+            success(request, _('Employee created'))
             return redirect(employee.get_absolute_url())
         
     else:
@@ -145,7 +145,7 @@ def employee(request, employee_id):
             employee_data.update(new_employee.to_mongo())
             Employee.objects._collection.update({'_id': employee_data['_id']},
                 employee_data, safe=True)
-            messages.success(request, _('Employee updated'))
+            success(request, _('Employee updated'))
             employee = Employee.objects(id=employee_id).first()
             return redirect(employee.get_absolute_url())
         
@@ -153,4 +153,25 @@ def employee(request, employee_id):
         employee_form = EmployeeChangeForm(instance=employee)
     
     return {'employee': employee, 'employee_form': employee_form}
+
+
+@role_required('su')
+def employee_department(request, employee_id):
     
+    employee = Employee.objects(id=employee_id).first()
+    if not employee: raise Http404
+    
+    if request.method == 'POST' and 'department' in request.POST:
+        department_id = request.POST['department']
+        
+        if department_id:
+            department = Department.objects(id=department_id).first()
+        else:
+            department = None
+        
+        employee.department = department
+        employee.save()
+        success(request, _('Department for employee changed'))
+        return redirect('picket-admin-employees')
+    else:
+        return HttpResponseBadRequest()
