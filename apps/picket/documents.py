@@ -43,6 +43,13 @@ class Employee(User):
     @queryset_manager
     def all(self, qs):
         return User.objects
+    
+    @classmethod
+    def from_user(cls, user, commit=True):
+        employee = Employee(pk=user.pk, **user.to_mongo())
+        if commit:
+            employee.save()
+        return employee
 
 
 class Project(Document):

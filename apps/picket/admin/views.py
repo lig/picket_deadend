@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from django.contrib.messages import success, error
+from django.contrib.messages import success
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
@@ -103,7 +103,7 @@ def department(request, department_id=None):
 @render_to('picket/admin/employees.html')
 def employees(request):
     
-    employees = list(Employee.all()) # list to avoid circular dereference
+    employees = list(Employee.all().order_by('department')) # list to avoid circular dereference
     departments = Department.objects
     
     return {'employees': employees, 'departments': departments}
@@ -131,22 +131,20 @@ def new_employee(request):
 @render_to('picket/admin/employee.html')
 def employee(request, employee_id):
     
-    employee = (Employee.objects(id=employee_id).first() or
-        User.objects(id=employee_id).first())
+    employee = Employee.objects(id=employee_id).first()
     if not employee:
-        raise Http404
+        user = User.objects(id=employee_id).first()
+        if user:
+            employee = Employee.from_user(user)
+        else:
+            raise Http404
     
     if request.method == 'POST':
         employee_form = EmployeeChangeForm(request.POST, instance=employee)
         
         if employee_form.is_valid():
-            new_employee = Employee(**employee_form.cleaned_data)
-            employee_data = employee.to_mongo()
-            employee_data.update(new_employee.to_mongo())
-            Employee.objects._collection.update({'_id': employee_data['_id']},
-                employee_data, safe=True)
+            employee = employee_form.save()
             success(request, _('Employee updated'))
-            employee = Employee.objects(id=employee_id).first()
             return redirect(employee.get_absolute_url())
         
     else:
@@ -158,8 +156,14 @@ def employee(request, employee_id):
 @role_required('su')
 def employee_department(request, employee_id):
     
+    # @todo: respect DRY with employee method
     employee = Employee.objects(id=employee_id).first()
-    if not employee: raise Http404
+    if not employee:
+        user = User.objects(id=employee_id).first()
+        if user:
+            employee = Employee.from_user(user)
+        else:
+            raise Http404
     
     if request.method == 'POST' and 'department' in request.POST:
         department_id = request.POST['department']
