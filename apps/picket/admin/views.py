@@ -99,6 +99,7 @@ def department(request, department_id=None):
     return {'department': department, 'department_form': department_form}
 
 
+#noinspection PyArgumentList,PyArgumentList
 @role_required('su')
 @render_to('picket/admin/employees.html')
 def employees(request):

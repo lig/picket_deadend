@@ -20,6 +20,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from mongoforms.forms import MongoForm
+from mongoforms.fields import ReferenceField
 
 from ..documents import Project, Department, Employee
 
@@ -32,7 +33,14 @@ class ProjectForm(MongoForm):
 
 
 class DepartmentForm(MongoForm):
-    
+
+    def __init__(self, *args, **kwargs):
+        super(DepartmentForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            delattr(self.fields['head'], '_choices')
+            self.fields['head'].queryset = Employee.objects(
+                    department=kwargs['instance'])
+
     class Meta:
         document = Department
         fields = ('name', 'head',)
