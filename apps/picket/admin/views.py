@@ -105,9 +105,6 @@ def employees(request):
 
     # list to avoid circular dereference
     employees = list(Employee.all().order_by('department'))
-    for employee in employees:
-        employee.is_head = (employee.department and
-            employee == employee.department.head)
 
     departments = Department.objects
     
