@@ -113,3 +113,7 @@ input.search {
 .inline_form {
 	display: inline;
 }
+
+.department_head {
+    background-color: #ffd700;
+}

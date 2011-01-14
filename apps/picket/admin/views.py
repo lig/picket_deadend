@@ -102,8 +102,13 @@ def department(request, department_id=None):
 @role_required('su')
 @render_to('picket/admin/employees.html')
 def employees(request):
-    
-    employees = list(Employee.all().order_by('department')) # list to avoid circular dereference
+
+    # list to avoid circular dereference
+    employees = list(Employee.all().order_by('department'))
+    for employee in employees:
+        employee.is_head = (employee.department and
+            employee == employee.department.head)
+
     departments = Department.objects
     
     return {'employees': employees, 'departments': departments}

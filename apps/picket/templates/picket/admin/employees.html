@@ -33,7 +33,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
         <ul>
         {% for employee in department.list %}
             <li>
-                <a href="{% url picket-admin-employee employee.pk %}">{{ employee }}</a>
+                <a href="{% url picket-admin-employee employee.pk %}"{% if employee.is_head %} class="department_head"{% endif %}>{{ employee }}</a>
                 <form class="inline_form" method="post" action="{% url picket-admin-employee-department employee.pk %}">
                     <select name="department" onchange="this.form.submit();">
                         <option value="">{% trans 'Unemployed' %}</option>
