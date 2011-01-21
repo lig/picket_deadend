@@ -36,7 +36,7 @@ class DepartmentForm(MongoForm):
 
     def __init__(self, *args, **kwargs):
         super(DepartmentForm, self).__init__(*args, **kwargs)
-        if not self.is_bound and 'instance' in kwargs:
+        if 'instance' in kwargs:
             delattr(self.fields['head'], '_choices')
             self.fields['head'].queryset = Employee.objects(
                     department=kwargs['instance'])
