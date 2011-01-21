@@ -31,7 +31,7 @@ from forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
     EmployeeChangeForm)
 
 
-@role_required('manager')
+@role_required('su')
 @render_to('picket/admin/projects.html')
 def projects(request):
     
@@ -65,7 +65,7 @@ def project(request, project_id=None):
     return {'project': project, 'project_form': project_form}
 
 
-@role_required('head')
+@role_required('su')
 @render_to('picket/admin/departments.html')
 def departments(request):
     
