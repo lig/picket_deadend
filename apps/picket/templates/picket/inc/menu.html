@@ -24,13 +24,15 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
     <li><a href="% url picket-workspace %">{% trans 'Workspace' %}</a></li> |
     <li><a href="{% url picket-issues %}">{% trans 'Issue list' %}</a></li> |
     <li><a href="% url picket-help %">{% trans 'Help' %}</a></li> |
-{% if my_departments %}
-    <li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li> |
-{% endif %}
-{% if my_projects %}
-    <li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li> |
-{% endif %}
+{% for department in my_departments %}
+    <li><a href="{% url picket-admin-department department.pk %}">{{ department.name }}</a></li> |
+{% endfor %}
+{% for project in my_projects %}
+    <li><a href="{% url picket-admin-project project.pk %}">{{ project.name }}</a></li> |
+{% endfor %}
 {% if user.is_superuser %}
+	<li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li> |
+	<li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li> |
 	<li><a href="{% url picket-admin-employees %}">{% trans 'Employees' %}</a></li> |
 {% endif %}
 </ul>
