@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from django.conf import settings
 from django.contrib.messages import success
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
@@ -51,12 +52,8 @@ def project(request, project_id=None):
         
         if project_form.is_valid():
             project = project_form.save()
-            
-            if project_id:
-                success(request, _('Project updated'))
-            else:
-                success(request, _('Project created'))
-            
+            success(request, project_id and _('Project updated') or
+                _('Project created'))
             return redirect(project.get_absolute_url())
         
     else:
@@ -85,12 +82,8 @@ def department(request, department_id=None):
         
         if department_form.is_valid():
             department = department_form.save()
-            
-            if department_id:
-                success(request, _('Department updated'))
-            else:
-                success(request, _('Department created'))
-            
+            success(request, department_id and _('Department updated') or
+                _('Department created'))
             return redirect(department.get_absolute_url())
         
     else:
@@ -99,7 +92,6 @@ def department(request, department_id=None):
     return {'department': department, 'department_form': department_form}
 
 
-#noinspection PyArgumentList,PyArgumentList
 @role_required('su')
 @render_to('picket/admin/employees.html')
 def employees(request):

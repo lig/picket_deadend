@@ -27,6 +27,11 @@ from ..documents import Project, Department, Employee
 
 class ProjectForm(MongoForm):
     
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs and not kwargs['instance']:
+            del kwargs['instance']
+        super(ProjectForm, self).__init__(*args, **kwargs)
+
     class Meta:
         document = Project
         fields = ('name', 'manager',)
@@ -35,11 +40,9 @@ class ProjectForm(MongoForm):
 class DepartmentForm(MongoForm):
 
     def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs and not kwargs['instance']:
+            del kwargs['instance']
         super(DepartmentForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
-            delattr(self.fields['head'], '_choices')
-            self.fields['head'].queryset = Employee.objects(
-                    department=kwargs['instance'])
 
     class Meta:
         document = Department
