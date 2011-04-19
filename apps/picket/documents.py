@@ -70,6 +70,11 @@ class Department(Document):
     name = StringField(max_length=255, required=True, unique=True)
     head = ReferenceField(User)
     
+    def save(self, *args, **kwargs):
+        super(Department, self).save(*args, **kwargs)
+        self.head.department = self
+        self.head.save()
+    
     def __unicode__(self):
         return self.name
     
