@@ -18,10 +18,11 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from django.conf import settings
-from django.contrib.messages import success
+from django.contrib.messages import success, error
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic import ListView
 from mongoengine.django.auth import User
 
 from ..decorators import render_to
@@ -32,13 +33,37 @@ from forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
     EmployeeChangeForm)
 
 
-@role_required('su')
-@render_to('picket/admin/projects.html')
-def projects(request):
+class RoleRequiredMixin(object):
     
-    projects = Project.objects()
+    role_required = ''
     
-    return {'projects': projects}
+    def dispatch(self, request, *args, **kwargs):
+        
+        def test():
+            return bool(request.user.is_superuser or {
+                'manager': request.my_projects and
+                    kwargs.get('project_id') and
+                    Project.objects.filter(pk=kwargs['project_id'] #@UndefinedVariable
+                        ).first() in request.my_projects, #@UndefinedVariable
+                'head': request.my_departments and
+                    kwargs.get('department_id') and
+                    Department.objects.filter(pk=kwargs['department_id'] #@UndefinedVariable
+                        ).first() in request.my_departments, #@UndefinedVariable
+            }.get(self.role_required))
+        
+        if test():
+            return super(RoleRequiredMixin, self).dispatch(request, *args, **kwargs)
+        else:
+            error(request, _('Permission denied'))
+            return redirect(settings.LOGIN_URL)
+
+    
+class ProjectsView(RoleRequiredMixin, ListView):
+    
+    role_required = 'su'
+    queryset = Project.objects
+    template_name = 'picket/admin/projects.html'
+    context_object_name = 'projects'
 
 
 @role_required('manager')
