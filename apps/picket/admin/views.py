@@ -1,5 +1,5 @@
 """
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -17,12 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from copy import copy
+
 from django.conf import settings
 from django.contrib.messages import success, error
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic.base import TemplateResponseMixin
 from mongoengine.django.auth import User
 
 from ..decorators import render_to
@@ -66,25 +69,20 @@ class ProjectsView(RoleRequiredMixin, ListView):
     context_object_name = 'projects'
 
 
-@role_required('manager')
-@render_to('picket/admin/project.html')
-def project(request, project_id=None):
+class ProjectView(RoleRequiredMixin, UpdateView):
     
-    project = project_id and Project.objects(id=project_id).first()
+    role_required = 'manager'
+    queryset = Project.objects
+    template_name = 'picket/admin/project.html'
+    context_object_name = 'project'
+    form_class = ProjectForm
     
-    if request.method == 'POST':
-        project_form = ProjectForm(request.POST, instance=project)
-        
-        if project_form.is_valid():
-            project = project_form.save()
-            success(request, project_id and _('Project updated') or
-                _('Project created'))
-            return redirect(project.get_absolute_url())
-        
-    else:
-        project_form = ProjectForm(instance=project)
+    def get_object(self):
+        project_id = self.kwargs.get('project_id', None)
+        return project_id and Project.objects(id=project_id).first()
     
-    return {'project': project, 'project_form': project_form}
+    def get_template_names(self):
+        return TemplateResponseMixin.get_template_names(self)
 
 
 @role_required('su')
