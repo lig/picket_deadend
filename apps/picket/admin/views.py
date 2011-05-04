@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from copy import copy
-
 from django.conf import settings
 from django.contrib.messages import success, error
 from django.http import Http404, HttpResponseBadRequest
