@@ -24,7 +24,7 @@ from django.contrib.messages import success, error
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, UpdateView, TemplateView
 from django.views.generic.base import TemplateResponseMixin
 from mongoengine.django.auth import User
 
@@ -34,6 +34,10 @@ from ..documents import Project, Department, Employee
 from decorators import role_required
 from forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
     EmployeeChangeForm)
+
+
+__all__ = ('ProjectsView', 'ProjectView', 'DepartmentsView', 'DepartmentView',
+    'EmployeesView')
 
 
 class RoleRequiredMixin(object):
@@ -109,16 +113,16 @@ class DepartmentView(RoleRequiredMixin, UpdateView):
         return TemplateResponseMixin.get_template_names(self)
 
 
-@role_required('su')
-@render_to('picket/admin/employees.html')
-def employees(request):
-
-    # list to avoid circular dereference
-    employees = list(Employee.all().order_by('department'))
-
-    departments = Department.objects
+class EmployeesView(RoleRequiredMixin, TemplateView):
     
-    return {'employees': employees, 'departments': departments}
+    role_required = 'su'
+    template_name = 'picket/admin/employees.html'
+    
+    def get_context_data(self):
+        # list to avoid circular dereference
+        employees = list(Employee.all().order_by('department'))
+        departments = Department.objects
+        return {'employees': employees, 'departments': departments}
 
 
 @role_required('su')
