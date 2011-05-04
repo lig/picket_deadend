@@ -19,7 +19,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults import *
 
-from views import ProjectsView, ProjectView
+from views import ProjectsView, ProjectView, DepartmentsView, DepartmentView
 
 
 urlpatterns = patterns('%s.views' % __package__,
@@ -32,9 +32,11 @@ urlpatterns = patterns('%s.views' % __package__,
         'picket-admin-project'),
     
     # Departments
-    (r'^departments/$', 'departments', {}, 'picket-admin-departments'),
-    (r'^departments/new/$', 'department', {}, 'picket-admin-department-new'),
-    (r'^departments/(?P<department_id>\w+)/$', 'department', {},
+    (r'^departments/$', DepartmentsView.as_view(), {},
+        'picket-admin-departments'),
+    (r'^departments/new/$', DepartmentView.as_view(), {},
+        'picket-admin-department-new'),
+    (r'^departments/(?P<department_id>\w+)/$', DepartmentView.as_view(), {},
         'picket-admin-department'),
     
     # Employees

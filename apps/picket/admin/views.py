@@ -85,34 +85,28 @@ class ProjectView(RoleRequiredMixin, UpdateView):
         return TemplateResponseMixin.get_template_names(self)
 
 
-@role_required('su')
-@render_to('picket/admin/departments.html')
-def departments(request):
+class DepartmentsView(RoleRequiredMixin, ListView):
     
-    departments = Department.objects()
-    
-    return {'departments': departments}
+    role_required = 'su'
+    queryset = Department.objects
+    template_name = 'picket/admin/departments.html'
+    context_object_name = 'departments'
 
 
-@role_required('head')
-@render_to('picket/admin/department.html')
-def department(request, department_id=None):
+class DepartmentView(RoleRequiredMixin, UpdateView):
     
-    department = department_id and Department.objects(id=department_id).first()
+    role_required = 'head'
+    queryset = Department.objects
+    template_name = 'picket/admin/department.html'
+    context_object_name = 'department'
+    form_class = DepartmentForm
     
-    if request.method == 'POST':
-        department_form = DepartmentForm(request.POST, instance=department)
-        
-        if department_form.is_valid():
-            department = department_form.save()
-            success(request, department_id and _('Department updated') or
-                _('Department created'))
-            return redirect(department.get_absolute_url())
-        
-    else:
-        department_form = DepartmentForm(instance=department)
+    def get_object(self):
+        department_id = self.kwargs.get('department_id', None)
+        return department_id and Department.objects(id=department_id).first()
     
-    return {'department': department, 'department_form': department_form}
+    def get_template_names(self):
+        return TemplateResponseMixin.get_template_names(self)
 
 
 @role_required('su')
