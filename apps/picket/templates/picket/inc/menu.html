@@ -1,6 +1,6 @@
 {% load i18n %}
 {% comment %}
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -33,6 +33,7 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 {% if user.is_superuser %}
 	<li><a href="{% url picket-admin-projects %}">{% trans 'Projects' %}</a></li> |
 	<li><a href="{% url picket-admin-departments %}">{% trans 'Departments' %}</a></li> |
+	<li><a href="{% url picket-admin-stages %}">{% trans 'Stages' %}</a></li> |
 	<li><a href="{% url picket-admin-employees %}">{% trans 'Employees' %}</a></li> |
 {% endif %}
 </ul>

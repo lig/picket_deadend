@@ -1,5 +1,5 @@
 """
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -20,9 +20,8 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from mongoforms.forms import MongoForm
-from mongoforms.fields import ReferenceField
 
-from ..documents import Project, Department, Employee
+from ..documents import Project, Department, Employee, Stage
 
 
 class ProjectForm(MongoForm):
@@ -47,6 +46,18 @@ class DepartmentForm(MongoForm):
     class Meta:
         document = Department
         fields = ('name', 'head',)
+
+
+class StageForm(MongoForm):
+
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs and not kwargs['instance']:
+            del kwargs['instance']
+        super(StageForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        document = Stage
+        fields = ('name', 'department', 'order',)
 
 
 class EmployeeCreationForm(MongoForm):

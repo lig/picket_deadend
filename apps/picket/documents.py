@@ -1,5 +1,5 @@
 """
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -92,10 +92,21 @@ class Group(Document):
 
 class Stage(Document):
     
-    name = StringField(required=True)
+    meta = {
+        'ordering': ('order',),
+    }
+    
+    name = StringField(max_length=255, required=True)
     department = ReferenceField(Department)
     order = IntField()
     first = GenericReferenceField() # Status, Stage
+    
+    def __unicode__(self):
+        return self.name
+    
+    @permalink
+    def get_absolute_url(self):
+        return 'picket-admin-stage', (self.id,)
 
 
 class Milestone(EmbeddedDocument):

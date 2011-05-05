@@ -27,15 +27,15 @@ from django.views.generic.base import TemplateResponseMixin
 from mongoengine.django.auth import User
 
 from ..decorators import render_to
-from ..documents import Project, Department, Employee
+from ..documents import Project, Department, Employee, Stage
 
 from decorators import role_required
 from forms import (ProjectForm, DepartmentForm, EmployeeCreationForm,
-    EmployeeChangeForm)
+    EmployeeChangeForm, StageForm)
 
 
 __all__ = ('ProjectsView', 'ProjectView', 'DepartmentsView', 'DepartmentView',
-    'EmployeesView')
+    'StagesView', 'StageView', 'EmployeesView')
 
 
 class RoleRequiredMixin(object):
@@ -106,6 +106,30 @@ class DepartmentView(RoleRequiredMixin, UpdateView):
     def get_object(self):
         department_id = self.kwargs.get('department_id', None)
         return department_id and Department.objects(id=department_id).first()
+    
+    def get_template_names(self):
+        return TemplateResponseMixin.get_template_names(self)
+
+
+class StagesView(RoleRequiredMixin, ListView):
+    
+    role_required = 'su'
+    queryset = Stage.objects
+    template_name = 'picket/admin/stages.html'
+    context_object_name = 'stages'
+
+
+class StageView(RoleRequiredMixin, UpdateView):
+    
+    role_required = 'su'
+    queryset = Stage.objects
+    template_name = 'picket/admin/stage.html'
+    context_object_name = 'department'
+    form_class = StageForm
+    
+    def get_object(self):
+        stage_id = self.kwargs.get('stage_id', None)
+        return stage_id and Stage.objects(id=stage_id).first()
     
     def get_template_names(self):
         return TemplateResponseMixin.get_template_names(self)

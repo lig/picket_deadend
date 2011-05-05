@@ -1,5 +1,5 @@
 """
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -38,6 +38,14 @@ urlpatterns = patterns('%s.views' % __package__,
         'picket-admin-department-new'),
     (r'^departments/(?P<department_id>\w+)/$', DepartmentView.as_view(), {},
         'picket-admin-department'),
+    
+    # Stages
+    (r'^stages/$', StagesView.as_view(), {},
+        'picket-admin-stages'),
+    (r'^stages/new/$', StageView.as_view(), {},
+        'picket-admin-stage-new'),
+    (r'^stages/(?P<stage_id>\w+)/$', StageView.as_view(), {},
+        'picket-admin-stage'),
     
     # Employees
     (r'^employees/$', EmployeesView.as_view(), {}, 'picket-admin-employees'),
