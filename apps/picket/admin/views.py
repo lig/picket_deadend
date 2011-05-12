@@ -105,10 +105,17 @@ class DepartmentView(RoleRequiredMixin, UpdateView):
     
     def get_object(self):
         department_id = self.kwargs.get('department_id', None)
-        return department_id and Department.objects(id=department_id).first()
+        self.department = (department_id and
+            Department.objects(id=department_id).first())
+        return self.department
     
     def get_template_names(self):
         return TemplateResponseMixin.get_template_names(self)
+    
+    def get_context_data(self, *args, **kwargs):
+        kwargs.update(
+            {'assigned_stages': Stage.objects(department=self.department)})
+        return super(DepartmentView, self).get_context_data(*args, **kwargs)
 
 
 class StagesView(RoleRequiredMixin, ListView):

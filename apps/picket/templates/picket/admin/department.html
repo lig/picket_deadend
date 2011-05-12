@@ -1,6 +1,6 @@
 {% extends 'picket/admin/base.html' %}{% load i18n %}
 {% comment %}
-Copyright 2010 Serge Matveenko
+Copyright 2010-2011 Serge Matveenko
 
 This file is part of Picket.
 
@@ -26,5 +26,16 @@ along with Picket.  If not, see <http://www.gnu.org/licenses/>.
 <p>{% trans 'Department head' %}: {{ form.head }}</p>
 <p><input type="submit" /></p>
 </form>
+
+<div class="endline">&nbsp;</div>
+
+{% if assigned_stages|length %}
+<p>{% trans 'Responsible for stages:' %}</p>
+<ul>
+{% for stage in assigned_stages %}
+<li>{{ stage }}</li>
+{% endfor %}
+</ul>
+{% endif %}
 
 {% endblock picket-admin %}
