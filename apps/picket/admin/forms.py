@@ -24,7 +24,15 @@ from mongoforms.forms import MongoForm
 from ..documents import Project, Department, Employee, Stage
 
 
-class ProjectForm(MongoForm):
+class PatchedMongoForm(MongoForm):
+    
+    def __init__(self, *args, **kwargs):
+        if 'files' in kwargs:
+            del kwargs['files']
+        return super(PatchedMongoForm, self).__init__(*args, **kwargs)
+
+
+class ProjectForm(PatchedMongoForm):
     
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs and not kwargs['instance']:
@@ -36,7 +44,7 @@ class ProjectForm(MongoForm):
         fields = ('name', 'manager',)
 
 
-class DepartmentForm(MongoForm):
+class DepartmentForm(PatchedMongoForm):
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs and not kwargs['instance']:
@@ -48,7 +56,7 @@ class DepartmentForm(MongoForm):
         fields = ('name', 'head',)
 
 
-class StageForm(MongoForm):
+class StageForm(PatchedMongoForm):
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs and not kwargs['instance']:
@@ -60,7 +68,7 @@ class StageForm(MongoForm):
         fields = ('name', 'department', 'order',)
 
 
-class EmployeeCreationForm(MongoForm):
+class EmployeeCreationForm(PatchedMongoForm):
     """
     A form that creates an emloyee, from the given username and password.
     """
@@ -102,7 +110,7 @@ class EmployeeCreationForm(MongoForm):
         return employee
 
 
-class EmployeeChangeForm(MongoForm):
+class EmployeeChangeForm(PatchedMongoForm):
     #@todo: password change form
     
     username = forms.RegexField(label=_("Username"), max_length=30,
