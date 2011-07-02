@@ -1,0 +1,1 @@
+db.user.update({ "username" : "admin"}, { "username" : "admin", "_types" : [ "User" ], "password" : "sha1$8c73c$4236f9efb97df0ba894e625fe8929baa0c1d4535", "is_active" : true, "is_superuser" : true, "is_staff" : true, "last_login" : ISODate("1970-01-01T00:00:00.000Z"), "_cls" : "User", "date_joined" : ISODate("1970-01-01T00:00:00.000Z") }, true)

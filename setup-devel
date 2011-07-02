@@ -1,0 +1,42 @@
+#!/bin/bash
+
+BASEDIR=$(dirname $0)
+VENVDIR=$BASEDIR/venv
+
+cd $BASEDIR
+
+function require {
+	if ! hash $1 2>&- > /dev/null
+	then
+		echo
+		echo 'Error: no "'$1'" executable.'
+		echo
+	fi
+}
+
+if ! test -d venv
+then
+	require virtualenv
+	virtualenv --no-site-packages $VENVDIR
+fi
+
+source $VENVDIR/bin/activate
+if test $? -ne 0
+then
+	echo
+	echo 'Error: cannot activate virtual environment.'
+	echo
+fi
+
+require pip
+pip install -r requirements.pip
+
+require mongo
+mongo picket apps/picket/fixtures/devel.js
+
+if ! test -e settings/local.py
+then
+	cp settings/local{_sample,}.py
+fi
+
+python manage.py runserver
